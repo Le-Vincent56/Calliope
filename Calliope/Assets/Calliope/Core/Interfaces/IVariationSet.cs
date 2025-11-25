@@ -14,7 +14,7 @@ namespace Calliope.Core.Interfaces
         string ID { get; }
         
         /// <summary>
-        /// Display name for the editor ("Instigator Proposal")
+        /// The display name for the editor ("Instigator Proposal")
         /// </summary>
         string DisplayName { get; }
         

@@ -15,31 +15,31 @@ namespace Calliope.Core.Interfaces
         string ID { get; }
         
         /// <summary>
-        /// Raw text with variables
+        /// Raw text with variables;
         /// Example: "{speaker.name} glares at {target.name}. \"We're taking the mountains.\""
         /// </summary>
         string Text { get; }
         
         /// <summary>
-        /// The trait affinities affecting selection probability
+        /// The trait affinities affecting selection probability;
         /// Example: aggressive +1.0 makes aggressive characters more likely to use this fragment
         /// </summary>
         IReadOnlyList<TraitAffinity> TraitAffinities { get; }
         
         /// <summary>
-        /// The relationship modifiers affecting selection probability
+        /// The relationship modifiers affecting selection probability;
         /// Example: Opinion >= 70 multiplies score by 1.5x
         /// </summary>
         IReadOnlyList<RelationshipModifier> RelationshipModifiers { get; }
         
         /// <summary>
-        /// The traits that must be present for this fragment to be valid
+        /// The traits that must be present for this fragment to be valid;
         /// Example: ["leader"] means only characters with the "leader" trait can use this
         /// </summary>
         IReadOnlyList<string> RequiredTraitIDs { get; }
         
         /// <summary>
-        /// The traits that prevent this fragment from being valid
+        /// The traits that prevent this fragment from being valid;
         /// Example: ["timid"] means timid characters cannot use this
         /// </summary>
         IReadOnlyList<string> ForbiddenTraitIDs { get; }
