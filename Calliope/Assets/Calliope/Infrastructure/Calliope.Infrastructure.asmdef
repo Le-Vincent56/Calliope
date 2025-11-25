@@ -1,0 +1,16 @@
+{
+    "name": "Calliope.Infrastructure",
+    "rootNamespace": "Calliope.Infrastructure",
+    "references": [
+        "GUID:8ca60dbb0e6114bc9a38323448e48ca6"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

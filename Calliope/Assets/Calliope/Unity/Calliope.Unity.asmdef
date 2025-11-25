@@ -1,0 +1,22 @@
+{
+    "name": "Calliope.Unity",
+    "rootNamespace": "Calliope.Unity",
+    "references": [
+        "GUID:8ca60dbb0e6114bc9a38323448e48ca6",
+        "GUID:d8bc7cf4798f7d6c3bee24c9e9b6b5f5",
+        "GUID:cdd45f1127ccc062db477b1ec9743b6d",
+        "GUID:8e92a714652d81b30b0cf5bb579f0a3e",
+        "GUID:9e24947de15b9834991c9d8411ea37cf",
+        "GUID:84651a3751eca9349aac36a66bba901b",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

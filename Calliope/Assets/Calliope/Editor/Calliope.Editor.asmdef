@@ -1,0 +1,24 @@
+{
+    "name": "Calliope.Editor",
+    "rootNamespace": "Calliope.Editor",
+    "references": [
+        "GUID:8ca60dbb0e6114bc9a38323448e48ca6",
+        "GUID:d8bc7cf4798f7d6c3bee24c9e9b6b5f5",
+        "GUID:cdd45f1127ccc062db477b1ec9743b6d",
+        "GUID:8e92a714652d81b30b0cf5bb579f0a3e",
+        "GUID:3dafa7cac6488e974a0e9b95169e56ec",
+        "GUID:69448af7b92c7f342b298e06a37122aa",
+        "GUID:6546d7765b4165b40850b3667f981c26"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
