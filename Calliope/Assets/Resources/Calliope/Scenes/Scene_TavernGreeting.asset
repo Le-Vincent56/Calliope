@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 451256f7760843bb9de55f7c09f8f3ea, type: 3}
+  m_Name: Scene_TavernGreeting
+  m_EditorClassIdentifier: 
+  id: tavern-greeting
+  displayName: Tavern Greeting
+  triggerType: 0
+  roles:
+  - {fileID: 11400000, guid: 0359d3027daf9bdb7bccbe10e5f880df, type: 2}
+  beats:
+  - {fileID: 11400000, guid: 6fd42fa02afa3374a804a0de90f02e36, type: 2}
+  startingBeatID: greeting
+  description: A simple scene where a character greets the player in a tavern
+  tags: []

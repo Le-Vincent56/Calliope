@@ -139,7 +139,7 @@ namespace Calliope.Infrastructure.Repositories
             if (IsLoaded) return;
             
             // Synchronous fallback - blocks until laoded
-            LoadItemsAsync().Wait();
+            LoadItemsAsync().GetAwaiter().GetResult();
         }
 
         /// <summary>

@@ -109,9 +109,11 @@ namespace Calliope.Runtime.Services
             pronounBuilder.Append("{");
             pronounBuilder.Append(prefix);
             pronounBuilder.Append(".pronoun.subject");
+            pronounBuilder.Append("}");
             titleCaseBuilder.Append("{");
             titleCaseBuilder.Append(prefix);
             titleCaseBuilder.Append(".pronoun.Subject");
+            titleCaseBuilder.Append("}");
             
             // Replace the subject string
             stringBuilder.Replace(pronounBuilder.ToString(), pronouns.Subject);
@@ -123,9 +125,11 @@ namespace Calliope.Runtime.Services
             pronounBuilder.Append("{");
             pronounBuilder.Append(prefix);
             pronounBuilder.Append(".pronoun.object");
+            pronounBuilder.Append("}");
             titleCaseBuilder.Append("{");
             titleCaseBuilder.Append(prefix);
             titleCaseBuilder.Append(".pronoun.Object");
+            titleCaseBuilder.Append("}");
             
             // Replace the object string
             stringBuilder.Replace(pronounBuilder.ToString(), pronouns.Object);
@@ -137,9 +141,11 @@ namespace Calliope.Runtime.Services
             pronounBuilder.Append("{");
             pronounBuilder.Append(prefix);
             pronounBuilder.Append(".pronoun.possessive");
+            pronounBuilder.Append("}");
             titleCaseBuilder.Append("{");
             titleCaseBuilder.Append(prefix);
             titleCaseBuilder.Append(".pronoun.Possessive");
+            titleCaseBuilder.Append("}");
             
             // Replace the possessive string
             stringBuilder.Replace(pronounBuilder.ToString(), pronouns.Possessive);
@@ -151,10 +157,11 @@ namespace Calliope.Runtime.Services
             pronounBuilder.Append("{");
             pronounBuilder.Append(prefix);
             pronounBuilder.Append(".pronoun.reflexive");
+            pronounBuilder.Append("}");
             titleCaseBuilder.Append("{");
             titleCaseBuilder.Append(prefix);
             titleCaseBuilder.Append(".pronoun.Reflexive");
-            
+            titleCaseBuilder.Append("}");
             
             // Replace the reflexive string
             stringBuilder.Replace(pronounBuilder.ToString(), pronouns.Reflexive);

@@ -15,59 +15,53 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 683d2b1e5da1edcc697f41bef53ec7a0
   m_SerializeEntries:
-  - m_GUID: 14e298a7149ddc1c9929d8367410b289
-    m_Address: Assets/Scriptable Objects/Traits/Passive.asset
+  - m_GUID: 074525671b4384baab95da332d9838ec
+    m_Address: Assets/Calliope/Samples/DemoContent/Traits/Trait_Cynical.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Trait
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1712ff93e91a8d14aaf19b213c0e3ea9
-    m_Address: Assets/Scriptable Objects/Traits/Cowardly.asset
+  - m_GUID: 0d9318aa986f629f1934a09776a840e5
+    m_Address: Assets/Calliope/Samples/DemoContent/Traits/Trait_Kind.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Trait
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3f855e3b2864182279e489a48e2784e3
-    m_Address: Assets/Scriptable Objects/Traits/Brave.asset
+  - m_GUID: 122eec5b45fea0c34bf9dddf1437fff5
+    m_Address: Assets/Calliope/Samples/DemoContent/Traits/Trait_Brave.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Trait
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 475736db95bada27faa58acfbc9c12ce
-    m_Address: Assets/Scriptable Objects/Characters/Sera.asset
+  - m_GUID: 63f82e78ccb44c311b617d71a0375eee
+    m_Address: Assets/Calliope/Samples/DemoContent/Characters/Character_Sera.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5a907e1c98e4207c1b6ee628e5cd9c42
-    m_Address: Assets/Scriptable Objects/Characters/Aldric.asset
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Character
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 671ace7608d128aac8e14c8d2c96297d
-    m_Address: Assets/Scriptable Objects/Traits/Aggressive.asset
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Trait
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c2079f4d2dab7315b9f249e934dad704
-    m_Address: Assets/Scriptable Objects/Variation Sets/VariationSet1.asset
+  - m_GUID: b2babc7d31354b75bb072fe7a8d7e4ed
+    m_Address: Assets/Calliope/Samples/DemoContent/VariationSets/VariationSet_TavernGreeting.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Variation Set
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f27e6b6f7a58ff54285e29702821b14f
-    m_Address: Assets/Scriptable Objects/Scene Templates/Campfire Disagreement.asset
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Scene
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f530d8e559728fb6b90508f7980265b7
-    m_Address: Assets/Scriptable Objects/Characters/Finn.asset
+  - m_GUID: c7ce7864ac78e3be3888e37ac16d45de
+    m_Address: Assets/Calliope/Samples/DemoContent/Characters/Character_Finn.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ecf49e9c5a6bf46b693246b9eb947bd0
+    m_Address: Assets/Calliope/Samples/DemoContent/Characters/Character_Aldric.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fac5f9ad725cbabd0affba053071a686
+    m_Address: Assets/Calliope/Samples/DemoContent/Scenes/Scene_TavernGreeting.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Scene
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: efccc689fa40cfb2bb2b07fd56236888, type: 2}

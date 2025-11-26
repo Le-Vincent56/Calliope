@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_Cynical_Greeting_1
+  m_EditorClassIdentifier: 
+  id: cynical-greeting-1
+  text: '{speaker.pronoun.Subject} eyes you suspiciously. "Another wanderer, huh?
+    Let me guess, you need something from me. They always do."'
+  traitAffinities:
+  - TraitID: cynical
+    Weight: 1
+  requiredTraitIDs:
+  - cynical
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []

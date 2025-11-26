@@ -42,6 +42,12 @@ namespace Calliope.Samples.Presenters
         [Tooltip("Starting scale for show animation (0.8 = 80% size)")]
         [SerializeField] [Range(0.1f, 1f)] private float scaleFrom = 0.8f;
         
+        [Tooltip("Easing curve for scaling up")]
+        [SerializeField] private Ease scaleUpEase = Ease.OutQuad;
+        
+        [Tooltip("Easing curve for scaling down")]
+        [SerializeField] private Ease scaleDownEase = Ease.OutQuad;
+        
         [Header("Animation Settings - Typewriter")]
         [Tooltip("Text typewriter effect speed in characters per second (0 = instant)")]
         [SerializeField] private float typewriterSpeed = 30f;
@@ -115,7 +121,7 @@ namespace Calliope.Samples.Presenters
                     _typewriterTween = Tween.Custom(0, characterCount, duration, value =>
                         {
                             // Exit case - there is no text component
-                            if (dialogueText) return;
+                            if (!dialogueText) return;
                             
                             dialogueText.maxVisibleCharacters = Mathf.RoundToInt(value);
                         }, 
@@ -145,7 +151,6 @@ namespace Calliope.Samples.Presenters
             // Exit case - already showing
             if (_isShowing) return;
             
-            
             // Stop any existing animation
             _currentSequence.Stop();
             
@@ -166,7 +171,7 @@ namespace Calliope.Samples.Presenters
                     _rectTransform, 
                     Vector3.one, 
                     fadeDuration, 
-                    fadeEase
+                    scaleUpEase
                 ));
             }
             
@@ -228,7 +233,7 @@ namespace Calliope.Samples.Presenters
                     _rectTransform, 
                     Vector3.one * scaleFrom, 
                     fadeDuration, 
-                    fadeEase
+                    scaleDownEase
                 ));
             }
         }

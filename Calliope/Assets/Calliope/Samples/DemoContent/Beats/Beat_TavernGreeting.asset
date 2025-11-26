@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Beat_TavernGreeting
+  m_EditorClassIdentifier: 
+  beatID: greeting
+  speakerRoleID: greeter
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: b2babc7d31354b75bb072fe7a8d7e4ed, type: 2}
+  isEndBeat: 1
+  branches: []
+  defaultNextBeatID: 

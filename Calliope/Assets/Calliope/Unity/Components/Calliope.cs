@@ -48,7 +48,7 @@ namespace Calliope.Unity.Components
         public CharacterCaster CharacterCaster { get; private set; }
         public SceneOrchestrator SceneOrchestrator { get; private set; }
 
-        private void Awake()
+        private async void Awake()
         {
             // Singleton pattern - only one Calliope instance allowed per scene
             if (Instance && Instance != this)
@@ -61,7 +61,7 @@ namespace Calliope.Unity.Components
             DontDestroyOnLoad(gameObject);
             
             // Initialize services
-            InitializeServices();
+            await InitializeServices();
         }
 
         private void OnDestroy()
@@ -70,10 +70,17 @@ namespace Calliope.Unity.Components
             if (!_initialized || Instance != this) return;
             
             // Clean up Addressable assets
-            (TraitRepository as TraitRepository)?.ReleaseAssets();
-            (CharacterRepository as CharacterRepository)?.ReleaseAssets();
-            (VariationSetRepository as VariationSetRepository)?.ReleaseAssets();
-            (SceneTemplateRepository as SceneTemplateRepository)?.ReleaseAssets();
+            if(TraitRepository is AddressableTraitRepository addressableTraitRepository)
+                addressableTraitRepository.ReleaseAssets();
+            
+            if(CharacterRepository is AddressableCharacterRepository addressableCharacterRepository)
+                addressableCharacterRepository.ReleaseAssets();
+            
+            if(VariationSetRepository is AddressableVariationSetRepository addressablesVariationSetRepository)
+                addressablesVariationSetRepository.ReleaseAssets();
+            
+            if(SceneTemplateRepository is AddressableSceneTemplateRepository addressableSceneTemplateRepository)
+                addressableSceneTemplateRepository.ReleaseAssets();
                 
             Debug.Log("[Calliope] Released Addressable assets");
         }
@@ -83,7 +90,7 @@ namespace Calliope.Unity.Components
         /// this includes logging, event handling, repositories, relationship management, scoring,
         /// selection strategies, text assembly, and scene orchestrating components
         /// </summary>
-        private void InitializeServices()
+        private async Task InitializeServices()
         {
             // Exit case - already initialized
             if (_initialized) return;
@@ -94,11 +101,11 @@ namespace Calliope.Unity.Components
             Logger = new UnityLogger();
             EventBus = new EventBus();
             
-            // Repositories (Addressables-based)
-            TraitRepository = new TraitRepository();
-            CharacterRepository = new CharacterRepository();
-            VariationSetRepository = new VariationSetRepository();
-            SceneTemplateRepository = new SceneTemplateRepository();
+            // Repositories (Addressable-based)
+            TraitRepository = new AddressableTraitRepository();
+            CharacterRepository = new AddressableCharacterRepository();
+            VariationSetRepository = new AddressableVariationSetRepository();
+            SceneTemplateRepository = new AddressableSceneTemplateRepository();
             
             // Relationship system
             RelationshipProvider = new RelationshipProvider(EventBus, Logger);
@@ -135,6 +142,9 @@ namespace Calliope.Unity.Components
             _initialized = true;
             
             Debug.Log("[Calliope] Calliope services initialized successfully");
+
+            // Preload all content
+            await PreloadAllContent();
         }
 
         /// <summary>
