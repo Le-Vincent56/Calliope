@@ -15,5 +15,13 @@ namespace Calliope.Core.Interfaces
         /// <param name="traitID">The unique identifier of the trait to filter characters by</param>
         /// <returns>A read-only list of characters that have the specified trait</returns>
         IReadOnlyList<ICharacter> GetByTrait(string traitID);
+
+        /// <summary>
+        /// Retrieves a list of characters that possess all the specified traits;
+        /// useful for filtering characters based on multiple traits simultaneously.
+        /// </summary>
+        /// <param name="traitIDs">A collection of trait identifiers that characters must possess</param>
+        /// <returns>A read-only list of characters that have all the specified traits</returns>
+        IReadOnlyList<ICharacter> GetByTraits(IEnumerable<string> traitIDs);
     }
 }
