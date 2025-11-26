@@ -82,10 +82,8 @@ namespace Calliope.Runtime.Saliency
 
             // If all fragments have a negative score, return the first one
             if (totalScore <= 0)
-            {
-                context.MarkUsed(pool[0].fragment.ID);
                 return pool[0].fragment;
-            }
+            
             
             // Weighted random roll selection
             float roll = (float)context.Random.NextDouble() * totalScore;
@@ -97,15 +95,11 @@ namespace Calliope.Runtime.Saliency
                 
                 // Exit case - roll is within the cumulative weight
                 if (roll <= cumulative)
-                {
-                    context.MarkUsed(pool[i].fragment.ID);
                     return pool[i].fragment;
-                }
             }
             
             // Fallback
             IDialogueFragment fallback = pool[^1].fragment;
-            context.MarkUsed(fallback.ID);
             return fallback;
         }
     }

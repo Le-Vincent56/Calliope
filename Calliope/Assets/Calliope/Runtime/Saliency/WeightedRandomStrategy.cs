@@ -76,16 +76,11 @@ namespace Calliope.Runtime.Saliency
                 
                 // Exit case - roll is within the cumulative weight
                 if (roll <= cumulative)
-                {
-                    // Mark the fragment as used
-                    context.MarkUsed(valid[i].fragment.ID);
                     return valid[i].fragment;
-                }
             }
             
             // Fallback
             IDialogueFragment fallback = valid[^1].fragment;
-            context.MarkUsed(fallback.ID);
             return fallback;
         }
     }

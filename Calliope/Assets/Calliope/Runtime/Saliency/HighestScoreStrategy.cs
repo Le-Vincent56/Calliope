@@ -50,7 +50,6 @@ namespace Calliope.Runtime.Saliency
             // Exit case - no valid fragments
             if (best == null) return null;
             
-            context.MarkUsed(best.ID);
             return best;
         }
     }
