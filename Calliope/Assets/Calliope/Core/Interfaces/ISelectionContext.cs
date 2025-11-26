@@ -38,5 +38,11 @@ namespace Calliope.Core.Interfaces
         /// a lower multiplier means a stronger penalty against repetition
         /// </summary>
         float RecencyPenalty { get; set; }
+
+        /// <summary>
+        /// Resets the selection context to its initial state by clearing all tracked usage data,
+        /// including usage counts and the recency queue, effectively removing all recorded history
+        /// </summary>
+        void Reset();
     }
 }

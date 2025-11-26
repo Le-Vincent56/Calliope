@@ -16,7 +16,7 @@ namespace Calliope.Runtime.Services
         private readonly ISaliencyStrategy _selectionStrategy;
         private readonly TextAssembler _textAssembler;
         private readonly RelationshipModifierApplier _relationshipApplier;
-        private readonly RelationshipProvider _relationshipProvider;
+        private readonly IRelationshipProvider _relationshipProvider;
         private readonly ISelectionContext _selectionContext;
         private readonly IEventBus _eventBus;
         private readonly ILogger _logger;
@@ -26,7 +26,7 @@ namespace Calliope.Runtime.Services
             ISaliencyStrategy selectionStrategy, 
             TextAssembler textAssembler, 
             RelationshipModifierApplier relationshipApplier, 
-            RelationshipProvider relationshipProvider,
+            IRelationshipProvider relationshipProvider,
             ISelectionContext selectionContext, 
             IEventBus eventBus, 
             ILogger logger)

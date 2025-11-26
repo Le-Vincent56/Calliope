@@ -35,5 +35,10 @@ namespace Calliope.Core.Interfaces
         /// <param name="type">The type of relationship to modify, such as opinion or other relationship types</param>
         /// <param name="delta">The change to apply to the current relationship value</param>
         void ModifyRelationship(string fromCharacterID, string toCharacterID, RelationshipType type, float delta);
+
+        /// <summary>
+        /// Removes all relationships between characters managed by the provider
+        /// </summary>
+        void ClearAllRelationships();
     }
 }
