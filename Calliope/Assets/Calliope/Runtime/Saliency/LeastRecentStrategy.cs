@@ -4,12 +4,31 @@ using Calliope.Core.Interfaces;
 
 namespace Calliope.Runtime.Saliency
 {
+    /// <summary>
+    /// Represents a saliency strategy that selects dialogue fragments based on their
+    /// recency of use, prioritizing fragments that have been used the least recently
+    /// </summary>
     [SaliencyStrategy("least-recent", "Least Recent")]
     public class LeastRecentStrategy : ISaliencyStrategy
     {
         public string StrategyID => "least-recent";
         public string DisplayName => "Least Recent";
 
+        /// <summary>
+        /// Selects a dialogue fragment based on the "least recent" saliency strategy, which prioritizes fragments
+        /// that have been least recently used or never used, followed by a weighted random selection among the candidates
+        /// </summary>
+        /// <param name="scoredCandidates">
+        /// A list of tuples containing dialogue fragments and their associated scores; these represent
+        /// the potential candidates for selection
+        /// </param>
+        /// <param name="context">
+        /// The selection context, which provides access to utilities such as random number generation
+        /// and tracking of fragment usage
+        /// </param>
+        /// <returns>
+        /// The selected dialogue fragment based on the "least recent" saliency strategy, or null if no valid candidate exists
+        /// </returns>
         public IDialogueFragment Select(
             IReadOnlyList<(IDialogueFragment fragment, IScoringResult score)> scoredCandidates,
             ISelectionContext context

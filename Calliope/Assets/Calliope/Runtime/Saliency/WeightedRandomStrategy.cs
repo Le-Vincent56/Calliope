@@ -1,5 +1,3 @@
-
-
 using System.Collections.Generic;
 using Calliope.Core.Attributes;
 using Calliope.Core.Interfaces;
