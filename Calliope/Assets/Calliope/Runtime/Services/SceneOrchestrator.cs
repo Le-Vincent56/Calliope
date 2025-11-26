@@ -143,8 +143,8 @@ namespace Calliope.Runtime.Services
         /// </summary>
         /// <returns>
         /// A boolean value indicating whether the operation successfully advanced to the next beat;
-        /// returns false if the current beat is null, if there are no branches, or if no valid branch
-        /// is found to transition to
+        /// returns false if the scene has completed, if the current beat is null, if there are no branches, 
+        /// or if no valid branch is found to transition to
         /// </returns>
         public bool AdvanceToNextBeat()
         {
@@ -159,29 +159,33 @@ namespace Calliope.Runtime.Services
             
             StringBuilder logBuilder = new StringBuilder();
             
-            // Exit case - there are no branches to advance to
-            if (currentBeat.Branches == null || currentBeat.Branches.Count == 0)
+            // Check if this is an end beat
+            if (currentBeat.IsEndBeat)
             {
-                // No branches means the scene is complete; build the log message
-                logBuilder.Append("[SceneOrchestrator] Scene '");
-                logBuilder.Append(_currentScene.ID);
-                logBuilder.Append("' complete at beat '");
+                logBuilder.Append("[SceneOrchestrator] Reached end beat '");
                 logBuilder.Append(_currentBeatID);
-                logBuilder.Append("'");
+                logBuilder.Append("', scene complete");
                 _logger.LogInfo(logBuilder.ToString());
-                
-                // End the scene
+
                 EndScene();
                 return false;
             }
 
-            // Evaluate what the next beat should be
-            string nextBeatID = EvaluateBranches(currentBeat.Branches);
+            string nextBeatID = null;
 
-            // Exit case - no valid branch was found
+            // Evaluate the branches if they exist
+            if (currentBeat.Branches is { Count: > 0 })
+                nextBeatID = EvaluateBranches(currentBeat.Branches);
+            
+
+            // Fallback to the default next beat
+            if (string.IsNullOrEmpty(nextBeatID))
+                nextBeatID = currentBeat.DefaultNextBeatID;
+            
+            // Exit case - still not valid beat is found
             if (string.IsNullOrEmpty(nextBeatID))
             {
-                logBuilder.Append("[SceneOrchestrator] No valid branch found from beat '");
+                logBuilder.Append("[SceneOrchestrator] No valid next beat found from beat '");
                 logBuilder.Append(_currentBeatID);
                 logBuilder.Append("', ending scene");
                 _logger.LogInfo(logBuilder.ToString());

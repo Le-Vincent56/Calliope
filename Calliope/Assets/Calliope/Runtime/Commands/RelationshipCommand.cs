@@ -1,7 +1,7 @@
 using Calliope.Core.Enums;
 using Calliope.Core.Interfaces;
 
-namespace Calliope.Runtime.Services
+namespace Calliope.Runtime.Commands
 {
     /// <summary>
     /// Represents a command used to modify the relationship between two characters;

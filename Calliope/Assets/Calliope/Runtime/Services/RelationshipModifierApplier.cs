@@ -4,6 +4,7 @@ using System.Text;
 using Calliope.Core.Interfaces;
 using Calliope.Core.ValueObjects;
 using Calliope.Infrastructure.Logging;
+using Calliope.Runtime.Commands;
 
 namespace Calliope.Runtime.Services
 {
