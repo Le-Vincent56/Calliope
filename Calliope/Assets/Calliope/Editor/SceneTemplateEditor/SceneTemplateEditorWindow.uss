@@ -1,0 +1,216 @@
+#Root {
+    flex-grow: 1;
+}
+
+.toolbar {
+    flex-direction: row;
+    background-color: rgb(60, 60, 60);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(30, 30, 30);
+    padding: 4px 8px;
+    min-height: 32px;
+    align-items: center;
+}
+
+.toolbar-title {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(200, 200, 200);
+    margin-right: 16px;
+}
+
+.toolbar-template-field {
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.toolbar-button {
+    margin-left: 8px;
+    padding: 4px 12px;
+    background-color: rgb(80, 80, 120);
+    border-radius: 4px;
+    border-width: 0;
+    color: rgb(220, 220, 220);
+    -unity-font-style: bold;
+}
+
+.toolbar-button:hover {
+    background-color: rgb(100, 100, 140);
+}
+
+.toolbar-button:active {
+    background-color: rgb(60, 60, 100);
+}
+
+#ContentArea {
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.inspector-panel {
+    width: 300px;
+    background-color: rgb(50, 50, 50);
+    border-left-width: 1px;
+    border-left-color: rgb(30, 30, 30);
+}
+
+.inspector-title {
+    font-size: 14px;
+    -unity-font-style: bold;
+    padding: 8px;
+    background-color: rgb(60, 60, 60);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(30, 30, 30);
+}
+
+.inspector-content {
+    flex-grow: 1;
+    padding: 8px;
+}
+
+.inspector-placeholder {
+    color: rgb(150, 150, 150);
+    -unity-text-align: middle-center;
+    margin-top: 20px;
+    -unity-font-style: italic;
+}
+
+.inspector-field {
+    margin-bottom: 8px;
+}
+
+.inspector-section {
+    margin-bottom: 16px;
+    padding: 8px;
+    background-color: rgb(45, 45, 45);
+    border-radius: 4px;
+}
+
+.inspector-section-title {
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: rgb(180, 180, 200);
+    margin-bottom: 8px;
+}
+
+.graph-view {
+    flex-grow: 1;
+    background-color: rgb(40, 40, 40);
+}
+
+Label {
+    color: rgb(200, 200, 200);
+}
+
+.beat-node {
+    position: absolute;
+    background-color: rgb(50, 50, 50);
+    border-radius: 6px;
+    border-width: 2px;
+    border-color: rgb(30, 30, 30);
+    overflow: hidden;
+    min-width: 200px;
+}
+
+.beat-node-header {
+    background-color: rgb(70, 70, 100);
+    padding: 8px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(40, 40, 40);
+    flex-direction: row;
+    align-items: center;
+}
+
+.beat-node-title {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(220, 220, 220);
+    -unity-text-align: middle-center;
+    flex-grow: 1;
+}
+
+.beat-node-body {
+    padding: 8px;
+}
+
+.beat-node-field {
+    font-size: 11px;
+    color: rgb(180, 180, 180);
+    margin-bottom: 4px;
+    white-space: normal;
+}
+
+.beat-node-selected {
+    border-color: rgb(100, 150, 255);
+    border-width: 3px;
+}
+
+.beat-node-selected .beat-node-header {
+    background-color: rgb(80, 100, 150);
+}
+
+.node-port {
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background-color: rgb(100, 100, 100);
+    border-width: 2px;
+    border-color: rgb(200, 200, 200);
+    flex-shrink: 0;
+}
+
+.input-port {
+    margin-right: 8px;
+}
+
+.output-port {
+    margin-left: 8px;
+}
+
+.node-port:hover {
+    background-color: rgb(120, 150, 200);
+    border-color: rgb(150, 180, 255);
+}
+
+.node-port-highlight {
+    background-color: rgb(100, 200, 100);
+    border-color: rgb(150, 255, 150);
+    border-width: 3px;
+}
+
+.validation-section {
+    bottom: 0;
+    background-color: rgb(45, 45, 45);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(30, 30, 30);
+    max-height: 200px;
+}
+
+.validation-item {
+    padding: 6px 8px;
+    margin: 4px;
+    border-left-width: 3px;
+    border-radius: 3px;
+    background-color: rgb(50, 50, 50);
+}
+
+.validation-error {
+    border-left-color: rgb(200, 50, 50);
+    background-color: rgb(60, 40, 40);
+}
+
+.validation-warning {
+    border-left-color: rgb(200, 150, 50);
+    background-color: rgb(60, 55, 40);
+}
+
+.validation-success {
+    border-left-color: rgb(50, 200, 100);
+    background-color: rgb(40, 60, 45);
+}
+
+.validation-message {
+    font-size: 11px;
+    color: rgb(220, 220, 220);
+    white-space: normal;
+}

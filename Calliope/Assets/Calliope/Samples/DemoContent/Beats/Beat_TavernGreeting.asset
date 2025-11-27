@@ -17,5 +17,6 @@ MonoBehaviour:
   targetRoleID: 
   variationSet: {fileID: 11400000, guid: b2babc7d31354b75bb072fe7a8d7e4ed, type: 2}
   isEndBeat: 1
-  branches: []
+  branches:
+  - {fileID: -3541722812701253937, guid: fac5f9ad725cbabd0affba053071a686, type: 2}
   defaultNextBeatID: 
