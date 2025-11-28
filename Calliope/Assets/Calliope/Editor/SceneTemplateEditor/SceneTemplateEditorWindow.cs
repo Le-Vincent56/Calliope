@@ -25,7 +25,8 @@ namespace Calliope.Editor.SceneTemplateEditor
         private VisualElement _validationSection;
         private Button _validationButton;
         private BeatConnectionView _hoveredConnection;
-
+        private DropdownField _modeSelector;
+        
         [MenuItem("Window/Calliope/Scene Template Editor")]
         public static void ShowWindow()
         {
@@ -85,6 +86,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             _inspectorContent = root.Q<VisualElement>("InspectorContent");
             _validationSection = root.Q<VisualElement>("ValidationSection");
             _validationButton = root.Q<Button>("ValidateButton");
+            _modeSelector = root.Q<DropdownField>("ModeSelector");
             
             // Set up the create beat button
             if (_createBeatButton != null)
@@ -104,6 +106,32 @@ namespace Calliope.Editor.SceneTemplateEditor
                 _validationButton.clicked += ValidateScene;
             }
             
+            // Set up the mode selector
+            if (_modeSelector != null)
+            {
+                // Set up choices
+                _modeSelector.choices = new List<string>
+                {
+                    AssetScanner.GetModeDisplayName(AssetScanMode.All),
+                    AssetScanner.GetModeDisplayName(AssetScanMode.Resources),
+                    AssetScanner.GetModeDisplayName(AssetScanMode.Addressables)
+                };
+
+                // Set current value
+                _modeSelector.value = AssetScanner.GetModeDisplayName(AssetScanner.CurrentMode);
+
+                // Register callback
+                _modeSelector.RegisterValueChangedCallback(evt =>
+                {
+                    if (evt.newValue == AssetScanner.GetModeDisplayName(AssetScanMode.All))
+                        AssetScanner.CurrentMode = AssetScanMode.All;
+                    else if (evt.newValue == AssetScanner.GetModeDisplayName(AssetScanMode.Resources))
+                        AssetScanner.CurrentMode = AssetScanMode.Resources;
+                    else if (evt.newValue == AssetScanner.GetModeDisplayName(AssetScanMode.Addressables))
+                        AssetScanner.CurrentMode = AssetScanMode.Addressables;
+                });
+            }
+
             // Set up the template selector
             if (_templateField != null)
             {
@@ -130,42 +158,42 @@ namespace Calliope.Editor.SceneTemplateEditor
             // Exit case - no template selected
             if (!_currentTemplate)
             {
-                Debug.LogWarning("[SceneTemplateEditor] No template selected");
+                EditorUtility.DisplayDialog("No Template", "Please select a Scene Template first.", "OK");
                 return;
             }
             
+            // Show the dialog
+            BeatCreationDialog.Show(
+                onCreate: (beatID, displayName) => CreateBeat(beatID, displayName, null),
+                onValidateID: IsBeatIDUnique
+            );
+        }
+
+        private void CreateBeat(string beatID, string displayName, Vector2? nodePosition)
+        {
+            // Exit case - no template selected
+            if(!_currentTemplate) return;
+            
             // Create a new SceneBeatSO asset
             SceneBeatSO newBeat = CreateInstance<SceneBeatSO>();
-            
-            // Generate a unique beat ID
-            int beatCount = 0;
-            SerializedObject serializedObject = new SerializedObject(_currentTemplate);
-            SerializedProperty beatsProperty = serializedObject.FindProperty("beats");
-           
-            // Set the amount of beats
-            if (beatsProperty != null)
-                beatCount = beatsProperty.arraySize;
-
-            StringBuilder idBuilder = new StringBuilder();
-            idBuilder.Append("beat_");
-            idBuilder.Append(beatCount + 1);
-            string newBeatID = idBuilder.ToString();
             
             // Set the beat ID
             SerializedObject beatSerializedObject = new SerializedObject(newBeat);
             SerializedProperty beatIDProperty = beatSerializedObject.FindProperty("beatID");
             if (beatIDProperty != null)
             {
-                beatIDProperty.stringValue = newBeatID;
+                beatIDProperty.stringValue = beatID;
                 beatSerializedObject.ApplyModifiedProperties();
             }
             
             // Save the new beat as a sub-asset
             string templatePath = AssetDatabase.GetAssetPath(_currentTemplate);
-            newBeat.name = newBeatID;
+            newBeat.name = string.IsNullOrEmpty(displayName) ? beatID : displayName;
             AssetDatabase.AddObjectToAsset(newBeat, templatePath);
             
             // Add the beat to the template's beats array
+            SerializedObject serializedObject = new SerializedObject(_currentTemplate);
+            SerializedProperty beatsProperty = serializedObject.FindProperty("beats");
             if (beatsProperty != null)
             {
                 beatsProperty.InsertArrayElementAtIndex(beatsProperty.arraySize);
@@ -178,15 +206,43 @@ namespace Calliope.Editor.SceneTemplateEditor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             
-            // Log the creation
-            StringBuilder logBuilder = new StringBuilder();
-            logBuilder.Append("[SceneTemplateEditor] Created new beat '");
-            logBuilder.Append(newBeatID);
-            logBuilder.Append("'");
-            Debug.Log(logBuilder.ToString());
-            
-            // Refresh the view
+            // Save the position if provided
+            if (nodePosition.HasValue)
+            {
+                NodePositionStorage.SavePosition(_currentTemplate.ID, beatID, nodePosition.Value);
+            }
+
+            // Refresh the graph view
             InitializeGraphView();
+        }
+
+        /// <summary>
+        /// Verifies whether the provided beat ID is unique within the beats array of the currently selected SceneTemplateSO
+        /// </summary>
+        /// <param name="beatID">The beat ID to validate for uniqueness</param>
+        /// <returns>
+        /// True if the beat ID is unique (not present in the current template's beats array), otherwise false
+        /// </returns>
+        private bool IsBeatIDUnique(string beatID)
+        {
+            SerializedObject serializedObject = new SerializedObject(_currentTemplate);
+            SerializedProperty beatsProperty = serializedObject.FindProperty("beats");
+
+            // Exit case - no beats property found
+            if (beatsProperty == null) return true;
+
+            for (int i = 0; i < beatsProperty.arraySize; i++)
+            {
+                SerializedProperty beatProperty = beatsProperty.GetArrayElementAtIndex(i);
+                SceneBeatSO beat = beatProperty.objectReferenceValue as SceneBeatSO;
+
+                // Skip if the beat does not exist or is mismatching
+                if (!beat || beat.BeatID != beatID) continue;
+                
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>

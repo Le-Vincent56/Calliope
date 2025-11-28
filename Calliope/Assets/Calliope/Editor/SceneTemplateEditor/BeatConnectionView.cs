@@ -218,9 +218,9 @@ namespace Calliope.Editor.SceneTemplateEditor
         }
 
         /// <summary>
-        /// 
+        /// Updates the hover state of the connection and triggers a repaint if the state changes
         /// </summary>
-        /// <param name="hovered"></param>
+        /// <param name="hovered">True if the connection is being hovered over, false otherwise</param>
         public void SetHovered(bool hovered)
         {
             // Exit case - no change in hover state
@@ -232,10 +232,10 @@ namespace Calliope.Editor.SceneTemplateEditor
         }
 
         /// <summary>
-        /// 
+        /// Calculates the shortest distance from a given point to the bezier curve connecting two beat nodes
         /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
+        /// <param name="point">The point to calculate the distance to</param>
+        /// <returns>The shortest distance from the point to the bezier curve</returns>
         public float GetDistanceToPoint(Vector2 point)
         {
             Vector2 start = GetOutputPoint(_fromNode);
