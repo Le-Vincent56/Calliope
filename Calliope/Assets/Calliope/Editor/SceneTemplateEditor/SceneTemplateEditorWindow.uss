@@ -42,11 +42,6 @@
     background-color: rgb(60, 60, 100);
 }
 
-.toolbar-mode-selector {
-    min-width: 140px;
-    margin-right: 8px;
-}
-
 #ContentArea {
     flex-direction: row;
     flex-grow: 1;

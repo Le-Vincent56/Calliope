@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Beat_TavernGreeting
   m_EditorClassIdentifier: 
   beatID: greeting
-  speakerRoleID: greeter
+  speakerRoleID: role_tester
   targetRoleID: 
   variationSet: {fileID: 11400000, guid: b2babc7d31354b75bb072fe7a8d7e4ed, type: 2}
   isEndBeat: 1

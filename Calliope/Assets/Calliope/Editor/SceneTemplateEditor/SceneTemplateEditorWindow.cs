@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Calliope.Core.Interfaces;
 using Calliope.Unity.ScriptableObjects;
@@ -6,6 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
+using Object = UnityEngine.Object;
 
 namespace Calliope.Editor.SceneTemplateEditor
 {
@@ -25,7 +28,6 @@ namespace Calliope.Editor.SceneTemplateEditor
         private VisualElement _validationSection;
         private Button _validationButton;
         private BeatConnectionView _hoveredConnection;
-        private DropdownField _modeSelector;
         
         [MenuItem("Window/Calliope/Scene Template Editor")]
         public static void ShowWindow()
@@ -86,7 +88,6 @@ namespace Calliope.Editor.SceneTemplateEditor
             _inspectorContent = root.Q<VisualElement>("InspectorContent");
             _validationSection = root.Q<VisualElement>("ValidationSection");
             _validationButton = root.Q<Button>("ValidateButton");
-            _modeSelector = root.Q<DropdownField>("ModeSelector");
             
             // Set up the create beat button
             if (_createBeatButton != null)
@@ -104,32 +105,6 @@ namespace Calliope.Editor.SceneTemplateEditor
             if (_validationButton != null)
             {
                 _validationButton.clicked += ValidateScene;
-            }
-            
-            // Set up the mode selector
-            if (_modeSelector != null)
-            {
-                // Set up choices
-                _modeSelector.choices = new List<string>
-                {
-                    AssetScanner.GetModeDisplayName(AssetScanMode.All),
-                    AssetScanner.GetModeDisplayName(AssetScanMode.Resources),
-                    AssetScanner.GetModeDisplayName(AssetScanMode.Addressables)
-                };
-
-                // Set current value
-                _modeSelector.value = AssetScanner.GetModeDisplayName(AssetScanner.CurrentMode);
-
-                // Register callback
-                _modeSelector.RegisterValueChangedCallback(evt =>
-                {
-                    if (evt.newValue == AssetScanner.GetModeDisplayName(AssetScanMode.All))
-                        AssetScanner.CurrentMode = AssetScanMode.All;
-                    else if (evt.newValue == AssetScanner.GetModeDisplayName(AssetScanMode.Resources))
-                        AssetScanner.CurrentMode = AssetScanMode.Resources;
-                    else if (evt.newValue == AssetScanner.GetModeDisplayName(AssetScanMode.Addressables))
-                        AssetScanner.CurrentMode = AssetScanMode.Addressables;
-                });
             }
 
             // Set up the template selector
@@ -287,30 +262,62 @@ namespace Calliope.Editor.SceneTemplateEditor
             // Beat ID field
             TextField beatIDField = new TextField("Beat ID");
             beatIDField.value = beat.BeatID ?? "";
-            beatIDField.AddToClassList("inspector-field");
+            beatIDField.style.marginBottom = 8;
             beatIDField.RegisterValueChangedCallback(evt => OnBeatPropertyChanged(beat, "beatID", evt.newValue));
             _inspectorContent.Add(beatIDField);
             
             // Speaker role field
-            TextField speakerField = new TextField("Speaker Role");
-            speakerField.value = beat.SpeakerRoleID ?? "";
-            speakerField.AddToClassList("inspector-field");
-            speakerField.RegisterValueChangedCallback(evt => OnBeatPropertyChanged(beat, "speakerRoleID", evt.newValue));
-            _inspectorContent.Add(speakerField);
+            SearchableDropdown speakerDropdown = new SearchableDropdown(
+                label: "Speaker Role",
+                prefsKey: "SpeakerRole",
+                onGetItems: GetRoleDropdownItems,
+                onValueChanged: (value) => OnBeatPropertyChanged(beat, "speakerRoleID", value),
+                allowCreateNew: true,
+                onCreateNew: (searchText) => CreateNewRole(searchText, (roleID) =>
+                {
+                    OnBeatPropertyChanged(beat, "speakerRoleID", roleID);
+                    ShowBeatInspector(nodeView);
+                })
+            );
+            speakerDropdown.Value = beat.SpeakerRoleID ?? "";
+            _inspectorContent.Add(speakerDropdown);
             
             // Target role field
-            TextField targetField = new TextField("Target Role");
-            targetField.value = beat.TargetRoleID ?? "";
-            targetField.AddToClassList("inspector-field");
-            targetField.RegisterValueChangedCallback(evt => OnBeatPropertyChanged(beat, "targetRoleID", evt.newValue));
-            _inspectorContent.Add(targetField);
+            SearchableDropdown targetDropdown = new SearchableDropdown(
+                label: "Target Role",
+                prefsKey: "TargetRole",
+                onGetItems: GetRoleDropdownItems,
+                onValueChanged: (value) => OnBeatPropertyChanged(beat, "targetRoleID", value),
+                allowCreateNew: true,
+                onCreateNew: (searchText) => CreateNewRole(searchText, (roleID) =>
+                {
+                    OnBeatPropertyChanged(beat, "targetRoleID", roleID);
+                    ShowBeatInspector(nodeView);
+                })
+            );
+            targetDropdown.Value = beat.TargetRoleID ?? "";
+            _inspectorContent.Add(targetDropdown);
             
             // Variation Set field
-            TextField variationField = new TextField("Variation Set ID");
-            variationField.value = beat.VariationSetID ?? "";
-            variationField.AddToClassList("inspector-field");
-            variationField.RegisterValueChangedCallback(evt => OnBeatPropertyChanged(beat, "VariationSetID", evt.newValue));
-            _inspectorContent.Add(variationField);
+            SearchableDropdown variationDropdown = new SearchableDropdown(
+                label: "Variation Set",
+                prefsKey: "VariationSet",
+                onGetItems: GetVariationSetDropdownItems,
+                onValueChanged: (value) => OnBeatPropertyChanged(beat, "VariationSetID", value),
+                allowCreateNew: true,
+                onCreateNew: (searchText) => CreateNewVariationSet(searchText, (variationSetID) =>
+                {
+                    OnBeatPropertyChanged(beat, "VariationSetID", variationSetID);
+                    ShowBeatInspector(nodeView);
+                })
+            );
+            variationDropdown.Value = beat.VariationSetID ?? "";
+            _inspectorContent.Add(variationDropdown);
+            
+            // Spacer
+            VisualElement spacer = new VisualElement();
+            spacer.style.height = 16;
+            _inspectorContent.Add(spacer);
             
             // Delete button
             Button deleteButton = new Button(() => OnDeleteButtonClicked(nodeView));
@@ -318,6 +325,143 @@ namespace Calliope.Editor.SceneTemplateEditor
             deleteButton.style.marginTop = 16;
             deleteButton.style.backgroundColor = new Color(0.8f, 0.3f, 0.3f);
             _inspectorContent.Add(deleteButton);
+        }
+
+        /// <summary>
+        /// Retrieves a list of dropdown items representing available roles for a SceneTemplate;
+        /// this method scans the assets for SceneRoleSO instances, skips any invalid roles,
+        /// and constructs a dropdown item for each valid role based on its ID and display name
+        /// </summary>
+        /// <returns>
+        /// A list of SearchableDropdown.DropdownItem objects, each corresponding to a valid SceneRoleSO asset
+        /// </returns>
+        private List<SearchableDropdown.DropdownItem> GetRoleDropdownItems()
+        {
+            List<SearchableDropdown.DropdownItem> items = new List<SearchableDropdown.DropdownItem>();
+            
+            // Find all SceneRoleSO assets based on the current scan mode
+            List<SceneRoleSO> roles = AssetCreator.FindAllAssets<SceneRoleSO>();
+
+            // Add items to the dropdown
+            for (int i = 0; i < roles.Count; i++)
+            {
+                SceneRoleSO role = roles[i];
+
+                // Skip if the role does not exist
+                if (!role) continue;
+                
+                // Skip if the role ID does not exist
+                if (string.IsNullOrEmpty(role.RoleID)) continue;
+                
+                items.Add(new SearchableDropdown.DropdownItem(
+                    id: role.RoleID, 
+                    displayName: role.DisplayName ?? role.RoleID
+                ));
+            }
+
+            return items;
+        }
+
+        /// <summary>
+        /// Retrieves a list of dropdown items for the variation set selection in the Scene Template Editor;
+        /// scans for available VariationSetSO assets, processes them, and creates dropdown items using their identifiers and display names,
+        /// while skipping invalid or incomplete entries
+        /// </summary>
+        /// <returns>A list of dropdown items derived from available VariationSetSO assets</returns>
+        private List<SearchableDropdown.DropdownItem> GetVariationSetDropdownItems()
+        {
+            List<SearchableDropdown.DropdownItem> items = new List<SearchableDropdown.DropdownItem>();
+            
+            // Find all VariationSetSO assets based on the current scan mode
+            List<VariationSetSO> variationSets = AssetCreator.FindAllAssets<VariationSetSO>();
+            
+            // Add items to the dropdown
+            for (int i = 0; i < variationSets.Count; i++)
+            {
+                VariationSetSO variationSet = variationSets[i];
+
+                // Skip if the variation set does not exist
+                if (!variationSet) continue;
+
+                // Skip if the variation set ID does not exist
+                if (string.IsNullOrEmpty(variationSet.ID)) continue;
+                
+                items.Add(new SearchableDropdown.DropdownItem(
+                    id: variationSet.ID,
+                    displayName: variationSet.DisplayName ?? variationSet.ID
+                ));
+            }
+
+            return items;
+        }
+
+        /// <summary>
+        /// Creates a new SceneRoleSO asset with a specified name, saves it to a user-specified location,
+        /// assigns initial values to its properties, and triggers a callback with the generated role ID
+        /// </summary>
+        /// <param name="suggestedName">The default name suggested for the new role asset</param>
+        /// <param name="onRoleCreated">An action to be invoked with the generated role ID after the role is created and saved</param>
+        private void CreateNewRole(string suggestedName, Action<string> onRoleCreated)
+        {
+            // Create the asset
+            SceneRoleSO newRole = AssetCreator.CreateAsset<SceneRoleSO>(
+                suggestedName,
+                (role, serialized) =>
+                {
+                    // Set the initial values
+                    string roleName = string.IsNullOrEmpty(suggestedName) ? "NewRole" : suggestedName;
+                    string roleID = roleName.ToLower().Replace(" ", "-");
+
+                    SerializedProperty roleIDProperty = serialized.FindProperty("roleID");
+                    SerializedProperty displayNameProperty = serialized.FindProperty("displayName");
+
+                    if (roleIDProperty != null)
+                        roleIDProperty.stringValue = roleID;
+                    if (displayNameProperty != null)
+                        displayNameProperty.stringValue = roleName;
+                }
+            );
+
+            // Exit case - the asset was not created
+            if (!newRole) return;
+
+            onRoleCreated?.Invoke(newRole.RoleID);
+        }
+
+        /// <summary>
+        /// Creates a new Variation Set asset in the Unity project, prompts the user to select a save location,
+        /// initializes the asset with a unique identifier and display name, saves it to the specified location,
+        /// refreshes the AssetDatabase, and invokes a callback with the created Variation Set's identifier
+        /// </summary>
+        /// <param name="suggestedName">Suggested default name for the new Variation Set asset; used if not overridden by the user</param>
+        /// <param name="onVariationSetCreated">
+        /// Callback function invoked upon successfully creating the Variation Set,
+        /// with the generated unique identifier for the Variation Set passed as a parameter
+        /// </param>
+        private void CreateNewVariationSet(string suggestedName, Action<string> onVariationSetCreated)
+        {
+            // Create the asset
+            VariationSetSO newVariationSet = AssetCreator.CreateAsset<VariationSetSO>(
+                suggestedName,
+                (variationSet, serialized) =>
+                {
+                    string variationSetName = string.IsNullOrEmpty(suggestedName) ? "NewVariationSet" : suggestedName;
+                    string variationSetID = variationSetName.ToLower().Replace(" ", "-");
+            
+                    SerializedProperty variationSetIDProperty = serialized.FindProperty("id");
+                    SerializedProperty displayNameProperty = serialized.FindProperty("displayName");
+            
+                    if (variationSetIDProperty != null) 
+                        variationSetIDProperty.stringValue = variationSetID;
+                    if (displayNameProperty != null) 
+                        displayNameProperty.stringValue = variationSetName;
+                }
+            );
+
+            // Exit case - the asset was not created
+            if (!newVariationSet) return;
+            
+            onVariationSetCreated?.Invoke(newVariationSet.ID);
         }
 
         /// <summary>

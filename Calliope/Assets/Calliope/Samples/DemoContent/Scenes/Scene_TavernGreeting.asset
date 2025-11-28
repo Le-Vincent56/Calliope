@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: beat_3
   m_EditorClassIdentifier: 
   beatID: beat_3
-  speakerRoleID: 
+  speakerRoleID: newrole
   targetRoleID: 
   variationSet: {fileID: 0}
   isEndBeat: 0
