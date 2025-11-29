@@ -20,6 +20,9 @@ namespace Calliope.Editor.SceneTemplateEditor
         private SceneTemplateSO _currentTemplate;
         private VisualElement _graphView;
         private VisualElement _toolbar;
+        private TextField _searchField;
+        private Button _clearSearchButton;
+        private string _currentSearchText = "";
         private Button _createBeatButton;
         private Button _cleanupButton;
         private VisualElement _inspectorContent;
@@ -90,6 +93,8 @@ namespace Calliope.Editor.SceneTemplateEditor
             _inspectorContent = root.Q<VisualElement>("InspectorContent");
             _validationSection = root.Q<VisualElement>("ValidationSection");
             _validationButton = root.Q<Button>("ValidateButton");
+            _searchField = root.Q<TextField>("SearchField");
+            _clearSearchButton = root.Q<Button>("ClearSearchButton");
             
             // Set up the create beat button
             if (_createBeatButton != null)
@@ -107,6 +112,15 @@ namespace Calliope.Editor.SceneTemplateEditor
             if (_validationButton != null)
             {
                 _validationButton.clicked += ValidateScene;
+            }
+
+            // Set up the search field
+            _searchField?.RegisterValueChangedCallback(OnSearchChanged);
+
+            // Set up the clear search button
+            if (_clearSearchButton != null)
+            {
+                _clearSearchButton.clicked += OnClearSearchClicked;
             }
 
             // Set up the template selector
@@ -2231,6 +2245,98 @@ namespace Calliope.Editor.SceneTemplateEditor
 
             // Refresh the view
             InitializeGraphView();
+        }
+
+        /// <summary>
+        /// Handles changes to the search field input; updates the current search text
+        /// and applies the search filter to the editor's content, enabling dynamic filtering
+        /// of displayed elements based on the new search criteria
+        /// </summary>
+        /// <param name="evt">The event containing the updated search text value</param
+        private void OnSearchChanged(ChangeEvent<string> evt)
+        {
+            _currentSearchText = evt.newValue?.Trim().ToLower() ?? "";
+            ApplySearchFilter();
+        }
+
+        /// <summary>
+        /// Handles the event triggered when the "Clear Search" button is clicked;
+        /// this method resets the search field's value, clears the current search text,
+        /// and applies an updated filter with no active search input
+        /// </summary>
+        private void OnClearSearchClicked()
+        {
+            if (_searchField != null) _searchField.value = "";
+            _currentSearchText = "";
+            ApplySearchFilter();
+        }
+
+        /// <summary>
+        /// Filters the nodes displayed in the graph view based on the current search text;
+        /// clears the filter state if the search text is empty, and updates the state of each node based on whether it matches the search criteria
+        /// </summary
+        private void ApplySearchFilter()
+        {
+            // Exit case - if the search field is empty
+            if (_graphView == null) return;
+            
+            // If the search is empty, clear all filter states
+            if (string.IsNullOrEmpty(_currentSearchText))
+            {
+                _graphView.Query<BeatNodeView>().ForEach(node => node.ClearFilterState());
+                return;
+            }
+
+            // Apply filter to each node
+            _graphView.Query<BeatNodeView>().ForEach(node =>
+            {
+                // Exit case - if the node does not have a beat
+                if (!node.Beat)
+                {
+                    node.SetFilterState(false);
+                    return;
+                }
+
+                // Check if beat matches search
+                bool matches = MatchesSearch(node.Beat, _currentSearchText);
+                node.SetFilterState(matches, matches);
+            });
+        }
+
+        /// <summary>
+        /// Determines whether a given SceneBeatSO matches the provided search text;
+        /// evaluates multiple properties of the SceneBeatSO, including BeatID, name, SpeakerRoleID, TargetRoleID,
+        /// and VariationSetID, for a case-insensitive match
+        /// </summary>
+        /// <param name="beat">The SceneBeatSO instance to check against the search text</param>
+        /// <param name="searchText">The case-insensitive search string to match against the SceneBeatSO's properties</param>
+        /// <returns>True if any of the SceneBeatSO's properties match the search text; otherwise, false</returns>
+        private bool MatchesSearch(SceneBeatSO beat, string searchText)
+        {
+            // Exit case - the beat does not exist
+            if (!beat) return false;
+
+            // Exit case - the beat ID exists and contains the search text
+            if (!string.IsNullOrEmpty(beat.BeatID) && beat.BeatID.ToLower().Contains(searchText))
+                return true;
+
+            // Exit case - the beat asset exists (SceneBeatSO) and contains the search text
+            if (!string.IsNullOrEmpty(beat.name) && beat.name.ToLower().Contains(searchText))
+                return true;
+
+            // Exit case - the speaker role exists and contains the search text
+            if (!string.IsNullOrEmpty(beat.SpeakerRoleID) && beat.SpeakerRoleID.ToLower().Contains(searchText))
+                return true;
+
+            // Exit case - the target role exists and contains the search text
+            if (!string.IsNullOrEmpty(beat.TargetRoleID) && beat.TargetRoleID.ToLower().Contains(searchText))
+                return true;
+
+            // Exit case - the variation set exists and contains the search text
+            if (!string.IsNullOrEmpty(beat.VariationSetID) && beat.VariationSetID.ToLower().Contains(searchText))
+                return true;
+
+            return false;
         }
     }
 }

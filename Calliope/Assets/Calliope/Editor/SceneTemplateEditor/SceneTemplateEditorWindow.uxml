@@ -8,7 +8,11 @@
             <ui:Button name="ValidateButton" text="Validate" class="toolbar-button" />
             <ui:Button name="CleanupButton" text="Cleanup" class="toolbar-button" />
             <ui:Button name="CreateBeatButton" text="+ Create Beat" class="toolbar-button" />
-        </ui:VisualElement>
+            <ui:VisualElement name="SearchContainer" class="search-container">
+                <ui:Label text="Search:" class="search-label"/>
+                <ui:TextField name="SearchField" class="search-field"/>
+            </ui:VisualElement>
+            </ui:VisualElement>
 
         <!-- Main content area with graph and inspector -->
         <ui:VisualElement name="ContentArea" style="flex-direction: row; flex-grow: 1;">

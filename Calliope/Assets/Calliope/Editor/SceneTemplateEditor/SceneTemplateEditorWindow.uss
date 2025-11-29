@@ -42,6 +42,29 @@
     background-color: rgb(60, 60, 100);
 }
 
+.search-container {
+    flex-direction: row;
+    align-items: center;
+    margin-left: 16px;
+}
+
+.search-label {
+    margin-right: 4px;
+    color: rgb(180, 180, 180);
+}
+
+.search-field {
+    min-width: 150px;
+    max-width: 200px;
+}
+
+.clear-search-button {
+    width: 20px;
+    height: 20px;
+    margin-left: 4px;
+    padding: 0;
+}
+
 #ContentArea {
     flex-direction: row;
     flex-grow: 1;
@@ -147,6 +170,15 @@ Label {
 
 .beat-node-selected .beat-node-header {
     background-color: rgb(80, 100, 150);
+}
+
+.beat-node-filtered {
+    opacity: 0.25;
+}
+
+.beat-node-highlighted {
+    border-color: rgb(255, 200, 50);
+    border-width: 3px;
 }
 
 .starting-beat {

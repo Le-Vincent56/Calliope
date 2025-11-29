@@ -162,5 +162,37 @@ namespace Calliope.Editor.SceneTemplateEditor
             if (isStarting) AddToClassList("starting-beat");
             else RemoveFromClassList("starting-beat");
         }
+
+        /// <summary>
+        /// Updates the visual state of the beat node based on whether it matches the current filter criteria
+        /// and its highlighted status
+        /// </summary>
+        /// <param name="matchesFilter">A boolean indicating whether the beat node satisfies the filter conditions</param>
+        /// <param name="isHighlighted">A boolean indicating whether the beat node should be visually highlighted. Default is false</param>
+        public void SetFilterState(bool matchesFilter, bool isHighlighted = false)
+        {
+            if (matchesFilter)
+            {
+                RemoveFromClassList("beat-node-filtered");
+                
+                if (isHighlighted) AddToClassList("beat-node-highlighted");
+                else RemoveFromClassList("beat-node-highlighted");
+            }
+            else
+            {
+                AddToClassList("beat-node-filtered");
+                RemoveFromClassList("beat-node-highlighted");
+            }
+        }
+
+        /// <summary>
+        /// Clears the current filter state for the beat node, removing any visual indicators
+        /// associated with filtering or highlighting
+        /// </summary>
+        public void ClearFilterState()
+        {
+            RemoveFromClassList("beat-node-filtered");
+            RemoveFromClassList("beat-node-highlighted");
+        }
     }
 }
