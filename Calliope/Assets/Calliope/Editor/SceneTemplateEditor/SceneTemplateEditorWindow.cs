@@ -737,7 +737,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             
             // Register mouse move handler for connection hover
             _graphView.RegisterCallback<MouseMoveEvent>(OnGraphViewMouseMove);
-            _graphView.RegisterCallback<MouseDownEvent>(OnGraphViewMouseDown);
+            _graphView.RegisterCallback<MouseDownEvent>(OnGraphViewMouseDown, TrickleDown.TrickleDown);
             
             // Exit case - no template is selected
             if (!_currentTemplate)
@@ -1499,21 +1499,209 @@ namespace Calliope.Editor.SceneTemplateEditor
         {
             // Exit case - not the right mouse button
             if (evt.button != 1) return;
-            
-            // Exit case - there's no hovered connection
-            if(_hoveredConnection == null) return;
 
+            Vector2 mousePos = evt.mousePosition;
+            Vector2 localMousePosition = _graphView.WorldToLocal(mousePos);
+            
+            // Show the Connection Context Menu if hovering a connection
+            if (_hoveredConnection != null)
+            {
+                ShowConnectionContextMenu(_hoveredConnection);
+                evt.StopPropagation();
+                return;
+            }
+            
+            // Show the Beat Context Menu if hovering or selecting a node
+            BeatNodeView clickedNode = FindNodeAtPosition(mousePos);
+            if (clickedNode != null)
+            {
+                ShowBeatContextMenu(clickedNode, localMousePosition);
+                evt.StopPropagation();
+                return;
+            }
+            
+            // Show the Empty Context menu if hovering over an empty space
+            ShowEmptySpaceContextMenu(localMousePosition);
+            
+            evt.StopPropagation();
+        }
+
+        /// <summary>
+        /// Finds and returns the <see cref="BeatNodeView"/> located at the specified screen position;
+        /// traverses the hierarchy of UI elements in the graph view to locate the node at the given screen coordinates
+        /// </summary>
+        /// <param name="screenPosition">The position on the screen in world coordinates where the search for a node begins</param>
+        /// <returns>Returns the <see cref="BeatNodeView"/> instance at the specified position if found; otherwise, returns null</returns>
+        private BeatNodeView FindNodeAtPosition(Vector2 screenPosition)
+        {
+            VisualElement targetElement = _graphView.panel.Pick(screenPosition);
+            
+            // Walk up the hierarchy to find a BeatNodeView
+            VisualElement current = targetElement;
+            while (current != null)
+            {
+                if(current is BeatNodeView nodeView) return nodeView;
+                current = current.parent;
+            }
+            
+            return null;
+        }
+
+        /// <summary>
+        /// Displays a context menu for a specified connection between two beat nodes in the editor;
+        /// allows users to view information about the connection or delete it from the graph
+        /// </summary>
+        /// <param name="connection">The connection view representing the link between two beat nodes</param>
+        private void ShowConnectionContextMenu(BeatConnectionView connection)
+        {
             GenericMenu menu = new GenericMenu();
             
-            BeatConnectionView connection = _hoveredConnection;
-            menu.AddItem(
-                new GUIContent("Delete Connection"), 
-                false, 
-                () => DeleteBranch(connection.FromNode, connection.ToNode, connection.Branch)
-            );
+            // Header (disabled item to show what's selected)
+            StringBuilder headerBuilder = new StringBuilder();
+            headerBuilder.Append("Branch: ");
+            headerBuilder.Append(connection.FromNode?.Beat?.BeatID ?? "?");
+            headerBuilder.Append(" to ");
+            headerBuilder.Append(connection.ToNode?.Beat?.BeatID ?? "?");
+            menu.AddDisabledItem(new GUIContent(headerBuilder.ToString()));
+            menu.AddSeparator("");
+            
+            // Delete
+            menu.AddItem(new GUIContent("Delete Connection"), false, () =>
+            {
+                DeleteBranch(connection.FromNode, connection.ToNode, connection.Branch);
+            });
+            
+            menu.ShowAsContext();;
+        }
 
+        /// <summary>
+        /// Displays a context menu for the selected BeatNodeView, providing options to interact with the beat,
+        /// such as selecting it, setting it as the starting beat, creating branches, or deleting it
+        /// </summary>
+        /// <param name="node">The BeatNodeView instance for which the context menu is being displayed</param>
+        /// <param name="localMousePosition">The local position of the mouse pointer when the context menu is triggered</param>
+        private void ShowBeatContextMenu(BeatNodeView node, Vector2 localMousePosition)
+        {
+            GenericMenu menu = new GenericMenu();
+            
+            // Header
+            StringBuilder headerBuilder = new StringBuilder();
+            headerBuilder.Append("Beat: ");
+            headerBuilder.Append(node.Beat?.BeatID ?? node.Beat?.name ?? "Unknown");
+            menu.AddDisabledItem(new GUIContent(headerBuilder.ToString()));
+            menu.AddSeparator("");;
+            
+            // Set as the Starting Beat option
+            bool isStartingBeat = !string.IsNullOrEmpty(_currentTemplate?.StartingBeatID) && _currentTemplate.StartingBeatID == node.Beat?.BeatID;
+            if (!isStartingBeat)
+            {
+                menu.AddItem(new GUIContent("Set as Starting Beat"), false, () =>
+                {
+                    SetAsStartingBeat(node.Beat, node);
+                });
+            }
+            else {
+                menu.AddDisabledItem(new GUIContent("Set As Starting Beat (Already Starting)"));
+            }
+            
+            menu.AddSeparator("");
+            
+            StringBuilder menuPath = new StringBuilder();
+            
+            // Create Branch submenu (list all possible target beats)
+            List<SearchableDropdown.DropdownItem> targetBeats = GetBeatDropdownItems(node.Beat);
+            if(targetBeats.Count > 0) 
+            {
+                for(int i = 0; i < targetBeats.Count; i++) 
+                {
+                    SearchableDropdown.DropdownItem targetBeat = targetBeats[i];
+                    
+                    // Check if the branch already exists
+                    bool branchExists = false;
+                    if(node.Beat?.Branches != null) 
+                    {
+                        for (int j = 0; j < node.Beat.Branches.Count; j++)
+                        {
+                            // Skip if the branches' target beat ID does not match the target beat
+                            if(node.Beat.Branches[j]?.NextBeatID != targetBeat.ID) continue;
+                            
+                            branchExists = true;
+                            break;
+                        }
+                    }
+
+                    menuPath.Clear();
+                    menuPath.Append("Create Branch To \"");
+                    menuPath.Append(targetBeat.DisplayName);
+                    
+                    if (branchExists)
+                    {
+                        // Disable the item if the branch already exists
+                        menuPath.Append("\" (exists");
+                        menu.AddDisabledItem(new GUIContent(menuPath.ToString()));
+                    } 
+                    else
+                    {
+                        menuPath.Append("\"");
+                        // Create a menu item to branch
+                        string targetID = targetBeat.ID;
+                        menu.AddItem(new GUIContent(menuPath.ToString()), false, () =>
+                        {
+                            CreateNewBranch(node.Beat, targetID, node);
+                        });
+                    }
+                }
+            } 
+            else 
+            {
+                menu.AddDisabledItem(new GUIContent("Create Branch To (No other beats available)"));
+            }
+            
+            menu.AddSeparator("");
+                
+            // Delete option
+            menu.AddItem(new GUIContent("Delete Beat"), false, () => 
+            {
+                OnDeleteButtonClicked(node);;
+            });
+                
             menu.ShowAsContext();
-            evt.StopPropagation();
+        }
+
+        /// <summary>
+        /// Displays a context menu at the specified position when the user interacts with empty space in the editor;
+        /// this menu provides options for creating new beats, validating the scene, and cleaning up orphaned branches
+        /// </summary>
+        /// <param name="localMousePosition">The position in local space where the context menu should be shown</param>
+        private void ShowEmptySpaceContextMenu(Vector2 localMousePosition)
+        {
+            // Exit case - no template has been selected
+            if (!_currentTemplate)
+            {
+                GenericMenu noTemplateMenu = new GenericMenu();
+                noTemplateMenu.AddDisabledItem(new GUIContent("Select a template first"));
+                noTemplateMenu.ShowAsContext();
+                return;
+            }
+            
+            GenericMenu menu = new GenericMenu();
+            
+            // Create a beat at this position
+            menu.AddItem(new GUIContent("Create New Beat"), false, () =>
+            {
+                BeatCreationDialog.Show(
+                    onCreate: (beatID, displayName) => CreateBeat(beatID, displayName, localMousePosition),
+                    onValidateID: IsBeatIDUnique
+                );
+            });
+            
+            menu.AddSeparator("");
+            
+            // Quick actions
+            menu.AddItem(new GUIContent("Validate Scene"), false, ValidateScene);
+            menu.AddItem(new GUIContent("Cleanup Orphaned Branches"), false, CleanupOrphanedBranches);
+            
+            menu.ShowAsContext();
         }
 
         /// <summary>
