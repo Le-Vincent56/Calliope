@@ -20,7 +20,7 @@ MonoBehaviour:
   branches:
   - {fileID: -195412316243967431}
   defaultNextBeatID: 
---- !u!114 &-3541722812701253937
+--- !u!114 &-7692106048780781107
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,10 +47,10 @@ MonoBehaviour:
   m_Name: beat_3
   m_EditorClassIdentifier: 
   beatID: beat_3
-  speakerRoleID: newrole
+  speakerRoleID: 
   targetRoleID: 
   variationSet: {fileID: 0}
-  isEndBeat: 0
+  isEndBeat: 1
   branches: []
   defaultNextBeatID: 
 --- !u!114 &-195412316243967431

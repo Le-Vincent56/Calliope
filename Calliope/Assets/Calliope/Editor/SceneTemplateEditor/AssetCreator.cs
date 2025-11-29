@@ -64,6 +64,13 @@ namespace Calliope.Editor.SceneTemplateEditor
             return pathBuilder.ToString();
         }
 
+        /// <summary>
+        /// Creates a new asset of the specified type, optionally initializing it and saving it at a user-selected location
+        /// </summary>
+        /// <typeparam name="T">The type of the asset to create, which must inherit from ScriptableObject</typeparam>
+        /// <param name="suggestedName">The default suggested name of the new asset file, excluding the file extension</param>
+        /// <param name="setupAction">An optional action to configure the newly created asset; it receives the asset instance and its serialized representation</param>
+        /// <returns>The newly created asset of type T, or null if the user cancels the save operation</returns>
         public static T CreateAsset<T>(string suggestedName, Action<T, SerializedObject> setupAction = null)
             where T : ScriptableObject
         {
@@ -195,6 +202,27 @@ namespace Calliope.Editor.SceneTemplateEditor
             }
         }
 
+        /// <summary>
+        /// Marks the specified asset at the given path as addressable, if the associated type configuration supports addressable assets
+        /// </summary>
+        /// <typeparam name="T">The type of the asset, which must inherit from ScriptableObject</typeparam>
+        /// <param name="assetPath">The path of the asset to be marked as addressable</param>
+        public static void MakeAssetAddressable<T>(string assetPath) where T : ScriptableObject
+        {
+            // Exit case - the asset was not found
+            if (!_assetConfigs.TryGetValue(typeof(T), out AssetTypeConfig config)) return;
+
+            // Exit case - the asset is not supposed to be an addressable
+            if (!config.MakeAddressable) return;
+            
+            MakeAddressable(assetPath, config.AddressableLabel);
+        }
+
+        /// <summary>
+        /// Marks a given asset as addressable and assigns a label if provided
+        /// </summary>
+        /// <param name="assetPath">The file path to the asset within the Unity project</param>
+        /// <param name="label">The label to apply to the Addressable asset. Can be null or empty if no label is required</param>
         private static void MakeAddressable(string assetPath, string label)
         {
 #if UNITY_EDITOR

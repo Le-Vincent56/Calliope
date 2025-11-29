@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Beat_TavernGreeting
   m_EditorClassIdentifier: 
   beatID: greeting
-  speakerRoleID: role_tester
+  speakerRoleID: greeter
   targetRoleID: 
   variationSet: {fileID: 11400000, guid: b2babc7d31354b75bb072fe7a8d7e4ed, type: 2}
-  isEndBeat: 1
+  isEndBeat: 0
   branches:
-  - {fileID: -3541722812701253937, guid: fac5f9ad725cbabd0affba053071a686, type: 2}
+  - {fileID: -7692106048780781107, guid: fac5f9ad725cbabd0affba053071a686, type: 2}
   defaultNextBeatID: 

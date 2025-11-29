@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using Calliope.Core.Interfaces;
 using Calliope.Unity.ScriptableObjects;
@@ -9,6 +8,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using Object = UnityEngine.Object;
+using FieldConfig = Calliope.Editor.SceneTemplateEditor.AssetCreationDialog.FieldConfig;
 
 namespace Calliope.Editor.SceneTemplateEditor
 {
@@ -28,6 +28,8 @@ namespace Calliope.Editor.SceneTemplateEditor
         private VisualElement _validationSection;
         private Button _validationButton;
         private BeatConnectionView _hoveredConnection;
+        private BeatBranchSO _pendingConditionBranch;
+        private BeatNodeView _pendingConditionNodeView;
         
         [MenuItem("Window/Calliope/Scene Template Editor")]
         public static void ShowWindow()
@@ -319,6 +321,14 @@ namespace Calliope.Editor.SceneTemplateEditor
             spacer.style.height = 16;
             _inspectorContent.Add(spacer);
             
+            // Create the branch editor section
+            CreateBranchEditorSection(beat, nodeView);
+            
+            // Spacer before delete
+            VisualElement spacer2 = new VisualElement();
+            spacer2.style.height = 16;
+            _inspectorContent.Add(spacer2);
+            
             // Delete button
             Button deleteButton = new Button(() => OnDeleteButtonClicked(nodeView));
             deleteButton.text = "Delete Beat";
@@ -403,29 +413,54 @@ namespace Calliope.Editor.SceneTemplateEditor
         /// <param name="onRoleCreated">An action to be invoked with the generated role ID after the role is created and saved</param>
         private void CreateNewRole(string suggestedName, Action<string> onRoleCreated)
         {
-            // Create the asset
-            SceneRoleSO newRole = AssetCreator.CreateAsset<SceneRoleSO>(
-                suggestedName,
-                (role, serialized) =>
+            List<FieldConfig> fields = new List<FieldConfig>
+            {
+                new FieldConfig(
+                    key: "roleID",
+                    label: "Role ID",
+                    required: true,
+                    autoGenerateFromName: true,
+                    transformForID: fieldName => fieldName.ToLower().Replace(" ", "-")
+                ),
+                new FieldConfig(
+                    key: "displayName",
+                    label: "Display Name",
+                    required: false,
+                    autoGenerateFromName: true,
+                    transformForID: fieldName => fieldName
+                )
+            };
+            
+            AssetCreationDialog.Show(
+                assetTypeName: "Role",
+                defaultFolder: AssetCreator.GetDefaultFolder<SceneRoleSO>(),
+                fields: fields,
+                onCreate: (fieldValues, savePath) =>
                 {
-                    // Set the initial values
-                    string roleName = string.IsNullOrEmpty(suggestedName) ? "NewRole" : suggestedName;
-                    string roleID = roleName.ToLower().Replace(" ", "-");
+                    SceneRoleSO newRole = CreateInstance<SceneRoleSO>();
+                    SerializedObject serialized = new SerializedObject(newRole);
 
-                    SerializedProperty roleIDProperty = serialized.FindProperty("roleID");
-                    SerializedProperty displayNameProperty = serialized.FindProperty("displayName");
+                    SerializedProperty roleIDProp =
+                        serialized.FindProperty("roleID");
+                    SerializedProperty displayNameProp =
+                        serialized.FindProperty("displayName");
 
-                    if (roleIDProperty != null)
-                        roleIDProperty.stringValue = roleID;
-                    if (displayNameProperty != null)
-                        displayNameProperty.stringValue = roleName;
+                    // Set properties
+                    if (roleIDProp != null)
+                        roleIDProp.stringValue = fieldValues["roleID"];
+                    if (displayNameProp != null)
+                        displayNameProp.stringValue = fieldValues["displayName"];
+
+                    serialized.ApplyModifiedProperties();
+
+                    // Save the asset
+                    AssetDatabase.CreateAsset(newRole, savePath);
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+
+                    onRoleCreated?.Invoke(fieldValues["roleID"]);
                 }
             );
-
-            // Exit case - the asset was not created
-            if (!newRole) return;
-
-            onRoleCreated?.Invoke(newRole.RoleID);
         }
 
         /// <summary>
@@ -440,28 +475,63 @@ namespace Calliope.Editor.SceneTemplateEditor
         /// </param>
         private void CreateNewVariationSet(string suggestedName, Action<string> onVariationSetCreated)
         {
-            // Create the asset
-            VariationSetSO newVariationSet = AssetCreator.CreateAsset<VariationSetSO>(
-                suggestedName,
-                (variationSet, serialized) =>
+            List<FieldConfig> fields = new List<FieldConfig>
+            {
+                new FieldConfig(
+                    key: "id",
+                    label: "Variation Set ID",
+                    required: true,
+                    autoGenerateFromName: true,
+                    transformForID: fieldName => fieldName.ToLower().Replace(" ", "-")
+                ),
+                new FieldConfig(
+                    key: "displayName",
+                    label: "Display Name",
+                    required: false,
+                    autoGenerateFromName: true,
+                    transformForID: fieldName => fieldName
+                ),
+                new FieldConfig(
+                    key: "description",
+                    label: "description",
+                    required: false
+                )
+            };
+            
+            AssetCreationDialog.Show(
+                assetTypeName: "Variation Set",
+                defaultFolder: AssetCreator.GetDefaultFolder<VariationSetSO>(),
+                fields: fields,
+                onCreate: (fieldValues, savePath) =>
                 {
-                    string variationSetName = string.IsNullOrEmpty(suggestedName) ? "NewVariationSet" : suggestedName;
-                    string variationSetID = variationSetName.ToLower().Replace(" ", "-");
-            
-                    SerializedProperty variationSetIDProperty = serialized.FindProperty("id");
+                    VariationSetSO newVariationSet = CreateInstance<VariationSetSO>();
+                    
+                    SerializedObject serialized = new SerializedObject(newVariationSet);
+                    SerializedProperty idProperty = serialized.FindProperty("id");
                     SerializedProperty displayNameProperty = serialized.FindProperty("displayName");
-            
-                    if (variationSetIDProperty != null) 
-                        variationSetIDProperty.stringValue = variationSetID;
+                    SerializedProperty descriptionProperty = serialized.FindProperty("description");
+
+                    // Set the properties
+                    if (idProperty != null) 
+                        idProperty.stringValue = fieldValues["id"];
                     if (displayNameProperty != null) 
-                        displayNameProperty.stringValue = variationSetName;
+                        displayNameProperty.stringValue = fieldValues["displayName"];
+                    if (descriptionProperty != null) 
+                        descriptionProperty.stringValue = fieldValues.GetValueOrDefault("description", "");
+                    
+                    serialized.ApplyModifiedProperties();
+                    
+                    // Save the asset
+                    AssetDatabase.CreateAsset(newVariationSet, savePath);
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+                    
+                    // Make it addressable
+                    AssetCreator.MakeAssetAddressable<VariationSetSO>(savePath);
+                    
+                    onVariationSetCreated?.Invoke(fieldValues["id"]);
                 }
             );
-
-            // Exit case - the asset was not created
-            if (!newVariationSet) return;
-            
-            onVariationSetCreated?.Invoke(newVariationSet.ID);
         }
 
         /// <summary>
@@ -1316,5 +1386,797 @@ namespace Calliope.Editor.SceneTemplateEditor
         /// </summary>
         /// <returns>The primary <see cref="VisualElement"/> representing the graph view</returns>
         public VisualElement GetGraphView() => _graphView;
+
+        /// <summary>
+        /// Creates and configures the branch editor section within the scene template editor window;
+        /// adds a UI section for managing branches of the provided SceneBeatSO, allowing for the addition, display,
+        /// and editing of beat branches while linking them to the specified BeatNodeView;
+        /// also incorporates a section for setting the default next beat
+        /// </summary>
+        /// <param name="beat">The SceneBeatSO instance containing the beat data, including its branches, to be displayed and managed</param>
+        /// <param name="nodeView">The BeatNodeView instance representing the visual context for the beat within the editor hierarchy</param>
+        private void CreateBranchEditorSection(SceneBeatSO beat, BeatNodeView nodeView)
+        {
+            // Section header
+            VisualElement branchHeader = new VisualElement();
+            branchHeader.style.flexDirection = FlexDirection.Row;
+            branchHeader.style.justifyContent = Justify.SpaceBetween;
+            branchHeader.style.alignItems = Align.Center;
+            branchHeader.style.marginTop = 16;
+            branchHeader.style.marginBottom = 8;
+
+            Label branchLabel = new Label("Branches");
+            branchLabel.style.fontSize = 14;
+            branchLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+            branchHeader.Add(branchLabel);
+
+            Button addBranchButton = new Button(() => OnAddBranchClicked(beat, nodeView));
+            addBranchButton.text = "+ Add Branch";
+            addBranchButton.style.paddingLeft = 8;
+            addBranchButton.style.paddingRight = 8;
+            branchHeader.Add(addBranchButton);
+
+            _inspectorContent.Add(branchHeader);
+
+            // Branch list container
+            VisualElement branchList = new VisualElement();
+            branchList.AddToClassList("branch-list");
+            branchList.style.borderTopWidth = 1;
+            branchList.style.borderTopColor = new Color(0.3f, 0.3f, 0.3f);
+            branchList.style.paddingTop = 8;
+            
+            // Get branches
+            SerializedObject beatSerializedObject = new SerializedObject(beat);
+            SerializedProperty branchesProperty = beatSerializedObject.FindProperty("branches");
+
+            // Check if there are branches
+            if (branchesProperty == null || branchesProperty.arraySize == 0)
+            {
+                // If not, add a message
+                Label noBranchesLabel = new Label("No branches. This beat will end the scene.");
+                noBranchesLabel.style.color = new Color(0.6f, 0.6f, 0.6f);
+                noBranchesLabel.style.unityFontStyleAndWeight = FontStyle.Italic;
+                noBranchesLabel.style.marginTop = 4;
+                branchList.Add(noBranchesLabel);
+            }
+            else
+            {
+                // Add each branch to the list
+                for (int i = 0; i < branchesProperty.arraySize; i++)
+                {
+                    int branchIndex = i;
+                    SerializedProperty branchProperty = branchesProperty.GetArrayElementAtIndex(i);
+                    BeatBranchSO branch = branchProperty.objectReferenceValue as BeatBranchSO;
+
+                    // Skip if the branch is null
+                    if (!branch) continue;
+
+                    // Create the visual representation of the branch
+                    VisualElement branchItem = CreateBranchItemUI(
+                        beat,
+                        branch,
+                        branchIndex,
+                        branchesProperty.arraySize,
+                        nodeView
+                    );
+                    
+                    branchList.Add(branchItem);
+                }
+            }
+            
+            _inspectorContent.Add(branchList);
+                
+            // Default next beat section
+            CreateDefaultNextBeatSection(beat, nodeView);
+        }
+
+        /// <summary>
+        /// Creates a UI element representing a branch item within a scene template editor window;
+        /// this method initializes and configures the branch UI using the provided scene beat, branch data,
+        /// and positional context, ensuring proper integration with its corresponding beat node view
+        /// </summary>
+        /// <param name="beat">The SceneBeatSO object associated with the branch item</param>
+        /// <param name="branch">The BeatBranchSO object containing the data for the branch</param>
+        /// <param name="index">The positional index of the branch within the list of branches</param>
+        /// <param name="totalBranches">The total number of branches in the context of the scene beat</param>
+        /// <param name="nodeView">The BeatNodeView object to which the branch item is related</param>
+        /// <returns>Returns a VisualElement that represents the created branch item in the editor UI</returns>
+        private VisualElement CreateBranchItemUI(
+            SceneBeatSO beat,
+            BeatBranchSO branch,
+            int index,
+            int totalBranches,
+            BeatNodeView nodeView
+        )
+        {
+            VisualElement branchItem = new VisualElement();
+            branchItem.AddToClassList("branch-item");
+            branchItem.style.backgroundColor = new Color(0.22f, 0.22f, 0.22f);
+            branchItem.style.borderTopLeftRadius = 4;
+            branchItem.style.borderTopRightRadius = 4;
+            branchItem.style.borderBottomLeftRadius = 4;
+            branchItem.style.borderBottomRightRadius = 4;
+            branchItem.style.marginBottom = 8;
+            branchItem.style.paddingTop = 8;
+            branchItem.style.paddingBottom = 8;
+            branchItem.style.paddingLeft = 8;
+            branchItem.style.paddingRight = 8;
+
+            // Header row with priority number and controls
+            VisualElement headerRow = new VisualElement();
+            headerRow.style.flexDirection = FlexDirection.Row;
+            headerRow.style.justifyContent = Justify.SpaceBetween;
+            headerRow.style.alignItems = Align.Center;
+            headerRow.style.marginBottom = 8;
+
+            // Priority label
+            StringBuilder priorityBuilder = new StringBuilder();
+            priorityBuilder.Append("Priority ");
+            priorityBuilder.Append(index + 1);
+            Label priorityLabel = new Label(priorityBuilder.ToString());
+            priorityLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+            priorityLabel.style.color = new Color(0.8f, 0.8f, 0.5f);
+            headerRow.Add(priorityLabel);
+
+            // Control buttons container
+            VisualElement controlButtons = new VisualElement();
+            controlButtons.style.flexDirection = FlexDirection.Row;
+
+            // Move up button
+            Button moveUpButton = new Button(() => MoveBranch(beat, index, -1, nodeView));
+            moveUpButton.text = "▲";
+            moveUpButton.style.width = 24;
+            moveUpButton.style.marginRight = 2;
+            moveUpButton.SetEnabled(index > 0);
+            controlButtons.Add(moveUpButton);
+
+            // Move down button
+            Button moveDownButton = new Button(() => MoveBranch(beat, index, 1, nodeView));
+            moveDownButton.text = "▼";
+            moveDownButton.style.width = 24;
+            moveDownButton.style.marginRight = 8;
+            moveDownButton.SetEnabled(index < totalBranches - 1);
+            controlButtons.Add(moveDownButton);
+
+            // Delete button
+            Button deleteBranchButton = new Button(() => DeleteBranchAtIndex(beat, index, nodeView));
+            deleteBranchButton.text = "X";
+            deleteBranchButton.style.width = 24;
+            deleteBranchButton.style.backgroundColor = new Color(0.6f, 0.2f, 0.2f);
+            controlButtons.Add(deleteBranchButton);
+
+            headerRow.Add(controlButtons);
+            branchItem.Add(headerRow);
+
+            // Target beat dropdown
+            VisualElement targetRow = new VisualElement();
+            targetRow.style.marginBottom = 8;
+
+            SearchableDropdown targetDropdown = new SearchableDropdown(
+                label: "Target Beat",
+                prefsKey: "BranchTarget",
+                onGetItems: () => GetBeatDropdownItems(beat),
+                onValueChanged: (value) => OnBranchTargetChanged(branch, value, nodeView),
+                allowCreateNew: false,
+                onCreateNew: null
+            );
+            targetDropdown.Value = branch.NextBeatID ?? "";
+            targetRow.Add(targetDropdown);
+
+            // Add click to highlight target button
+            Button highlightButton = new Button(() => HighlightTargetBeat(branch.NextBeatID));
+            highlightButton.text = "Go to Target";
+            highlightButton.style.marginTop = 4;
+            targetRow.Add(highlightButton);
+
+            branchItem.Add(targetRow);
+
+            // Conditions section
+            CreateConditionsUI(branch, branchItem, nodeView);
+
+            return branchItem;
+        }
+
+        /// <summary>
+        /// Sets up the user interface for managing conditions associated with a given BeatBranchSO object;
+        /// includes a header section with a label and button to add new conditions, and a list section for displaying and managing existing conditions
+        /// </summary>
+        /// <param name="branch">The BeatBranchSO instance containing the conditions to be managed</param>
+        /// <param name="parent">The parent VisualElement to which the conditions UI will be added</param>
+        /// <param name="nodeView">The BeatNodeView representing the node in the editor where the conditions are displayed</param>
+        private void CreateConditionsUI(BeatBranchSO branch, VisualElement parent, BeatNodeView nodeView)
+        {
+            // Conditions header
+            VisualElement conditionsHeader = new VisualElement();
+            conditionsHeader.style.flexDirection = FlexDirection.Row;
+            conditionsHeader.style.justifyContent = Justify.SpaceBetween;
+            conditionsHeader.style.alignItems = Align.Center;
+            conditionsHeader.style.marginTop = 8;
+            conditionsHeader.style.marginBottom = 4;
+            conditionsHeader.style.borderTopWidth = 1;
+            conditionsHeader.style.borderTopColor = new Color(0.35f, 0.35f, 0.35f);
+            conditionsHeader.style.paddingTop = 8;
+
+            Label conditionsLabel = new Label("Conditions (all must be true)");
+            conditionsLabel.style.fontSize = 11;
+            conditionsLabel.style.color = new Color(0.7f, 0.7f, 0.7f);
+            conditionsHeader.Add(conditionsLabel);
+
+            Button addConditionButton = new Button(() => ShowAddConditionMenu(branch, nodeView));
+            addConditionButton.text = "+ Add";
+            addConditionButton.style.paddingLeft = 6;
+            addConditionButton.style.paddingRight = 6;
+            addConditionButton.style.height = 18;
+            conditionsHeader.Add(addConditionButton);
+
+            parent.Add(conditionsHeader);
+
+            // Conditions list
+            SerializedObject branchSerialized = new SerializedObject(branch);
+            SerializedProperty conditionsProperty = branchSerialized.FindProperty("conditions");
+
+            // Check if there are any conditions
+            if (conditionsProperty == null || conditionsProperty.arraySize == 0)
+            {
+                // If not, add a message
+                Label noConditionsLabel = new Label("No conditions (always taken)");
+                noConditionsLabel.style.color = new Color(0.5f, 0.7f, 0.5f);
+                noConditionsLabel.style.unityFontStyleAndWeight = FontStyle.Italic;
+                noConditionsLabel.style.fontSize = 11;
+                noConditionsLabel.style.marginLeft = 8;
+                parent.Add(noConditionsLabel);
+            }
+            else
+            {
+                for (int i = 0; i < conditionsProperty.arraySize; i++)
+                {
+                    int condIndex = i;
+                    SerializedProperty condProp = conditionsProperty.GetArrayElementAtIndex(i);
+                    BranchConditionSO condition = condProp.objectReferenceValue as BranchConditionSO;
+
+                    // Skip if the condition is null
+                    if (!condition) continue;
+
+                    VisualElement conditionRow = new VisualElement();
+                    conditionRow.style.flexDirection = FlexDirection.Row;
+                    conditionRow.style.justifyContent = Justify.SpaceBetween;
+                    conditionRow.style.alignItems = Align.Center;
+                    conditionRow.style.marginLeft = 8;
+                    conditionRow.style.marginBottom = 2;
+
+                    // Condition description
+                    Label condDesc = new Label(condition.GetDescription());
+                    condDesc.style.fontSize = 11;
+                    condDesc.style.flexGrow = 1;
+                    conditionRow.Add(condDesc);
+
+                    // Edit button (select in inspector)
+                    Button editButton = new Button(() => Selection.activeObject = condition);
+                    editButton.text = "Edit";
+                    editButton.style.width = 36;
+                    editButton.style.height = 16;
+                    editButton.style.marginRight = 2;
+                    conditionRow.Add(editButton);
+
+                    // Remove button
+                    Button removeButton = new Button(() => RemoveConditionAtIndex(branch, condIndex, nodeView));
+                    removeButton.text = "✕";
+                    removeButton.style.width = 20;
+                    removeButton.style.height = 16;
+                    removeButton.style.backgroundColor = new Color(0.5f, 0.2f, 0.2f);
+                    conditionRow.Add(removeButton);
+
+                    parent.Add(conditionRow);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates and configures the default "next beat" section for the specified SceneBeatSO and its associated BeatNodeView;
+        /// this section includes a fallback dropdown for setting the default next beat, and a toggle for marking the beat as the end of a sequence
+        /// </summary>
+        /// <param name="beat">The SceneBeatSO instance being configured with its default "next beat" options</param>
+        /// <param name="nodeView">The associated BeatNodeView that visually represents the beat in the editor</param>
+        private void CreateDefaultNextBeatSection(SceneBeatSO beat, BeatNodeView nodeView)
+        {
+            VisualElement defaultSection = new VisualElement();
+            defaultSection.style.marginTop = 12;
+            defaultSection.style.paddingTop = 8;
+            defaultSection.style.borderTopWidth = 1;
+            defaultSection.style.borderTopColor = new Color(0.3f, 0.3f, 0.3f);
+
+            Label defaultLabel = new Label("Fallback (if no branch matches)");
+            defaultLabel.style.fontSize = 12;
+            defaultLabel.style.marginBottom = 4;
+            defaultLabel.style.color = new Color(0.7f, 0.7f, 0.7f);
+            defaultSection.Add(defaultLabel);
+
+            SearchableDropdown defaultDropdown = new SearchableDropdown(
+                label: "Default Next Beat",
+                prefsKey: "DefaultNextBeat",
+                onGetItems: () => GetBeatDropdownItems(beat),
+                onValueChanged: (value) => OnBeatPropertyChanged(beat, "defaultNextBeatID", value),
+                allowCreateNew: false,
+                onCreateNew: null
+            );
+            defaultDropdown.Value = beat.DefaultNextBeatID ?? "";
+            defaultSection.Add(defaultDropdown);
+
+            // Is End Beat toggle
+            VisualElement endBeatRow = new VisualElement();
+            endBeatRow.style.flexDirection = FlexDirection.Row;
+            endBeatRow.style.alignItems = Align.Center;
+            endBeatRow.style.marginTop = 8;
+
+            Toggle endBeatToggle = new Toggle("Is End Beat");
+            endBeatToggle.value = beat.IsEndBeat;
+            endBeatToggle.RegisterValueChangedCallback(evt => OnEndBeatToggleChanged(beat, evt.newValue, nodeView));
+            endBeatRow.Add(endBeatToggle);
+
+            defaultSection.Add(endBeatRow);
+            _inspectorContent.Add(defaultSection);
+        }
+
+        /// <summary>
+        /// Constructs a list of dropdown items representing all SceneBeatSO assets within the currently selected SceneTemplateSO,
+        /// excluding the specified beat. Each dropdown item contains the unique BeatID and display name of a SceneBeatSO
+        /// </summary>
+        /// <param name="excludeBeat">The SceneBeatSO to exclude from the dropdown list</param>
+        /// <returns>A list of DropdownItem objects, each representing a valid SceneBeatSO that is part of the current SceneTemplateSO</returns>
+        private List<SearchableDropdown.DropdownItem> GetBeatDropdownItems(SceneBeatSO excludeBeat)
+        {
+            List<SearchableDropdown.DropdownItem> items = new List<SearchableDropdown.DropdownItem>();
+
+            // Exit case - there is no template set
+            if (!_currentTemplate) return items;
+
+            SerializedObject serialized = new SerializedObject(_currentTemplate);
+            SerializedProperty beatsProperty = serialized.FindProperty("beats");
+
+            // Exit case - there are no beats
+            if (beatsProperty == null) return items;
+
+            for (int i = 0; i < beatsProperty.arraySize; i++)
+            {
+                SerializedProperty beatProp = beatsProperty.GetArrayElementAtIndex(i);
+                SceneBeatSO beat = beatProp.objectReferenceValue as SceneBeatSO;
+
+                // Skip if the beat doesn't exist
+                if (!beat) continue;
+                
+                // Skip if the beat is the one we're excluding
+                if (beat == excludeBeat) continue;
+                
+                // Skip if the beat ID is empty
+                if (string.IsNullOrEmpty(beat.BeatID)) continue;
+
+                items.Add(new SearchableDropdown.DropdownItem(
+                    id: beat.BeatID,
+                    displayName: beat.name
+                ));
+            }
+
+            return items;
+        }
+
+        /// <summary>
+        /// Handles the event triggered when the "Add Branch" button is clicked;
+        /// this method displays a context menu with a list of available beats to create branches for the provided SceneBeatSO,
+        /// allowing the user to select and establish a new connection to another beat
+        /// </summary>
+        /// <param name="beat">The SceneBeatSO instance for which a new branch is being created</param>
+        /// <param name="nodeView">The BeatNodeView instance associated with the provided beat, used for visual representation</param>
+        private void OnAddBranchClicked(SceneBeatSO beat, BeatNodeView nodeView)
+        {
+            GenericMenu menu = new GenericMenu();
+            List<SearchableDropdown.DropdownItem> beatItems = GetBeatDropdownItems(beat);
+
+            // Check if there are any beats to add branches to
+            if (beatItems.Count == 0)
+            {
+                // If not, add a message
+                menu.AddDisabledItem(new GUIContent("No other beats available"));
+            }
+            else
+            {
+                // If there are, add a menu item for each beat
+                for (int i = 0; i < beatItems.Count; i++)
+                {
+                    SearchableDropdown.DropdownItem item = beatItems[i];
+                    menu.AddItem(new GUIContent(item.DisplayName), false, () =>
+                    {
+                        CreateNewBranch(beat, item.ID, nodeView);
+                    });
+                }
+            }
+            
+            menu.ShowAsContext();
+        }
+
+        /// <summary>
+        /// Creates a new branch in the Scene Template Editor by instantiating a new BeatBranchSO asset,
+        /// linking it to the specified target beat, and adding it as a sub-asset to the current SceneTemplateSO;
+        /// updates the branch properties, adds it to the source beat's branches, saves and refreshes the asset,
+        /// and updates the user interface
+        /// </summary>
+        /// <param name="beat">
+        /// The source SceneBeatSO to which the new branch will be linked
+        /// </param>
+        /// <param name="targetBeatID">
+        /// The unique identifier of the target SceneBeatSO to which the branch will connect
+        /// </param>
+        /// <param name="nodeView">
+        /// The BeatNodeView instance representing the source beat in the graph view; used for UI refresh
+        /// </param
+        private void CreateNewBranch(SceneBeatSO beat, string targetBeatID, BeatNodeView nodeView)
+        {
+            BeatBranchSO newBranch = CreateInstance<BeatBranchSO>();
+            
+            // Set the next beat ID
+            SerializedObject branchSerialized = new SerializedObject(newBranch);
+            SerializedProperty targetProp = branchSerialized.FindProperty("nextBeatID");
+            if (targetProp != null)
+            {
+                targetProp.stringValue = targetBeatID;
+                branchSerialized.ApplyModifiedProperties();
+            }
+
+            // Build the branch name
+            StringBuilder nameBuilder = new StringBuilder();
+            nameBuilder.Append("Branch_");
+            nameBuilder.Append(beat.BeatID);
+            nameBuilder.Append("_to_");
+            nameBuilder.Append(targetBeatID);
+            newBranch.name = nameBuilder.ToString();
+
+            // Add as a sub-asset to the template
+            string templatePath = AssetDatabase.GetAssetPath(_currentTemplate);
+            AssetDatabase.AddObjectToAsset(newBranch, templatePath);
+
+            // Add the branch to the beat's branches
+            SerializedObject beatSerialized = new SerializedObject(beat);
+            SerializedProperty branchesProperty = beatSerialized.FindProperty("branches");
+            if (branchesProperty != null)
+            {
+                branchesProperty.InsertArrayElementAtIndex(branchesProperty.arraySize);
+                SerializedProperty newElement = branchesProperty.GetArrayElementAtIndex(branchesProperty.arraySize - 1);
+                newElement.objectReferenceValue = newBranch;
+                beatSerialized.ApplyModifiedProperties();
+            }
+
+            // Save the asset
+            EditorUtility.SetDirty(beat);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            // Refresh the view
+            InitializeGraphView();
+            ShowBeatInspector(nodeView);
+        }
+
+        /// <summary>
+        /// Moves a branch within the list of branches in a SceneBeatSO asset by adjusting its position index;
+        /// this method ensures the branch is moved to the desired position, saves the changes, updates the inspector, and avoids out-of-bounds operations
+        /// </summary>
+        /// <param name="beat">The SceneBeatSO asset containing the list of branches to adjust</param>
+        /// <param name="currentIndex">The current index of the branch to be moved</param>
+        /// <param name="direction">The direction to move the branch; positive for forward, negative for backward</param>
+        /// <param name="nodeView">The BeatNodeView associated with the branch, used to update the UI component</param>
+        private void MoveBranch(SceneBeatSO beat, int currentIndex, int direction, BeatNodeView nodeView)
+        {
+            // Calculate the new index
+            int newIndex = currentIndex + direction;
+
+            // Get the beat's branches
+            SerializedObject beatSerialized = new SerializedObject(beat);
+            SerializedProperty branchesProperty = beatSerialized.FindProperty("branches");
+
+            // Exit case - if there is no "branches" property
+            if (branchesProperty == null) return;
+            
+            // Exit case - if the new index is out of bounds
+            if (newIndex < 0 || newIndex >= branchesProperty.arraySize) return;
+
+            // Move the branch
+            branchesProperty.MoveArrayElement(currentIndex, newIndex);
+            beatSerialized.ApplyModifiedProperties();
+
+            // Save the asset
+            EditorUtility.SetDirty(beat);
+            AssetDatabase.SaveAssets();
+
+            // Update the inspector
+            ShowBeatInspector(nodeView);
+        }
+
+        /// <summary>
+        /// Deletes a branch from the branches list of the specified SceneBeatSO asset based on the provided index;
+        /// prompts the user for confirmation, removes the branch, applies and saves the updated asset, and refreshes the graph view and beat inspector
+        /// </summary>
+        /// <param name="beat">The SceneBeatSO asset from which the branch will be deleted</param>
+        /// <param name="index">The index of the branch to delete in the branches array</param>
+        /// <param name="nodeView">The BeatNodeView to refresh after the deletion</param>
+        private void DeleteBranchAtIndex(SceneBeatSO beat, int index, BeatNodeView nodeView)
+        {
+            SerializedObject beatSerialized = new SerializedObject(beat);
+            SerializedProperty branchesProperty = beatSerialized.FindProperty("branches");
+
+            // Exit case - if there is no "branches" property or the index is out of bounds
+            if (branchesProperty == null || index >= branchesProperty.arraySize) return;
+
+            SerializedProperty branchProp = branchesProperty.GetArrayElementAtIndex(index);
+            BeatBranchSO branch = branchProp.objectReferenceValue as BeatBranchSO;
+
+            // Query the user to confirm the decision
+            if (!EditorUtility.DisplayDialog(
+                    "Delete Branch",
+                    "Delete this branch?",
+                    "Delete",
+                    "Cancel"
+                )
+            ) return;
+
+            // Remove the branch from the beat's branches'
+            branchesProperty.DeleteArrayElementAtIndex(index);
+            beatSerialized.ApplyModifiedProperties();
+
+            // Destroy the branch if it exists
+            if (branch)
+            {
+                AssetDatabase.RemoveObjectFromAsset(branch);
+                DestroyImmediate(branch, true);
+            }
+
+            // Save the asset
+            EditorUtility.SetDirty(beat);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            // Refresh the view
+            InitializeGraphView();
+            ShowBeatInspector(nodeView);
+        }
+
+        /// <summary>
+        /// Updates the target destination of a BeatBranchSO object when its branch target changes;
+        /// applies the new target identifier, saves the changes to the branch asset, and refreshes the graph view to reflect the update
+        /// </summary>
+        /// <param name="branch">The BeatBranchSO object representing the branch whose target is being updated</param>
+        /// <param name="newTargetID">The unique identifier of the new target beat to assign to the branch</param>
+        /// <param name="nodeView">The BeatNodeView instance associated with the branch, used for visualization and editing within the editor</param>
+        private void OnBranchTargetChanged(BeatBranchSO branch, string newTargetID, BeatNodeView nodeView)
+        {
+            SerializedObject branchSerialized = new SerializedObject(branch);
+            SerializedProperty targetProp = branchSerialized.FindProperty("nextBeatID");
+
+            // Update the target property if it exists
+            if (targetProp != null)
+            {
+                targetProp.stringValue = newTargetID;
+                branchSerialized.ApplyModifiedProperties();
+            }
+
+            // Save the asset
+            EditorUtility.SetDirty(branch);
+            AssetDatabase.SaveAssets();
+
+            // Refresh the view
+            InitializeGraphView();
+        }
+
+        /// <summary>
+        /// Highlights a specified beat node in the graph view by its unique identifier;
+        /// If the target beat ID matches a node in the graph, the node is selected; otherwise, a dialog is shown indicating the beat was not found
+        /// </summary>
+        /// <param name="beatID">The unique identifier of the beat to highlight within the graph view</param>
+        private void HighlightTargetBeat(string beatID)
+        {
+            // Exit case - if the beat ID is empty
+            if (string.IsNullOrEmpty(beatID)) return;
+
+            // Find the beat with the given ID
+            BeatNodeView targetNode = null;
+            _graphView.Query<BeatNodeView>().ForEach(node =>
+            {
+                if (node.Beat && node.Beat.BeatID == beatID)
+                {
+                    targetNode = node;
+                }
+            });
+
+            // Select the node if it exists
+            if (targetNode != null) SelectNode(targetNode);
+            else EditorUtility.DisplayDialog("Not Found", "Target beat not found in graph.", "OK");
+        }
+
+        /// <summary>
+        /// Displays a context menu for adding a condition to a specified branch in the SceneTemplate editor;
+        /// the menu provides options to create a new BranchConditionSO asset or select an existing one
+        /// </summary>
+        /// <param name="branch">The branch entity (BeatBranchSO) to which the condition will be added</param>
+        /// <param name="nodeView">The visual representation (BeatNodeView) of the branch node in the editor</param>
+        private void ShowAddConditionMenu(BeatBranchSO branch, BeatNodeView nodeView)
+        {
+            GenericMenu menu = new GenericMenu();
+
+            // Find all the branch conditions
+            string[] guids = AssetDatabase.FindAssets("t:BranchConditionSO");
+            
+            if (guids.Length == 0)
+            {
+                // If there are no conditions found, add a menu item to create a new condition
+                menu.AddItem(new GUIContent("Create New Condition Asset..."), false, () =>
+                {
+                    EditorUtility.DisplayDialog(
+                        "Create Condition",
+                        "Create a new BranchConditionSO asset in your project, then add it here.",
+                        "OK"
+                    );
+                });
+            }
+            else
+            {
+                // If there are conditions found, add a menu item to select one
+                menu.AddItem(new GUIContent("Select Existing Condition..."), false, () =>
+                {
+                    ShowConditionPickerWindow(branch, nodeView);
+                });
+
+                menu.AddSeparator("");
+
+                // Add a menu item to select a new condition
+                for (int i = 0; i < guids.Length; i++)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                    BranchConditionSO condition = AssetDatabase.LoadAssetAtPath<BranchConditionSO>(path);
+
+                    // Skip if the condition is null
+                    if (!condition) continue;
+
+                    string conditionName = condition.name;
+                    menu.AddItem(new GUIContent(conditionName), false, () =>
+                    {
+                        AddConditionToBranch(branch, condition, nodeView);
+                    });
+                }
+            }
+
+            menu.ShowAsContext();
+        }
+
+        /// <summary>
+        /// Displays the object picker window for selecting a BranchConditionSO instance;
+        /// sets the provided BeatBranchSO and BeatNodeView instances as pending for condition assignment,
+        /// and begins listening for updates via the Unity editor's update loop
+        /// </summary>
+        /// <param name="branch">The beat branch to associate with the selected condition</param>
+        /// <param name="nodeView">The beat node view representing the graph node to associate with the condition</param>
+        private void ShowConditionPickerWindow(BeatBranchSO branch, BeatNodeView nodeView)
+        {
+            EditorGUIUtility.ShowObjectPicker<BranchConditionSO>(null, false, "", 0);
+            _pendingConditionBranch = branch;
+            _pendingConditionNodeView = nodeView;
+            EditorApplication.update += OnConditionPickerUpdate;
+        }
+
+        /// <summary>
+        /// Monitors the update loop of the Object Picker window used for selecting a BranchConditionSO asset;
+        /// this method handles the selection process and associates the chosen condition with a pending BeatBranchSO and BeatNodeView;
+        /// upon selection or window closure, it finalizes the process, clears pending data, and detaches itself from the update event
+        /// </summary
+        private void OnConditionPickerUpdate()
+        {
+            // Exit case - if the picker window is closed
+            if (EditorGUIUtility.GetObjectPickerControlID() != 0) return;
+            
+            EditorApplication.update -= OnConditionPickerUpdate;
+
+            // Get the selected condition
+            BranchConditionSO pickedCondition = EditorGUIUtility.GetObjectPickerObject() as BranchConditionSO;
+            if (pickedCondition && _pendingConditionBranch)
+            {
+                AddConditionToBranch(_pendingConditionBranch, pickedCondition, _pendingConditionNodeView);
+            }
+
+            // Clear the pending variables
+            _pendingConditionBranch = null;
+            _pendingConditionNodeView = null;
+        }
+
+        /// <summary>
+        /// Adds a condition to a specified branch within the SceneTemplateEditor;
+        /// validates that the condition is not already present, applies the modification,
+        /// saves the changes to the asset, and refreshes the beat inspector view
+        /// </summary>
+        /// <param name="branch">The target BeatBranchSO to which the condition will be added</param>
+        /// <param name="condition">The BranchConditionSO to add to the branch</param>
+        /// <param name="nodeView">The BeatNodeView associated with the branch, used to refresh the UI after the condition is added</param>
+        private void AddConditionToBranch(BeatBranchSO branch, BranchConditionSO condition, BeatNodeView nodeView)
+        {
+            SerializedObject branchSerialized = new SerializedObject(branch);
+            SerializedProperty conditionsProperty = branchSerialized.FindProperty("conditions");
+
+            // Exit case - if there is no "conditions" property
+            if (conditionsProperty == null) return;
+
+            // Add a new condition element
+            for (int i = 0; i < conditionsProperty.arraySize; i++)
+            {
+                SerializedProperty prop = conditionsProperty.GetArrayElementAtIndex(i);
+                if (prop.objectReferenceValue == condition)
+                {
+                    EditorUtility.DisplayDialog("Already Added", "This condition is already on this branch.", "OK");
+                    return;
+                }
+            }
+
+            // Add the condition
+            conditionsProperty.InsertArrayElementAtIndex(conditionsProperty.arraySize);
+            SerializedProperty newElement = conditionsProperty.GetArrayElementAtIndex(conditionsProperty.arraySize - 1);
+            newElement.objectReferenceValue = condition;
+            branchSerialized.ApplyModifiedProperties();
+
+            // Save the asset
+            EditorUtility.SetDirty(branch);
+            AssetDatabase.SaveAssets();
+
+            // Refresh the view
+            ShowBeatInspector(nodeView);
+        }
+
+        /// <summary>
+        /// Removes a condition at the specified index from the given BeatBranchSO asset;
+        /// Updates the serialized object, applies modifications, saves changes to the asset,
+        /// and refreshes the associated BeatNodeView to reflect the update
+        /// </summary>
+        /// <param name="branch">The BeatBranchSO asset containing the conditions to modify</param>
+        /// <param name="index">The index of the condition to be removed</param>
+        /// <param name="nodeView">The BeatNodeView instance to be refreshed after the modification</param>
+        private void RemoveConditionAtIndex(BeatBranchSO branch, int index, BeatNodeView nodeView)
+        {
+            SerializedObject branchSerialized = new SerializedObject(branch);
+            SerializedProperty conditionsProperty = branchSerialized.FindProperty("conditions");
+
+            // Exit case - if there is no "conditions" property or the index is out of bounds
+            if (conditionsProperty == null || index >= conditionsProperty.arraySize) return;
+
+            // Remove the condition
+            conditionsProperty.DeleteArrayElementAtIndex(index);
+            branchSerialized.ApplyModifiedProperties();
+
+            // Save the asset
+            EditorUtility.SetDirty(branch);
+            AssetDatabase.SaveAssets();
+
+            // Refresh the view
+            ShowBeatInspector(nodeView);
+        }
+
+        /// <summary>
+        /// Updates the "Is End Beat" status for a SceneBeatSO instance when the corresponding toggle is changed;
+        /// modifies the serialized property, saves the changes to the asset, and refreshes the graph view to reflect updates
+        /// </summary>
+        /// <param name="beat">The SceneBeatSO instance representing the beat being modified</param>
+        /// <param name="newValue">The new boolean value indicating whether the beat is an end beat</param>
+        /// <param name="nodeView">The BeatNodeView associated with the beat, used for updating the visual representation</param>
+        private void OnEndBeatToggleChanged(SceneBeatSO beat, bool newValue, BeatNodeView nodeView)
+        {
+            SerializedObject beatSerialized = new SerializedObject(beat);
+            SerializedProperty endBeatProp = beatSerialized.FindProperty("isEndBeat");
+
+            // Update the end beat property if it exists
+            if (endBeatProp != null)
+            {
+                endBeatProp.boolValue = newValue;
+                beatSerialized.ApplyModifiedProperties();
+            }
+
+            // Save the asset
+            EditorUtility.SetDirty(beat);
+            AssetDatabase.SaveAssets();
+
+            // Refresh the view
+            InitializeGraphView();
+        }
     }
 }
