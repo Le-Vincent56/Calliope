@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Calliope.Core.Interfaces;
 using Calliope.Unity.ScriptableObjects;
@@ -27,7 +28,8 @@ namespace Calliope.Editor.SceneTemplateEditor
         private Button _cleanupButton;
         private VisualElement _inspectorContent;
         private BeatNodeView _selectedNode;
-        private ObjectField _templateField;
+        private Button _templateSelectorButton;
+        private Label _templateSelectorText;
         private VisualElement _validationSection;
         private Button _validationButton;
         private BeatConnectionView _hoveredConnection;
@@ -87,7 +89,8 @@ namespace Calliope.Editor.SceneTemplateEditor
             // Cache references to important UI elements
             _toolbar = root.Q<VisualElement>("Toolbar");
             _graphView = root.Q<VisualElement>("GraphView");
-            _templateField = root.Q<ObjectField>("TemplateField");
+            _templateSelectorButton = root.Q<Button>("TemplateSelectorButton");
+            _templateSelectorText = root.Q<Label>("TemplateSelectorText");
             _createBeatButton = root.Q<Button>("CreateBeatButton");
             _cleanupButton = root.Q<Button>("CleanupButton");
             _inspectorContent = root.Q<VisualElement>("InspectorContent");
@@ -124,15 +127,10 @@ namespace Calliope.Editor.SceneTemplateEditor
             }
 
             // Set up the template selector
-            if (_templateField != null)
+            if (_templateSelectorButton != null)
             {
-                // Configure the template field
-                _templateField.objectType = typeof(SceneTemplateSO);
-                _templateField.RegisterValueChangedCallback(OnTemplateChanged);
-                
-                // Set the current template if it exists
-                if(_currentTemplate)
-                    _templateField.value = _currentTemplate;
+                _templateSelectorButton.clicked += ShowTemplateSelector;
+                UpdateTemplateSelectorDisplay();
             }
             
             // Initialize the graph view
@@ -956,15 +954,224 @@ namespace Calliope.Editor.SceneTemplateEditor
         }
 
         /// <summary>
-        /// Handles changes to the selected Scene Template in the ObjectField, updating the editor to reflect the new template
+        /// Displays a context menu for selecting or creating a SceneTemplateSO asset;
+        /// provides an interface for users to choose existing SceneTemplateSO assets grouped by folder,
+        /// or create a new template if none are available
         /// </summary>
-        /// <param name="event">The event containing information about the change, including the new and previous values of the ObjectField</param>
-        private void OnTemplateChanged(ChangeEvent<Object> @event)
+        private void ShowTemplateSelector()
         {
-            _currentTemplate = @event.newValue as SceneTemplateSO;
+            GenericMenu menu = new GenericMenu();
+            
+            // Find all SceneTemplateSO assets
+            string[] guids = AssetDatabase.FindAssets("t:SceneTemplateSO");
+
+            if (guids.Length == 0)
+            {
+                menu.AddDisabledItem(new GUIContent("No templates found"));
+            }
+            else
+            {
+                // Group templates by folder
+                Dictionary<string, List<(string path, SceneTemplateSO template)>> groupedTemplates = new Dictionary<string, List<(string, SceneTemplateSO)>>();
+
+                for (int i = 0; i < guids.Length; i++)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                    SceneTemplateSO template = AssetDatabase.LoadAssetAtPath<SceneTemplateSO>(path);
+
+                    // Skip if the template is null
+                    if (template == null) continue;
+
+                    // Get the folder path for grouping
+                    string folderPath = Path.GetDirectoryName(path); folderPath = folderPath?.Replace("Assets/", "") ?? "Root";
+
+                    // If the folder path is not already in the dictionary, add it
+                    if (!groupedTemplates.ContainsKey(folderPath))
+                        groupedTemplates[folderPath] = new List<(string, SceneTemplateSO)>();
+
+                    groupedTemplates[folderPath].Add((path, template));
+                }
+
+                StringBuilder menuBuilder = new StringBuilder();
+
+                // Add templates to the menu, grouped by folder
+                foreach (KeyValuePair<string, List<(string path, SceneTemplateSO template)>> group in groupedTemplates)
+                {
+                    foreach ((string path, SceneTemplateSO template) in group.Value)
+                    {
+                        // Check if the template is already selected
+                        bool isSelected = _currentTemplate == template;
+                        
+                        // Create the path
+                        menuBuilder.Clear();
+                        menuBuilder.Append(group.Key);
+                        menuBuilder.Append("/");
+                        menuBuilder.Append(template.name);
+                        string menuPath = menuBuilder.ToString();
+
+                        // Add the template to the menu
+                        SceneTemplateSO templateRef = template;
+                        menu.AddItem(
+                            new GUIContent(menuPath),
+                            isSelected,
+                            () => SetCurrentTemplate(templateRef)
+                        );
+                    }
+                }
+            }
+
+            menu.AddSeparator("");
+
+            // Add the "Create New Template" option
+            menu.AddItem(new GUIContent("+ Create New Template..."), false, ShowCreateTemplateDialog);
+
+            menu.ShowAsContext();
+        }
+
+        /// <summary>
+        /// Updates the display of the template selector UI to reflect the currently selected SceneTemplateSO;
+        /// adjusts the label text and applies appropriate styling based on whether a template is selected or not
+        /// </summary>
+        private void UpdateTemplateSelectorDisplay()
+        {
+            // Exit case - no template is selected
+            if (_templateSelectorButton == null || _templateSelectorText == null) 
+                return;
+
+            // Check if there's a current template
+            if (_currentTemplate != null)
+            {
+                // If so, update the display text to reflect the template's name'
+                _templateSelectorText.text = _currentTemplate.name;
+                _templateSelectorButton.RemoveFromClassList("template-selector-no-value");
+                _templateSelectorButton.AddToClassList("template-selector-has-value");
+            }
+            else
+            {
+                // Otherwise, show the placeholder text
+                _templateSelectorText.text = "Select Template...";
+                _templateSelectorButton.RemoveFromClassList("template-selector-has-value");
+                _templateSelectorButton.AddToClassList("template-selector-no-value");
+            }
+        }
+
+        /// <summary>
+        /// Sets the specified SceneTemplateSO as the current template in the editor window;
+        /// updates the template selector display and initializes the graph view with the nodes and connections of the selected template
+        /// </summary>
+        /// <param name="template">The SceneTemplateSO to set as the current template</param>
+        private void SetCurrentTemplate(SceneTemplateSO template)
+        {
+            _currentTemplate = template;
+            UpdateTemplateSelectorDisplay();
             InitializeGraphView();
         }
 
+        /// <summary>
+        /// Displays a dialog to create a new SceneTemplateSO asset;
+        /// allows the user to specify custom field values such as Template ID, Display Name, and Description,
+        /// auto-generates fields where applicable, and ensures proper folder structure before saving the asset;
+        /// the newly created template is saved to the specified location and selected in the editor
+        /// </summary>
+        private void ShowCreateTemplateDialog()
+        {
+            // Get default folder
+            string defaultFolder = "Assets/Calliope/Content/SceneTemplates";
+
+            List<FieldConfig> fields = new List<FieldConfig>
+            {
+                new FieldConfig(
+                    key: "id",
+                    label: "Template ID",
+                    required: true,
+                    autoGenerateFromName: true,
+                    transformForID: fieldName => fieldName.ToLower().Replace(" ", "-")
+                ),
+                new FieldConfig(
+                    key: "displayName",
+                    label: "Display Name",
+                    required: false,
+                    autoGenerateFromName: true,
+                    transformForID: fieldName => fieldName
+                ),
+                new FieldConfig(
+                    key: "description",
+                    label: "Description",
+                    required: false
+                )
+            };
+
+            AssetCreationDialog.Show(
+                assetTypeName: "Scene Template",
+                defaultFolder: defaultFolder,
+                fields: fields,
+                onCreate: (fieldValues, savePath) =>
+                {
+                    // Create the new template
+                    SceneTemplateSO newTemplate = CreateInstance<SceneTemplateSO>();
+
+                    SerializedObject serialized = new SerializedObject(newTemplate);
+
+                    SerializedProperty idProp = serialized.FindProperty("id");
+                    SerializedProperty displayNameProp = serialized.FindProperty("displayName");
+                    SerializedProperty descriptionProp = serialized.FindProperty("description");
+
+                    // Set the property values
+                    if (idProp != null)
+                        idProp.stringValue = fieldValues["id"];
+                    if (displayNameProp != null)
+                        displayNameProp.stringValue = fieldValues["displayName"];
+                    if (descriptionProp != null)
+                        descriptionProp.stringValue = fieldValues.GetValueOrDefault("description", "");
+
+                    serialized.ApplyModifiedProperties();
+
+                    // Ensure folder exists
+                    string folderPath = Path.GetDirectoryName(savePath);
+                    
+                    if (!string.IsNullOrEmpty(folderPath) && !AssetDatabase.IsValidFolder(folderPath))
+                    {
+                        // Parse the folder path into components
+                        string[] parts = folderPath.Split('/');
+                        string currentPath = parts[0];
+
+                        StringBuilder pathBuilder = new StringBuilder();
+                        
+                        // Create the folder hierarchy
+                        for (int i = 1; i < parts.Length; i++)
+                        {
+                            // Construct the next path
+                            pathBuilder.Clear();
+                            pathBuilder.Append(currentPath);
+                            pathBuilder.Append("/");
+                            pathBuilder.Append(parts[i]);
+                            string nextPath = pathBuilder.ToString();
+                            
+                            if (!AssetDatabase.IsValidFolder(nextPath))
+                            {
+                                AssetDatabase.CreateFolder(currentPath, parts[i]);
+                            }
+                            currentPath = nextPath;
+                        }
+                    }
+
+                    // Save the asset
+                    AssetDatabase.CreateAsset(newTemplate, savePath);
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+
+                    // Select the new template
+                    SetCurrentTemplate(newTemplate);
+                }
+            );
+        }
+
+        /// <summary>
+        /// Saves the current positions of all beat nodes in the graph view;
+        /// iterates through the visible BeatNodeView elements, retrieves their positions,
+        /// and stores the data in the NodePositionStorage using the template's and beat's unique identifiers;
+        /// this ensures that the node layout is preserved between sessions
+        /// </summary>
         public void SaveNodePositions()
         {
             // Exit case - no template is selected
