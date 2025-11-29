@@ -20,6 +20,7 @@ namespace Calliope.Editor.SceneTemplateEditor
     {
         private SceneTemplateSO _currentTemplate;
         private VisualElement _graphView;
+        
         private VisualElement _toolbar;
         private TextField _searchField;
         private Button _clearSearchButton;
@@ -28,17 +29,33 @@ namespace Calliope.Editor.SceneTemplateEditor
         private Button _cleanupButton;
         private VisualElement _inspectorContent;
         private BeatNodeView _selectedNode;
+        
         private Button _templateSelectorButton;
         private Label _templateSelectorText;
         private VisualElement _recentTemplatesContainer;
         private VisualElement _recentTemplateButtons;
         private const string RecentTemplatesPrefKey = "Calliope_RecentTemplates";
         private const int MaxRecentTemplates = 5;
+        
         private VisualElement _validationSection;
         private Button _validationButton;
+        
         private BeatConnectionView _hoveredConnection;
         private BeatBranchSO _pendingConditionBranch;
         private BeatNodeView _pendingConditionNodeView;
+        
+        private VisualElement _graphContent;
+        private Button _zoomInButton;
+        private Button _zoomOutButton;
+        private Button _zoomResetButton;
+        private Label _zoomLevelLabel;
+        private float _zoomLevel = 1f;
+        private Vector2 _panOffset = Vector2.zero;
+        private bool _isPanning = false;
+        private Vector2 _lastMousePosition;
+        private const float MinZoom = 0.25f;
+        private const float MaxZoom = 2f;
+        private const float ZoomStep = 0.1f;
         
         [MenuItem("Window/Calliope/Scene Template Editor")]
         public static void ShowWindow()
@@ -104,6 +121,10 @@ namespace Calliope.Editor.SceneTemplateEditor
             _validationButton = root.Q<Button>("ValidateButton");
             _searchField = root.Q<TextField>("SearchField");
             _clearSearchButton = root.Q<Button>("ClearSearchButton");
+            _zoomInButton = root.Q<Button>("ZoomInButton");
+            _zoomOutButton = root.Q<Button>("ZoomOutButton");
+            _zoomResetButton = root.Q<Button>("ZoomResetButton");
+            _zoomLevelLabel = root.Q<Label>("ZoomLevelLabel");
             
             // Set up the create beat button
             if (_createBeatButton != null)
@@ -131,6 +152,23 @@ namespace Calliope.Editor.SceneTemplateEditor
             {
                 _clearSearchButton.clicked += OnClearSearchClicked;
             }
+            
+            if(_zoomInButton != null)
+            {
+                _zoomInButton.clicked += () => Zoom(ZoomStep, null);
+            }
+
+            if (_zoomOutButton != null)
+            {
+                _zoomOutButton.clicked += () => Zoom(-ZoomStep, null);
+            }
+
+            if (_zoomResetButton != null)
+            {
+                _zoomResetButton.clicked += ResetView;
+            }
+
+            UpdateZoomLevelLabel();
 
             // Set up the template selector
             if (_templateSelectorButton != null)
@@ -749,12 +787,32 @@ namespace Calliope.Editor.SceneTemplateEditor
                 return;
             }
             
+            // Cache the zoom controls before clearing (defined in the UXML)
+            VisualElement zoomControls = _graphView.Q<VisualElement>("ZoomControlsContainer");
+            
             // Clear any existing content
             _graphView.Clear();
             
-            // Register mouse move handler for connection hover
+            // Create content for zoom/pan
+            _graphContent = new VisualElement();
+            _graphContent.name = "GraphContent";
+            _graphContent.AddToClassList("graph-content");
+            _graphContent.pickingMode = PickingMode.Ignore;
+            _graphView.Add(_graphContent);
+            
+            // Re-add zoom controls
+            if(zoomControls != null) _graphView.Add(zoomControls);
+            
+            // Apply the current zoom and pan
+            ApplyZoomAndPan();
+            
+            // Register mouse handlers
             _graphView.RegisterCallback<MouseMoveEvent>(OnGraphViewMouseMove);
             _graphView.RegisterCallback<MouseDownEvent>(OnGraphViewMouseDown, TrickleDown.TrickleDown);
+            _graphView.RegisterCallback<WheelEvent>(OnMouseWheel);
+            _graphView.RegisterCallback<MouseDownEvent>(OnPanStart);
+            _graphView.RegisterCallback<MouseMoveEvent>(OnPanMove);
+            _graphView.RegisterCallback<MouseUpEvent>(OnPanEnd);
             
             // Exit case - no template is selected
             if (!_currentTemplate)
@@ -807,7 +865,7 @@ namespace Calliope.Editor.SceneTemplateEditor
                 noBeatLabel.style.color = new Color(0.7f, 0.7f, 0.7f);
                 noBeatLabel.style.flexGrow = 1;
                 
-                _graphView.Add(noBeatLabel);
+                _graphContent.Add(noBeatLabel);
                 return;
             }
             
@@ -854,7 +912,7 @@ namespace Calliope.Editor.SceneTemplateEditor
                     beatNodeView.SetStartingBeat(true);
                 }
                 
-                _graphView.Add(beatNodeView);
+                _graphContent.Add(beatNodeView);
             }
         }
 
@@ -869,7 +927,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             if (!_currentTemplate) return;
             
             // Get all beat nodes
-            List<BeatNodeView> beatNodes = _graphView.Query<BeatNodeView>().ToList();
+            List<BeatNodeView> beatNodes = _graphContent.Query<BeatNodeView>().ToList();
             
             // Create a lookup dictionary for quick access
             Dictionary<string, BeatNodeView> nodeLookup = new Dictionary<string, BeatNodeView>();
@@ -914,7 +972,7 @@ namespace Calliope.Editor.SceneTemplateEditor
                         BeatConnectionView connection = new BeatConnectionView(fromNode, toNode, branch, this);
                         
                         // Add it to the graph (before nodes so connections draw behind them)
-                        _graphView.Insert(0, connection);
+                        _graphContent.Insert(0, connection);
                     }
                     else
                     {
@@ -951,7 +1009,7 @@ namespace Calliope.Editor.SceneTemplateEditor
         private void SelectNode(BeatNodeView selectedNode)
         {
             // Deselect all nodes
-            _graphView.Query<BeatNodeView>().ForEach(node => node.SetSelected(false));
+            _graphContent.Query<BeatNodeView>().ForEach(node => node.SetSelected(false));
             
             // Select the clicked node
             selectedNode.SetSelected(true);
@@ -968,7 +1026,7 @@ namespace Calliope.Editor.SceneTemplateEditor
         /// </summary>
         public void UpdateConnections()
         {
-            _graphView.Query<BeatConnectionView>().ForEach(connection => connection.UpdateConnection());
+            _graphContent.Query<BeatConnectionView>().ForEach(connection => connection.UpdateConnection());
         }
 
         /// <summary>
@@ -1303,7 +1361,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             if (!_currentTemplate) return;
             
             // Save the position for each node
-            _graphView.Query<BeatNodeView>().ForEach(nodeView =>
+            _graphContent.Query<BeatNodeView>().ForEach(nodeView =>
             {
                 NodePositionStorage.SavePosition(
                     _currentTemplate.ID,
@@ -1591,7 +1649,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             BeatConnectionView closestConnection = null;
             float closestDistance = float.MaxValue;
 
-            _graphView.Query<BeatConnectionView>().ForEach(connection =>
+            _graphContent.Query<BeatConnectionView>().ForEach(connection =>
             {
                 float distance = connection.GetDistanceToPoint(mousePos);
 
@@ -2597,7 +2655,7 @@ namespace Calliope.Editor.SceneTemplateEditor
 
             // Find the beat with the given ID
             BeatNodeView targetNode = null;
-            _graphView.Query<BeatNodeView>().ForEach(node =>
+            _graphContent.Query<BeatNodeView>().ForEach(node =>
             {
                 if (node.Beat && node.Beat.BeatID == beatID)
                 {
@@ -2836,12 +2894,12 @@ namespace Calliope.Editor.SceneTemplateEditor
             // If the search is empty, clear all filter states
             if (string.IsNullOrEmpty(_currentSearchText))
             {
-                _graphView.Query<BeatNodeView>().ForEach(node => node.ClearFilterState());
+                _graphContent.Query<BeatNodeView>().ForEach(node => node.ClearFilterState());
                 return;
             }
 
             // Apply filter to each node
-            _graphView.Query<BeatNodeView>().ForEach(node =>
+            _graphContent.Query<BeatNodeView>().ForEach(node =>
             {
                 // Exit case - if the node does not have a beat
                 if (!node.Beat)
@@ -2912,7 +2970,7 @@ namespace Calliope.Editor.SceneTemplateEditor
                     CreateBeat(beatID, displayName, nodePosition);
                     
                     // Find the newly created beat node and create a branch to it
-                    _graphView.Query<BeatNodeView>().ForEach(node =>
+                    _graphContent.Query<BeatNodeView>().ForEach(node =>
                     {
                         // Exit case - the node does not have a beat
                         if (!node.Beat) return;
@@ -2925,6 +2983,170 @@ namespace Calliope.Editor.SceneTemplateEditor
                 },
                 onValidateID: IsBeatIDUnique
             );
+        }
+
+        /// <summary>
+        /// Handles mouse wheel events for zooming in and out of the graph view;
+        /// adjusts the zoom level based on the scroll direction and the wheel delta,
+        /// and applies the zoom centered around the mouse cursor position;
+        /// prevents the event from propagating further up the event chain
+        /// </summary>
+        /// <param name="evt">The wheel event containing information about the scroll delta and mouse position</param>
+        private void OnMouseWheel(WheelEvent evt)
+        {
+            float zoomDelta = -evt.delta.y * ZoomStep * 0.1f;
+            Vector2 mousePos = evt.localMousePosition;
+            Zoom(zoomDelta, mousePos);
+            evt.StopPropagation();
+        }
+
+        /// <summary>
+        /// Initiates the panning action within the graph view when the left mouse button is pressed;
+        /// this method sets the panning state, updates the last mouse position to the current event's position,
+        /// and ensures the graph view captures the mouse input to track subsequent movements
+        /// </summary>
+        /// <param name="evt">The MouseDownEvent containing information about the mouse button press,
+        /// including the button pressed and the position of the mouse</param>
+        private void OnPanStart(MouseDownEvent evt)
+        {
+            // Exit case - the left mouse button is not pressed
+            if (evt.button != 0) return;
+
+            // Exit case - clicking on a node
+            BeatNodeView clickedNode = FindNodeAtPosition(evt.mousePosition);
+            if (clickedNode != null) return;
+            
+            // Exit case - clicking on a hovered connection
+            if(_hoveredConnection != null) return;
+            
+            // Exit case - clicking on zoom controls
+            VisualElement clicked = _graphView.panel.Pick(evt.mousePosition);
+            if (clicked != null)
+            {
+                VisualElement current = clicked;
+                while (current != null)
+                {
+                    if (current.name == "ZoomControlsContainer") return;
+                    current = current.parent;
+                }
+            }
+            
+            _isPanning = true;
+            _lastMousePosition = evt.mousePosition;
+            _graphView.CaptureMouse();
+            evt.StopPropagation();
+        }
+
+        /// <summary>
+        /// Handles the mouse move event during a pan operation in the graph view;
+        /// updates the pan offset based on the mouse movement delta, updates the last mouse position,
+        /// and re-applies the zoom and pan transformation to the graph content
+        /// </summary>
+        /// <param name="evt">The mouse move event containing information about the current mouse position</param>
+        private void OnPanMove(MouseMoveEvent evt)
+        {
+            // Exit case - not panning
+            if (!_isPanning) return;
+
+            Vector2 delta = evt.mousePosition - _lastMousePosition;
+            _panOffset += delta;
+            _lastMousePosition = evt.mousePosition;
+
+            ApplyZoomAndPan();
+            evt.StopPropagation();
+        }
+
+        /// <summary>
+        /// Handles the event triggered when a pan gesture ends within the graph view;
+        /// this method stops the panning operation, releases the mouse capture,
+        /// and prevents further propagation of the event
+        /// </summary>
+        /// <param name="evt">The mouse event data containing information about the button and mouse</param>
+        private void OnPanEnd(MouseUpEvent evt)
+        {
+            // Exit case - not the left mouse button
+            if(evt.button != 0) return;
+            
+            // Exit case - not panning
+            if(!_isPanning) return;
+            
+            _isPanning = false;
+            _graphView.ReleaseMouse();
+            evt.StopPropagation();
+        }
+
+        /// <summary>
+        /// Adjusts the zoom level of the editor window and optionally repositions the view
+        /// to zoom towards a specified focal point
+        /// </summary>
+        /// <param name="delta">The amount to change the current zoom level, positive to zoom in and negative to zoom out</param>
+        /// <param name="centerPoint">An optional focal point in local coordinates; if specified, the view will pan to maintain focus on this point during zoom</param>
+        private void Zoom(float delta, Vector2? centerPoint)
+        {
+            float oldZoom = _zoomLevel;
+            _zoomLevel = Mathf.Clamp(_zoomLevel + delta, MinZoom, MaxZoom);
+            
+            // If there's a center point, adjust pan to zoom toward that point
+            if(centerPoint.HasValue && Mathf.Abs(_zoomLevel - oldZoom) > 0.001f) 
+            {
+                float zoomRatio = _zoomLevel / oldZoom;
+                Vector2 pointInContent = (centerPoint.Value - _panOffset) / oldZoom;
+                _panOffset = centerPoint.Value - (pointInContent * _zoomLevel);
+            }
+            
+            ApplyZoomAndPan();
+            UpdateZoomLevelLabel();
+        }
+
+        /// <summary>
+        /// Resets the editor view to its default state by restoring the zoom level to the original value
+        /// and centering the pan offset; updates the UI to reflect the reset zoom level
+        /// </summary>
+        private void ResetView()
+        {
+            _zoomLevel = 1f;
+            _panOffset = Vector2.zero;
+            ApplyZoomAndPan();
+            UpdateZoomLevelLabel();
+        }
+
+        /// <summary>
+        /// Adjusts the visual representation of the graph content by applying current zoom and pan settings;
+        /// Updates the translation and scale transformations of the graph content element to reflect the current
+        /// pan offset and zoom level; prevents further processing if the graph content element is not initialized
+        /// </summary>
+        private void ApplyZoomAndPan()
+        {
+            // Exit case - the graph content does not exist
+            if (_graphContent == null) return;
+            
+            // Apply the translation
+            _graphContent.style.translate = new Translate(_panOffset.x, _panOffset.y);
+            
+            // Apply the zoom
+            _graphContent.style.scale = new Scale(new Vector3(_zoomLevel, _zoomLevel, 1f));
+        }
+
+        /// <summary>
+        /// Updates the zoom level label by calculating the current zoom level percentage,
+        /// converting it to a string representation, and assigning it to the text property
+        /// of the label UI element if it exists; ignores the operation if the label is null
+        /// </summary>
+        private void UpdateZoomLevelLabel()
+        {
+            // Exit case - the zoom level label does not exist
+            if (_zoomLevelLabel == null) return;
+            
+            // Get the percentage
+            int percentage = Mathf.RoundToInt(_zoomLevel * 100f);
+            
+            // Construct the label
+            StringBuilder labelBuilder = new StringBuilder();
+            labelBuilder.Append(percentage);
+            labelBuilder.Append("%");
+
+            // Set the label
+            _zoomLevelLabel.text = labelBuilder.ToString();
         }
     }
 }

@@ -45,8 +45,8 @@ namespace Calliope.Editor.SceneTemplateEditor
             style.position = Position.Absolute;
             style.left = 0;
             style.top = 0;
-            style.right = 0;
-            style.bottom = 0;
+            style.width = 10000;
+            style.height = 10000;
             
             // Set picking mode so it doesn't interfere with node clicks
             pickingMode = PickingMode.Position;
