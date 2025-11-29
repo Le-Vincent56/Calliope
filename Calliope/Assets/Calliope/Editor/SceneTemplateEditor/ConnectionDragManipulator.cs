@@ -134,7 +134,15 @@ namespace Calliope.Editor.SceneTemplateEditor
             
             // Create a connection if a valid target was found
             if (targetNode != null && targetNode != _sourceNode)
+            {
                 _window.CreateBranch(_sourceNode, targetNode);
+            }
+            else if (targetNode == null)
+            {
+                // Dropped on an empty space - offer to create a new beat
+                Vector2 graphPosition = _window.GetGraphView().WorldToLocal(evt.mousePosition);
+                _window.ShowCreateBeatFromDrag(_sourceNode, graphPosition);
+            }
             
             evt.StopPropagation();
         }

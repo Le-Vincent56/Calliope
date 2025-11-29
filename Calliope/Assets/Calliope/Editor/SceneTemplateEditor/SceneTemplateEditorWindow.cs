@@ -2338,5 +2338,40 @@ namespace Calliope.Editor.SceneTemplateEditor
 
             return false;
         }
+
+        /// <summary>
+        /// Displays a dialog for creating a new SceneBeatSO asset when a drag action is performed and dropped onto an empty space;
+        /// if the user confirms the creation, the method generates a new beat at the specified position, validates its ID,
+        /// connects it to the source node, and updates the graph view
+        /// </summary>
+        /// <param name="sourceNode">The originating BeatNodeView from which the drag action began, representing the source of the connection</param>
+        /// <param name="nodePosition">The position in the graph view where the new beat should be created</param>
+        public void ShowCreateBeatFromDrag(BeatNodeView sourceNode, Vector2 nodePosition)
+        {
+            // Exit case - if the template or source node is null, or if the source node does not have a Beat
+            if (!_currentTemplate || sourceNode == null || !sourceNode.Beat) return;
+            
+            // Show the beat creation dialog
+            BeatCreationDialog.Show(
+                onCreate: (beatID, displayName) =>
+                {
+                    // Create the new beat at the drop position
+                    CreateBeat(beatID, displayName, nodePosition);
+                    
+                    // Find the newly created beat node and create a branch to it
+                    _graphView.Query<BeatNodeView>().ForEach(node =>
+                    {
+                        // Exit case - the node does not have a beat
+                        if (!node.Beat) return;
+
+                        // Exit case - the beat IDs are mismatching
+                        if (node.Beat.BeatID != beatID) return;
+
+                        CreateBranch(sourceNode, node);
+                    });
+                },
+                onValidateID: IsBeatIDUnique
+            );
+        }
     }
 }

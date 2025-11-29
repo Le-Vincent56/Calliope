@@ -50,8 +50,9 @@ MonoBehaviour:
   speakerRoleID: 
   targetRoleID: 
   variationSet: {fileID: 0}
-  isEndBeat: 1
-  branches: []
+  isEndBeat: 0
+  branches:
+  - {fileID: 303650384130062147}
   defaultNextBeatID: 
 --- !u!114 &-195412316243967431
 MonoBehaviour:
@@ -88,6 +89,40 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6fd42fa02afa3374a804a0de90f02e36, type: 2}
   - {fileID: -8040068832400263007}
   - {fileID: -1802971215561625522}
+  - {fileID: 6337387275652470086}
   startingBeatID: greeting
   description: A simple scene where a character greets the player in a tavern
   tags: []
+--- !u!114 &303650384130062147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_beat_3_to_beat_4
+  m_EditorClassIdentifier: 
+  nextBeatID: beat_4
+  conditions: []
+--- !u!114 &6337387275652470086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: beat_4
+  m_EditorClassIdentifier: 
+  beatID: beat_4
+  speakerRoleID: 
+  targetRoleID: 
+  variationSet: {fileID: 0}
+  isEndBeat: 1
+  branches: []
+  defaultNextBeatID: 
