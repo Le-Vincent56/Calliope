@@ -152,5 +152,15 @@ namespace Calliope.Editor.SceneTemplateEditor
             style.left = newPosition.x;
             style.top = newPosition.y;
         }
+
+        /// <summary>
+        /// Updates the visual styling of the beat node to indicate whether it is the starting beat
+        /// </summary>
+        /// <param name="isStarting">A boolean indicating whether the beat node should be marked as the starting beat (true) or not (false)</param>
+        public void SetStartingBeat(bool isStarting)
+        {
+            if (isStarting) AddToClassList("starting-beat");
+            else RemoveFromClassList("starting-beat");
+        }
     }
 }

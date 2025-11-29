@@ -316,9 +316,27 @@ namespace Calliope.Editor.SceneTemplateEditor
             variationDropdown.Value = beat.VariationSetID ?? "";
             _inspectorContent.Add(variationDropdown);
             
+            bool isCurrentlyStarting = !string.IsNullOrEmpty(_currentTemplate.StartingBeatID) && _currentTemplate.StartingBeatID == beat.BeatID;
+            if (!isCurrentlyStarting)
+            {
+                Button setStartingButton = new Button(() => SetAsStartingBeat(beat, nodeView));
+                setStartingButton.text = "Set as Starting Beat";
+                setStartingButton.style.marginTop = 12;
+                setStartingButton.style.backgroundColor = new Color(0.3f, 0.5f, 0.3f);
+                _inspectorContent.Add(setStartingButton);
+            }
+            else
+            {
+                Label startingLabel = new Label("✓ This is the Starting Beat");
+                startingLabel.style.marginTop = 12;
+                startingLabel.style.color = new Color(0.5f, 0.8f, 0.5f);
+                startingLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+                _inspectorContent.Add(startingLabel);
+            }
+            
             // Spacer
             VisualElement spacer = new VisualElement();
-            spacer.style.height = 16;
+            spacer.style.height = 24;
             _inspectorContent.Add(spacer);
             
             // Create the branch editor section
@@ -326,7 +344,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             
             // Spacer before delete
             VisualElement spacer2 = new VisualElement();
-            spacer2.style.height = 16;
+            spacer2.style.height = 24;
             _inspectorContent.Add(spacer2);
             
             // Delete button
@@ -532,6 +550,36 @@ namespace Calliope.Editor.SceneTemplateEditor
                     onVariationSetCreated?.Invoke(fieldValues["id"]);
                 }
             );
+        }
+
+        /// <summary>
+        /// Sets the specified SceneBeatSO instance as the starting beat for the currently loaded SceneTemplateSO;
+        /// updates the starting beat property, saves the asset changes, and refreshes the editor's visual state
+        /// </summary>
+        /// <param name="beat">The SceneBeatSO instance to be set as the starting beat</param>
+        /// <param name="nodeView">The BeatNodeView instance representing the visual node associated with the beat</param>
+        private void SetAsStartingBeat(SceneBeatSO beat, BeatNodeView nodeView)
+        {
+            // Exit case - no template or beat
+            if (!_currentTemplate || !beat) return;
+
+            SerializedObject templateSerialized = new SerializedObject(_currentTemplate);
+            SerializedProperty startingBeatProperty = templateSerialized.FindProperty("startingBeatID");
+
+            // Set the property value
+            if (startingBeatProperty != null)
+            {
+                startingBeatProperty.stringValue = beat.BeatID;
+                templateSerialized.ApplyModifiedProperties();
+            }
+            
+            // Save the asset
+            EditorUtility.SetDirty(_currentTemplate);
+            AssetDatabase.SaveAssets();
+            
+            // Refresh the view
+            InitializeGraphView();
+            ShowBeatInspector(nodeView);
         }
 
         /// <summary>
@@ -767,9 +815,15 @@ namespace Calliope.Editor.SceneTemplateEditor
                 // Add the click handler for selection
                 beatNodeView.RegisterCallback<MouseDownEvent>(evt => OnBeatNodeClicked(beatNodeView, evt));
                 
-                // Add connection drag manipulator to output port
+                // Add connection drag manipulator to the output port
                 beatNodeView.OutputPort?.AddManipulator(new ConnectionDragManipulator(beatNodeView, this));
 
+                // Mark as starting beat, if applicable
+                if (!string.IsNullOrEmpty(_currentTemplate.StartingBeatID) && beat.BeatID == _currentTemplate.StartingBeatID)
+                {
+                    beatNodeView.SetStartingBeat(true);
+                }
+                
                 _graphView.Add(beatNodeView);
             }
         }

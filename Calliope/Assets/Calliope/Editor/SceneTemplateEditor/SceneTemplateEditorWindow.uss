@@ -149,6 +149,27 @@ Label {
     background-color: rgb(80, 100, 150);
 }
 
+.starting-beat {
+    border-color: rgb(80, 180, 80);
+    border-width: 3px;
+}
+
+.starting-beat .node-header {
+    background-color: rgb(50, 100, 50);
+}
+
+.starting-beat-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    translate: -50% 0;
+    background-color: rgb(80, 180, 80);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 10px;
+}
+
 .node-port {
     width: 16px;
     height: 16px;
