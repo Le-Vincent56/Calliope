@@ -737,6 +737,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             
             // Register mouse move handler for connection hover
             _graphView.RegisterCallback<MouseMoveEvent>(OnGraphViewMouseMove);
+            _graphView.RegisterCallback<MouseDownEvent>(OnGraphViewMouseDown);
             
             // Exit case - no template is selected
             if (!_currentTemplate)
@@ -1065,6 +1066,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             _currentTemplate = template;
             UpdateTemplateSelectorDisplay();
             InitializeGraphView();
+            ShowBeatInspector(null);
         }
 
         /// <summary>
@@ -1453,6 +1455,11 @@ namespace Calliope.Editor.SceneTemplateEditor
             InitializeGraphView();
         }
 
+        /// <summary>
+        /// Handles the mouse move event within the graph view; identifies the connection closest to the mouse position,
+        /// updates the hover state for the relevant connection, and ensures only one connection is marked as hovered at a time
+        /// </summary>
+        /// <param name="evt">The MouseMoveEvent triggered by the user's cursor movement within the graph view</param>
         private void OnGraphViewMouseMove(MouseMoveEvent evt)
         {
             Vector2 mousePos = evt.localMousePosition;
@@ -1482,9 +1489,37 @@ namespace Calliope.Editor.SceneTemplateEditor
             _hoveredConnection?.SetHovered(true);
         }
 
+        /// <summary>
+        /// Handles the mouse down event on the graph view;
+        /// displays a context menu for deleting a connection if the right mouse button is clicked
+        /// while a connection is hovered over
+        /// </summary>
+        /// <param name="evt">The MouseDownEvent containing information about the mouse click</param>
+        private void OnGraphViewMouseDown(MouseDownEvent evt)
+        {
+            // Exit case - not the right mouse button
+            if (evt.button != 1) return;
+            
+            // Exit case - there's no hovered connection
+            if(_hoveredConnection == null) return;
+
+            GenericMenu menu = new GenericMenu();
+            
+            BeatConnectionView connection = _hoveredConnection;
+            menu.AddItem(
+                new GUIContent("Delete Connection"), 
+                false, 
+                () => DeleteBranch(connection.FromNode, connection.ToNode, connection.Branch)
+            );
+
+            menu.ShowAsContext();
+            evt.StopPropagation();
+        }
 
         /// <summary>
-        /// 
+        /// Validates the currently selected SceneTemplateSO instance by checking for critical issues such as missing beats,
+        /// invalid properties, and improperly configured branches; logs errors and warnings, updates the validation section
+        /// of the UI with detailed messages, and provides an overall summary of the validation results
         /// </summary>
         private void ValidateScene()
         {

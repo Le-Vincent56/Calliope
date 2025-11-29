@@ -53,9 +53,6 @@ namespace Calliope.Editor.SceneTemplateEditor
             
             // Register for custom drawing
             generateVisualContent += OnGenerateVisualContent;
-
-            // Register right-click handler for delete
-            RegisterCallback<MouseDownEvent>(OnMouseDown);
         }
 
         /// <summary>
@@ -197,24 +194,6 @@ namespace Calliope.Editor.SceneTemplateEditor
         {
             MarkDirtyRepaint();
             panel?.visualTree.MarkDirtyRepaint();
-        }
-
-        /// <summary>
-        /// Handles the mouse down event when interacting with the visual element,
-        /// allowing for the display of a context menu on right-click
-        /// </summary>
-        /// <param name="evt">The mouse down event data containing information such as the pressed button and pointer position</param>
-        private void OnMouseDown(MouseDownEvent evt)
-        {
-            // Exit case - not the right mouse button
-            if (evt.button != 1) return;
-            
-            // Show context menu
-            UnityEditor.GenericMenu menu = new UnityEditor.GenericMenu();
-            menu.AddItem(new GUIContent("Delete Connection"), false, OnDeleteConnection);
-            menu.ShowAsContext();
-            
-            evt.StopPropagation();
         }
 
         /// <summary>
