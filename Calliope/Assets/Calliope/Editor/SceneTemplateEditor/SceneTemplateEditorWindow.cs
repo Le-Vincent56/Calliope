@@ -661,9 +661,44 @@ namespace Calliope.Editor.SceneTemplateEditor
         /// <param name="newValue">The new value to set for the specified property</param>
         private void OnBeatPropertyChanged(SceneBeatSO beat, string propertyName, string newValue)
         {
-            // Get the property value
             SerializedObject serializedObject = new SerializedObject(beat);
-            SerializedProperty property = serializedObject.FindProperty(propertyName);
+            
+            // Handle VariationSetID specially - it maps to a VariationSetSO object reference
+            if (propertyName == "VariationSetID")
+            {
+                SerializedProperty variationSetProperty = serializedObject.FindProperty("variationSet");
+
+                // Exit case - no variation set property found
+                if (variationSetProperty == null) return;
+                
+                // Find the VariationSetSO asset by ID
+                VariationSetSO variationSetAsset = null;
+                if (!string.IsNullOrEmpty(newValue))
+                {
+                    List<VariationSetSO> variationSets = AssetCreator.FindAllAssets<VariationSetSO>();
+                    for (int i = 0; i < variationSets.Count; i++)
+                    {
+                        // Skip if the variation set does not exist or its ID does not match the specified value
+                        if (!variationSets[i] || variationSets[i].ID != newValue) continue;
+                        
+                        variationSetAsset = variationSets[i];
+                        break;
+                    }
+                }
+                
+                // Set the property value
+                variationSetProperty.objectReferenceValue = variationSetAsset;
+                serializedObject.ApplyModifiedProperties();
+
+                // Save the asset
+                EditorUtility.SetDirty(beat);
+                AssetDatabase.SaveAssets();
+                InitializeGraphView();
+            }
+            
+            // Get the property value
+            SerializedProperty property =
+                serializedObject.FindProperty(propertyName);
 
             // Exit case - the property doesn't exist
             if (property == null)
@@ -674,21 +709,86 @@ namespace Calliope.Editor.SceneTemplateEditor
                 warningBuilder.Append("' on beat '");
                 warningBuilder.Append(beat.BeatID);
                 warningBuilder.Append("'");
-                
+
                 Debug.LogWarning(warningBuilder.ToString());
                 return;
             }
-            
+
             // Set the property value
             property.stringValue = newValue;
+
+            // Automatically add roles to the template
+            if (propertyName == "speakerRoleID" || propertyName == "targetRoleID")
+                AddRoleToTemplateIfMissing(newValue);
+            
             serializedObject.ApplyModifiedProperties();
-                
+
             // Mark the editor as dirty and save assets
             EditorUtility.SetDirty(beat);
             AssetDatabase.SaveAssets();
-                
+
             // Refresh the node view
             InitializeGraphView();
+        }
+
+        /// <summary>
+        /// Ensures that a role specified by its unique identifier is included in the current scene template;
+        /// if the role is not already present, it searches for the corresponding SceneRoleSO asset,
+        /// adds it to the template, and persists the changes to the asset database
+        /// </summary>
+        /// <param name="roleID">The unique identifier of the role to be added to the scene template</param>
+        private void AddRoleToTemplateIfMissing(string roleID)
+        {
+            // Exit case - no template or empty role ID
+            if (!_currentTemplate || string.IsNullOrEmpty(roleID)) return;
+            
+            // Check if the role is already in the template
+            IReadOnlyList<ISceneRole> existingRoles = _currentTemplate.Roles;
+            if (existingRoles != null)
+            {
+                for (int i = 0; i < existingRoles.Count; i++)
+                {
+                    // Skip if the role does not exist or its ID does not match the specified value
+                    if (existingRoles[i] == null || existingRoles[i].RoleID != roleID)
+                        continue;
+
+                    // Exit case - the role already exists in the template
+                    return;
+                }
+            }
+            
+            // Find the SceneRoleSO asset by ID
+            SceneRoleSO roleAsset = null;
+            List<SceneRoleSO> allRoles = AssetCreator.FindAllAssets<SceneRoleSO>();
+            for (int i = 0; i < allRoles.Count; i++)
+            {
+                // Skip if the role does not exist or its ID does not match the specified value
+                if (!allRoles[i] || allRoles[i].RoleID != roleID) continue;
+                
+                roleAsset = allRoles[i];
+                break;
+            }
+            
+            // Exit case - no role asset found
+            if (!roleAsset) return;
+            
+            // Add the role to the template's roles array
+            SerializedObject templateSerialized = new SerializedObject(_currentTemplate);
+            SerializedProperty rolesProperty = templateSerialized.FindProperty("roles");
+
+            // Exit case - the roles property does not exist on the template
+            if (rolesProperty == null) return;
+            
+            // Expand array and add the new role
+            int newIndex = rolesProperty.arraySize;
+            rolesProperty.InsertArrayElementAtIndex(newIndex);
+            SerializedProperty newElement = rolesProperty.GetArrayElementAtIndex(newIndex);
+            newElement.objectReferenceValue = roleAsset;
+            
+            // Save the asset
+            templateSerialized.ApplyModifiedProperties();
+            EditorUtility.SetDirty(_currentTemplate);
+            AssetDatabase.SaveAssets();
         }
 
         /// <summary>
@@ -1267,14 +1367,14 @@ namespace Calliope.Editor.SceneTemplateEditor
                     key: "id",
                     label: "Template ID",
                     required: true,
-                    autoGenerateFromName: true,
+                    autoGenerateFromName: false,
                     transformForID: fieldName => fieldName.ToLower().Replace(" ", "-")
                 ),
                 new FieldConfig(
                     key: "displayName",
                     label: "Display Name",
                     required: false,
-                    autoGenerateFromName: true,
+                    autoGenerateFromName: false,
                     transformForID: fieldName => fieldName
                 ),
                 new FieldConfig(

@@ -1,3 +1,4 @@
+using Calliope.Core.Interfaces;
 using Calliope.Infrastructure.Events;
 using Calliope.Unity.Components;
 using TMPro;
@@ -281,18 +282,38 @@ namespace Calliope.Samples.Presenters
                 return;
             }
 
+            Unity.Components.Calliope calliope = Unity.Components.Calliope.Instance;
+            
             // Exit cases - no Calliope instance or a scene is not active
-            if (!Unity.Components.Calliope.Instance) return;
-            if (!Unity.Components.Calliope.Instance.SceneOrchestrator.IsSceneActive()) return;
+            if (!calliope) return;
+            if (!calliope.SceneOrchestrator.IsSceneActive()) return;
             
             // Advance to the next beat
-            bool advanced = Unity.Components.Calliope.Instance.SceneOrchestrator.AdvanceToNextBeat();
+            bool advanced = calliope.SceneOrchestrator.AdvanceToNextBeat();
 
-            // Exit case - if a beat was successfully advanced to
-            if (advanced) return;
+            // Exit case - there are no more beats
+            if (!advanced)
+            {
+                Hide();
+                return;
+            }
+            
+            // Present the new beat
+            ISceneBeat beat = calliope.SceneOrchestrator.GetCurrentBeat();
+            ICharacter speaker = calliope.SceneOrchestrator.GetCharacterForRole(beat.SpeakerRoleID);
+            ICharacter target = !string.IsNullOrEmpty(beat.TargetRoleID)
+                ? calliope.SceneOrchestrator.GetCharacterForRole(beat.TargetRoleID)
+                : null;
 
-            // Otherwise, there is nothing left to show in the scene, so hide the presenter
-            Hide();
+            IVariationSet variationSet = calliope.VariationSetRepository.GetByID(beat.VariationSetID);
+            
+            // Build the line
+            calliope.DialogueLineBuilder.BuildLine(
+                variationSet.Variations, 
+                speaker, 
+                target,
+                applyRelationshipModifiers: true
+            );
         }
     }
 }

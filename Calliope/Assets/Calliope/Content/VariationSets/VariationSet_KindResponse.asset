@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_KindResponse
+  m_EditorClassIdentifier: 
+  id: kind-response
+  displayName: Kind Response
+  variations:
+  - {fileID: 11400000, guid: 4b4d1f3bc88d92b24b2df5c3d50d9cee, type: 2}
+  - {fileID: 11400000, guid: 23a63ee5d7c04bd8b84d20de43c1d6f9, type: 2}
+  - {fileID: 11400000, guid: 82ef2b91137920e36870a83eac027f38, type: 2}
+  - {fileID: 11400000, guid: 7ff3c7a255a2858ff9e23a2ff7b373d1, type: 2}
+  description: 
+  tags: []

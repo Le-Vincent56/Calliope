@@ -9,14 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 451256f7760843bb9de55f7c09f8f3ea, type: 3}
-  m_Name: Scene_CampfireDisagreement
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_KindResponse_Neutral
   m_EditorClassIdentifier: 
-  id: scene_campfiredisagreement
-  displayName: Scene_CampfireDisagreement
-  triggerType: 0
-  roles: []
-  beats: []
-  startingBeatID: 
-  description: 
+  id: kind-response-kind
+  text: '"We should try to see their perspective."'
+  traitAffinities: []
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
   tags: []

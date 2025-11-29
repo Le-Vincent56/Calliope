@@ -33,11 +33,47 @@ MonoBehaviour:
     m_SerializedLabels:
     - Trait
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 27d2d07601b5125a295581326f77637e
+    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_Question.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 592be4f2582fb6c1badc2815753e0d77
+    m_Address: Assets/Calliope/Content/SceneTemplates/Scene_CampfireDiscussion.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Scene
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 63f82e78ccb44c311b617d71a0375eee
     m_Address: Assets/Calliope/Samples/DemoContent/Characters/Character_Sera.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6cf4765a0c2f94762b6cffbe67640e1a
+    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_Opening.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 86049a4ea702f88a49642d595386315e
+    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_BraveResponse.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a2759412c49e6381ca300b1805727288
+    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_CynicalResponse.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a3836a4014d570c2b8198e7ecfe9abd5
+    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_KindResponse.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b2babc7d31354b75bb072fe7a8d7e4ed
     m_Address: Assets/Calliope/Samples/DemoContent/VariationSets/VariationSet_TavernGreeting.asset
@@ -50,6 +86,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce4b2ff785e4844a2be454d5c6d565c7
+    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_End.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ecf49e9c5a6bf46b693246b9eb947bd0
     m_Address: Assets/Calliope/Samples/DemoContent/Characters/Character_Aldric.asset
