@@ -30,6 +30,10 @@ namespace Calliope.Editor.SceneTemplateEditor
         private BeatNodeView _selectedNode;
         private Button _templateSelectorButton;
         private Label _templateSelectorText;
+        private VisualElement _recentTemplatesContainer;
+        private VisualElement _recentTemplateButtons;
+        private const string RecentTemplatesPrefKey = "Calliope_RecentTemplates";
+        private const int MaxRecentTemplates = 5;
         private VisualElement _validationSection;
         private Button _validationButton;
         private BeatConnectionView _hoveredConnection;
@@ -91,6 +95,8 @@ namespace Calliope.Editor.SceneTemplateEditor
             _graphView = root.Q<VisualElement>("GraphView");
             _templateSelectorButton = root.Q<Button>("TemplateSelectorButton");
             _templateSelectorText = root.Q<Label>("TemplateSelectorText");
+            _recentTemplatesContainer = root.Q<VisualElement>("RecentTemplatesContainer");
+            _recentTemplateButtons = root.Q<VisualElement>("RecentTemplateButtons");
             _createBeatButton = root.Q<Button>("CreateBeatButton");
             _cleanupButton = root.Q<Button>("CleanupButton");
             _inspectorContent = root.Q<VisualElement>("InspectorContent");
@@ -133,6 +139,9 @@ namespace Calliope.Editor.SceneTemplateEditor
                 UpdateTemplateSelectorDisplay();
             }
             
+            // Update recent templates
+            UpdateRecentTemplatesUI();
+            
             // Initialize the graph view
             InitializeGraphView();
         }
@@ -158,10 +167,18 @@ namespace Calliope.Editor.SceneTemplateEditor
             );
         }
 
+        /// <summary>
+        /// Creates a new SceneBeatSO asset with the given identifier and display name;
+        /// assigns it to the currently selected SceneTemplateSO asset, optionally saves its position in the graph view,
+        /// and updates the template and associated assets accordingly
+        /// </summary>
+        /// <param name="beatID">The unique identifier for the new beat</param>
+        /// <param name="displayName">The display name for the new beat; if null or empty, the beat ID is used as the name</param>
+        /// <param name="nodePosition">The optional position of the new beat in the graph
         private void CreateBeat(string beatID, string displayName, Vector2? nodePosition)
         {
             // Exit case - no template selected
-            if(!_currentTemplate) return;
+            if (!_currentTemplate) return;
             
             // Create a new SceneBeatSO asset
             SceneBeatSO newBeat = CreateInstance<SceneBeatSO>();
@@ -1064,9 +1081,115 @@ namespace Calliope.Editor.SceneTemplateEditor
         private void SetCurrentTemplate(SceneTemplateSO template)
         {
             _currentTemplate = template;
+            
+            // Track in recent templates
+            if (template != null) AddToRecentTemplates(template);
+            
             UpdateTemplateSelectorDisplay();
             InitializeGraphView();
             ShowBeatInspector(null);
+        }
+
+        /// <summary>
+        /// Adds the provided SceneTemplateSO asset to the list of recently used scene templates,
+        /// ensuring it appears at the front of the list and maintaining a maximum limit of stored templates;
+        /// updates the stored list in EditorPrefs for persistent access across editor sessions
+        /// </summary>
+        /// <param name="template">The SceneTemplateSO asset to add to the list of recent templates</param>
+        private void AddToRecentTemplates(SceneTemplateSO template)
+        {
+            string templatePath = AssetDatabase.GetAssetPath(template);
+            
+            // Exit case - the template path is empty
+            if (string.IsNullOrEmpty(templatePath)) return;
+            
+            // Get current recent list
+            List<string> recentPaths = GetRecentTemplatePaths();
+            
+            // Remove if already exists (we'll re-add at the front)
+            recentPaths.Remove(templatePath);
+            
+            // Add to the front
+            recentPaths.Insert(0, templatePath);
+            
+            // Trim to max size
+            while (recentPaths.Count > MaxRecentTemplates)
+            {
+                recentPaths.RemoveAt(recentPaths.Count - 1);
+            }
+            
+            // Save
+            string joined = string.Join("|", recentPaths);
+            EditorPrefs.SetString(RecentTemplatesPrefKey, joined);
+        }
+
+        /// <summary>
+        /// Retrieves a list of recent SceneTemplateSO asset paths stored in the editor preferences
+        /// the paths are stored as a single string, with individual paths separated by a pipe ('|') character;
+        /// returns an empty list if no recent paths are found or if the data is empty
+        /// </summary>
+        /// <returns>A list of strings representing the file paths of recently accessed SceneTemplateSO assets</returns>
+        private List<string> GetRecentTemplatePaths()
+        {
+            string saved = EditorPrefs.GetString(RecentTemplatesPrefKey, "");
+
+            // Exit case - no saved templates
+            if (string.IsNullOrEmpty(saved)) return new List<string>();
+            
+            return new List<string>(saved.Split('|'));
+        }
+
+        /// <summary>
+        /// Updates the Recent Templates section of the Scene Template Editor window.
+        /// Clears the existing list of recent template buttons, retrieves the latest
+        /// recent templates, and updates the UI accordingly; hides the container if no
+        /// recent templates are found and generates buttons for each available recent
+        /// template, linking them to respective templates for selection
+        /// </summary>
+        private void UpdateRecentTemplatesUI()
+        {
+            // Exit case - no template selector button
+            if (_recentTemplateButtons == null) return;
+            
+            // Clear the recent templates
+            _recentTemplateButtons.Clear();
+
+            // Retrieve the recent templates
+            List<string> recentPaths = GetRecentTemplatePaths();
+            
+            // Hide the container if no recent templates
+            if (_recentTemplatesContainer != null)
+            {
+                _recentTemplatesContainer.style.display =
+                    recentPaths.Count > 0 
+                        ? DisplayStyle.Flex
+                        : DisplayStyle.None;
+            }
+
+            // Add the recent templates to the UI
+            for (int i = 0; i < recentPaths.Count; i++)
+            {
+                // Load the template
+                string path = recentPaths[i];
+                SceneTemplateSO template = AssetDatabase.LoadAssetAtPath<SceneTemplateSO>(path);
+                
+                // Skip if the template doesn't exist
+                if(!template) continue;
+                
+                Button recentButton = new Button(() => SetCurrentTemplate(template));
+                recentButton.text = template.name;
+                recentButton.tooltip = path;
+                
+                recentButton.AddToClassList("recent-template-button");
+                
+                // Highlight if this is the current template
+                if(_currentTemplate == template)
+                {
+                    recentButton.AddToClassList("recent-template-button-active");
+                }
+                
+                _recentTemplateButtons.Add(recentButton);
+            }
         }
 
         /// <summary>
@@ -1601,7 +1724,7 @@ namespace Calliope.Editor.SceneTemplateEditor
                 });
             }
             else {
-                menu.AddDisabledItem(new GUIContent("Set As Starting Beat (Already Starting)"));
+                menu.AddDisabledItem(new GUIContent("Set as Starting Beat (Already Starting)"));
             }
             
             menu.AddSeparator("");
