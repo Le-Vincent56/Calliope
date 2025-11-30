@@ -37,6 +37,13 @@ namespace Calliope.Editor.SceneTemplateEditor
             EditorPrefs.SetString(keyBuilder.ToString(), positionBuilder.ToString());
         }
 
+        /// <summary>
+        /// Loads the position of a node from persistent storage or returns the default position if no data is found
+        /// </summary>
+        /// <param name="templateID">The unique identifier of the template containing the node</param>
+        /// <param name="beatID">The unique identifier of the specific node within the template</param>
+        /// <param name="defaultPosition">The default position to return if the node's position has not been saved</param>
+        /// <returns>The position of the node as a 2D vector. Returns the default position if no saved position was found or if saved data is invalid</returns>
         public static Vector2 LoadPosition(string templateID, string beatID, Vector2 defaultPosition)
         {
             // Build the key
@@ -61,6 +68,28 @@ namespace Calliope.Editor.SceneTemplateEditor
             if (!float.TryParse(parts[1], out float y)) return defaultPosition;
             
             return new Vector2(x, y);
+        }
+
+        /// <summary>
+        /// Deletes the stored position of a node in the scene template editor from persistent storage
+        /// </summary>
+        /// <param name="templateID">The unique identifier of the template containing the node</param>
+        /// <param name="beatID">The unique identifier of the specific node within the template</param>
+        public static void DeletePosition(string templateID, string beatID)
+        {
+            // Build the key
+            StringBuilder keyBuilder = new StringBuilder();
+            keyBuilder.Append(PositionPrefix);
+            keyBuilder.Append(templateID);
+            keyBuilder.Append("_");
+            keyBuilder.Append(beatID);
+            string key = keyBuilder.ToString();
+            
+            // Exit case - the key does not exist in the EditorPrefs
+            if(!EditorPrefs.HasKey(key)) return;
+
+            // Delete the key
+            EditorPrefs.DeleteKey(key);
         }
     }
 }

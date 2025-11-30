@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Name: Scene_CampfireDiscussion
   m_EditorClassIdentifier: 
   id: campfire-discussion
-  displayName: Campfire Discussion
+  displayName: campfire-discussion
   triggerType: 0
   roles:
   - {fileID: 11400000, guid: d37cb3613b7ac2ef997c4d541e476bd4, type: 2}

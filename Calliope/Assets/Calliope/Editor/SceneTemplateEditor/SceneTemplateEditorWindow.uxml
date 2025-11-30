@@ -7,6 +7,7 @@
                     <ui:Label name="TemplateSelectorText" text="Select Template..." class="template-selector-text"/>
                     <ui:Label text="▼" class="template-selector-arrow"/>
                 </ui:Button>
+                <ui:Button name="RenameTemplateButton" text="Rename" class="toolbar-button" tooltip="Rename current template"/>
                 <ui:VisualElement name="RecentTemplatesContainer" class="recent-templates-container">
                     <ui:Label text="Recent:" class="recent-templates-label"/>
                     <ui:VisualElement name="RecentTemplateButtons" class="recent-template-buttons"/>

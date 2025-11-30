@@ -32,6 +32,7 @@ namespace Calliope.Editor.SceneTemplateEditor
         
         private Button _templateSelectorButton;
         private Label _templateSelectorText;
+        private Button _renameTemplateButton;
         private VisualElement _recentTemplatesContainer;
         private VisualElement _recentTemplateButtons;
         private const string RecentTemplatesPrefKey = "Calliope_RecentTemplates";
@@ -112,6 +113,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             _graphView = root.Q<VisualElement>("GraphView");
             _templateSelectorButton = root.Q<Button>("TemplateSelectorButton");
             _templateSelectorText = root.Q<Label>("TemplateSelectorText");
+            _renameTemplateButton = root.Q<Button>("RenameTemplateButton");
             _recentTemplatesContainer = root.Q<VisualElement>("RecentTemplatesContainer");
             _recentTemplateButtons = root.Q<VisualElement>("RecentTemplateButtons");
             _createBeatButton = root.Q<Button>("CreateBeatButton");
@@ -153,22 +155,32 @@ namespace Calliope.Editor.SceneTemplateEditor
                 _clearSearchButton.clicked += OnClearSearchClicked;
             }
             
+            // Set up the zoom in button
             if(_zoomInButton != null)
             {
                 _zoomInButton.clicked += () => Zoom(ZoomStep, null);
             }
 
+            // Set up the zoom out button
             if (_zoomOutButton != null)
             {
                 _zoomOutButton.clicked += () => Zoom(-ZoomStep, null);
             }
 
+            // Set up the reset zoom button
             if (_zoomResetButton != null)
             {
                 _zoomResetButton.clicked += ResetView;
             }
 
             UpdateZoomLevelLabel();
+            
+            // Set up rename template button
+            if(_renameTemplateButton != null) 
+            {
+                _renameTemplateButton.clicked += OnRenameTemplateClicked;
+                _renameTemplateButton.SetEnabled(false);
+            }
 
             // Set up the template selector
             if (_templateSelectorButton != null)
@@ -1227,6 +1239,9 @@ namespace Calliope.Editor.SceneTemplateEditor
                 _templateSelectorButton.RemoveFromClassList("template-selector-has-value");
                 _templateSelectorButton.AddToClassList("template-selector-no-value");
             }
+            
+            // Show the rename template button
+            _renameTemplateButton?.SetEnabled(_currentTemplate != null);
         }
 
         /// <summary>
@@ -3500,6 +3515,99 @@ namespace Calliope.Editor.SceneTemplateEditor
             container.Add(forbiddenTraitsField);
 
             return container;
+        }
+
+        /// <summary>
+        /// Handles the event triggered when the "Rename Template" button is clicked;
+        /// opens a dialog to rename the currently selected SceneTemplateSO asset;
+        /// updates the display name and identifier of the template based on the new name input;
+        /// saves the changes, ensures the asset is marked as dirty, and refreshes related UI
+        /// </summary>
+        private void OnRenameTemplateClicked() 
+        {
+            // Exit case - no template selected
+            if(!_currentTemplate) return;
+            
+            // Show a simple input dialog
+            string currentName = _currentTemplate.DisplayName ?? _currentTemplate.name;
+
+            RenameTemplateDialog.Show(currentName, (newDisplayName) =>
+            {
+                // Exit case - if the new display name is empty
+                if (string.IsNullOrEmpty(newDisplayName)) return;
+
+                // Calculate new ID
+                string oldID = _currentTemplate.ID;
+                string newID = newDisplayName.ToLower().Replace(" ", "-");
+                
+                // Migrate node positions before changing the ID
+                MigrateNodePositions(oldID, newID);
+                
+                SerializedObject serializedTemplate = new SerializedObject(_currentTemplate);
+
+                // Update display name
+                SerializedProperty displayNameProp = serializedTemplate.FindProperty("displayName");
+                if (displayNameProp != null)
+                {
+                    displayNameProp.stringValue = newDisplayName;
+                }
+
+                // Update ID (convert to lowercase with dashes)
+                SerializedProperty idProp = serializedTemplate.FindProperty("id");
+                if (idProp != null)
+                {
+                    idProp.stringValue = newDisplayName.ToLower().Replace(" ", "-");
+                }
+
+                serializedTemplate.ApplyModifiedProperties();
+
+                // Save the asset
+                EditorUtility.SetDirty(_currentTemplate);
+                AssetDatabase.SaveAssets();
+
+                // Update the display
+                UpdateTemplateSelectorDisplay();
+                UpdateRecentTemplatesUI();
+            });
+        }
+
+        /// <summary>
+        /// Migrates node positions associated with a specific SceneTemplate from one template ID to another;
+        /// updates the stored positions for all beats within the currently active SceneTemplate;
+        /// skips migration if the template IDs are identical, no template is selected, or no beats exist in the template
+        /// </summary>
+        /// <param name="oldTemplateID">The ID of the existing SceneTemplate from which positions are being migrated</param>
+        /// <param name="newTemplateID">The ID of the target SceneTemplate to which positions are being saved</param>
+        private void MigrateNodePositions(string oldTemplateID, string newTemplateID)
+        {
+            // Exit case - IDs are the same
+            if(oldTemplateID == newTemplateID) return;
+            
+            // Exit case - no template is selected
+            if(_currentTemplate) return;
+            
+            IReadOnlyDictionary<string, ISceneBeat> beats = _currentTemplate.Beats;
+            
+            // Exit case - no beats exist inside the template
+            if(beats == null) return;
+            
+            // Migrate each beat's position
+            foreach(KeyValuePair<string, ISceneBeat> kvp in beats) 
+            {
+                string beatID = kvp.Key;
+                
+                // Load the position with the old key
+                Vector2 nodePosition = NodePositionStorage.LoadPosition(oldTemplateID, beatID, Vector2.zero);
+                
+                // Skip if there was no saved position
+                if (nodePosition == Vector2.zero) continue;
+                
+                // Save with the new key
+                NodePositionStorage.SavePosition(newTemplateID, beatID, nodePosition);
+                
+                // Delete the old key
+                NodePositionStorage.DeletePosition(oldTemplateID, beatID);
+            }
         }
     }
 }
