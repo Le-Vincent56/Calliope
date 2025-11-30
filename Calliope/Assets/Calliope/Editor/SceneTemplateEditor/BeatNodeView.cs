@@ -21,6 +21,9 @@ namespace Calliope.Editor.SceneTemplateEditor
 
         private VisualElement _outputPort;
         private VisualElement _inputPort;
+
+        private VisualElement _warningIndicator;
+        private Label _warningCountLabel;
         
         public SceneBeatSO Beat => _beat;
         public Vector2 Position { get; set; }
@@ -74,7 +77,19 @@ namespace Calliope.Editor.SceneTemplateEditor
             _outputPort.AddToClassList("output-port");
             _header.Add(_outputPort);
             
+            // Add the warning indicator
+            _warningIndicator = new VisualElement();
+            _warningIndicator.AddToClassList("beat-node-warning-indicator");
+            _warningIndicator.style.display = DisplayStyle.None;
+
+            _warningCountLabel = new Label("!");
+            _warningCountLabel.AddToClassList("beat-node-warning-label");
+            _warningIndicator.Add(_warningCountLabel);
+            
+            _header.Add(_warningIndicator);
+            
             Add(_header);
+            
             
             // Body section (contains details)
             _body = new VisualElement();
@@ -193,6 +208,28 @@ namespace Calliope.Editor.SceneTemplateEditor
         {
             RemoveFromClassList("beat-node-filtered");
             RemoveFromClassList("beat-node-highlighted");
+        }
+
+        /// <summary>
+        /// Updates the warning state of the beat node based on the provided warning count and tooltip
+        /// </summary>
+        /// <param name="warningCount">The number of warnings to display; if greater than 0, the warning indicator is shown</param>
+        /// <param name="warningTooltip">A tooltip message describing the warning(s); if null or not provided, no tooltip is displayed</param>
+        public void SetWarningState(int warningCount, string warningTooltip = null)
+        {
+            if (warningCount > 0)
+            {
+                _warningIndicator.style.display = DisplayStyle.Flex;
+                _warningCountLabel.text = warningCount.ToString();
+                _warningIndicator.tooltip = warningTooltip ?? "";
+                AddToClassList("beat-node-has-warnings");
+            }
+            else
+            {
+                _warningIndicator.style.display = DisplayStyle.None;
+                _warningIndicator.tooltip = "";
+                RemoveFromClassList("beat-node-has-warnings");
+            }
         }
     }
 }

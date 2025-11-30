@@ -340,6 +340,36 @@ namespace Calliope.Editor.SceneTemplateEditor
             titleLabel.style.marginBottom = 12;
             _inspectorContent.Add(titleLabel);
             
+            // Display validation warnings
+            List<string> warnings = ValidateBeatReferences(beat);
+            if (warnings.Count > 0)
+            {
+                VisualElement warningBox = new VisualElement();
+                warningBox.style.backgroundColor = new Color(0.8f, 0.5f, 0f, 0.3f);
+                warningBox.style.borderLeftWidth = 3;
+                warningBox.style.borderLeftColor = new Color(0.8f, 0.5f, 0f);
+                warningBox.style.paddingLeft = 8;
+                warningBox.style.paddingRight = 8;
+                warningBox.style.paddingTop = 4;
+                warningBox.style.paddingBottom = 4;
+                warningBox.style.marginBottom = 8;
+
+                Label warningTitle = new Label("⚠ Missing References");
+                warningTitle.style.unityFontStyleAndWeight = FontStyle.Bold;
+                warningTitle.style.color = new Color(1f, 0.7f, 0.2f);
+                warningBox.Add(warningTitle);
+
+                for (int i = 0; i < warnings.Count; i++)
+                {
+                    Label warningLabel = new Label(warnings[i]);
+                    warningLabel.style.fontSize = 11;
+                    warningLabel.style.color = new Color(1f, 0.8f, 0.4f);
+                    warningBox.Add(warningLabel);
+                }
+
+                _inspectorContent.Add(warningBox);
+            }
+
             // Beat ID field
             TextField beatIDField = new TextField("Beat ID");
             beatIDField.value = beat.BeatID ?? "";
@@ -739,6 +769,12 @@ namespace Calliope.Editor.SceneTemplateEditor
 
             // Refresh the node view
             InitializeGraphView();
+
+            // Exit case - no selected node or beat
+            if (_selectedNode == null || _selectedNode.Beat != beat) return;
+            
+            // Refresh the beat inspector
+            ShowBeatInspector(_selectedNode);
         }
 
         /// <summary>
@@ -1009,6 +1045,14 @@ namespace Calliope.Editor.SceneTemplateEditor
                 
                 // Create the beat node view
                 BeatNodeView beatNodeView = new BeatNodeView(beat, nodePosition, this);
+                
+                // Validate the beat node
+                List<string> warnings = ValidateBeatReferences(beat);
+                if(warnings.Count > 0) 
+                {
+                    string tooltipText = string.Join("\n", warnings);
+                    beatNodeView.SetWarningState(warnings.Count, tooltipText);
+                }
                 
                 // Add the click handler for selection
                 beatNodeView.RegisterCallback<MouseDownEvent>(evt => OnBeatNodeClicked(beatNodeView, evt));
@@ -3608,6 +3652,152 @@ namespace Calliope.Editor.SceneTemplateEditor
                 // Delete the old key
                 NodePositionStorage.DeletePosition(oldTemplateID, beatID);
             }
+        }
+
+        /// <summary>
+        /// Validates the references of a given SceneBeatSO object based on its associated identifiers and connections;
+        /// this method checks if the beat references existing speaker roles, target roles, variation sets,
+        /// branch targets, and default next beats within the scene template
+        /// </summary>
+        /// <param name="beat">The SceneBeatSO object to validate</param>
+        /// <returns>A list of warning messages describing invalid or missing references in the provided beat</returns>
+        private List<string> ValidateBeatReferences(SceneBeatSO beat)
+        {
+            List<string> warnings = new List<string>();
+
+            // Exit case - if there is no beat to validate
+            if (!beat) return warnings;
+
+            // Cache available assets for efficiency
+            List<SceneRoleSO> allRoles = AssetCreator.FindAllAssets<SceneRoleSO>();
+            List<VariationSetSO> allVariationSets = AssetCreator.FindAllAssets<VariationSetSO>();
+
+            // Check speaker role
+            if (!string.IsNullOrEmpty(beat.SpeakerRoleID))
+            {
+                bool found = false;
+                for (int i = 0; i < allRoles.Count; i++)
+                {
+                    // Skip if the role doesn't exist or the role doesn't match the specified ID
+                    if (!allRoles[i] || allRoles[i].RoleID != beat.SpeakerRoleID) continue;
+                    
+                    found = true;
+                    break;
+                }
+                if (!found)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Speaker role '");
+                    sb.Append(beat.SpeakerRoleID);
+                    sb.Append("' not found");
+                    warnings.Add(sb.ToString());
+                }
+            }
+
+            // Check target role
+            if (!string.IsNullOrEmpty(beat.TargetRoleID))
+            {
+                bool found = false;
+                for (int i = 0; i < allRoles.Count; i++)
+                {
+                    // Skip if the role doesn't exist or the role doesn't match the specified ID
+                    if (!allRoles[i] || allRoles[i].RoleID != beat.TargetRoleID) continue;
+                    
+                    found = true;
+                    break;
+                }
+                if (!found)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Target role '");
+                    sb.Append(beat.TargetRoleID);
+                    sb.Append("' not found");
+                    warnings.Add(sb.ToString());
+                }
+            }
+
+            // Check variation set
+            if (!string.IsNullOrEmpty(beat.VariationSetID))
+            {
+                bool found = false;
+                for (int i = 0; i < allVariationSets.Count; i++)
+                {
+                    // Skip if the variation set doesn't exist or the variation set doesn't match the specified ID
+                    if (!allVariationSets[i] || allVariationSets[i].ID != beat.VariationSetID) continue;
+                    
+                    found = true;
+                    break;
+                }
+                if (!found)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Variation set '");
+                    sb.Append(beat.VariationSetID);
+                    sb.Append("' not found");
+                    warnings.Add(sb.ToString());
+                }
+            }
+            
+            // Check branch targets
+            if (beat.Branches != null)
+            {
+                IReadOnlyDictionary<string, ISceneBeat> templateBeats = _currentTemplate?.Beats;
+
+                for (int i = 0; i < beat.Branches.Count; i++)
+                {
+                    IBeatBranch branch = beat.Branches[i];
+                    
+                    // Skip if the branch doesn't exist
+                    if (branch == null) continue;
+
+                    string targetID = branch.NextBeatID;
+                    
+                    // Skip if the branch target is valid
+                    if (!string.IsNullOrEmpty(targetID) && templateBeats != null && templateBeats.ContainsKey(targetID)) 
+                        continue;
+                    
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Branch target '");
+                    sb.Append(targetID);
+                    sb.Append("' not found");
+                    warnings.Add(sb.ToString());
+                }
+            }
+
+            // Check default next beat
+            if (!string.IsNullOrEmpty(beat.DefaultNextBeatID) && !beat.IsEndBeat)
+            {
+                IReadOnlyDictionary<string, ISceneBeat> templateBeats = _currentTemplate?.Beats;
+        
+                // Skip if the template beats contains the next beat
+                if (templateBeats != null && templateBeats.ContainsKey(beat.DefaultNextBeatID)) return warnings;
+                
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Default next beat '");
+                sb.Append(beat.DefaultNextBeatID);
+                sb.Append("' not found");
+                warnings.Add(sb.ToString());
+            }
+
+            return warnings;
+        }
+        
+        // <summary>
+        /// Refresh the Scene Template Editor Window when asset changes are detected
+        /// </summary> 
+        public void OnExternalAssetChange() 
+        {
+            // Exit case - no template loaded
+            if(_currentTemplate) return;
+            
+            // Refresh the graph view
+            InitializeGraphView();
+            
+            // Exit case - no node is selected
+            if(_selectedNode == null) return;
+            
+            // Update the inspector
+            ShowBeatInspector(_selectedNode);      
         }
     }
 }
