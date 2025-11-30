@@ -70,7 +70,7 @@ namespace Calliope.Unity.Components
                 Debug.LogError("[BranchingTestStarter] Failed to start scene");
                 return;
             }
-
+            
             // Present first beat
             PresentCurrentBeat(calliope);
         }

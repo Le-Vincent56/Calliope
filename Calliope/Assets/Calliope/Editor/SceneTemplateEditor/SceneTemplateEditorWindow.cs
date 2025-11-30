@@ -336,36 +336,34 @@ namespace Calliope.Editor.SceneTemplateEditor
             _inspectorContent.Add(beatIDField);
             
             // Speaker role field
-            SearchableDropdown speakerDropdown = new SearchableDropdown(
+            VisualElement speakerField = CreateRoleFieldWithEdit(
                 label: "Speaker Role",
                 prefsKey: "SpeakerRole",
-                onGetItems: GetRoleDropdownItems,
+                currentValue: beat.SpeakerRoleID,
                 onValueChanged: (value) => OnBeatPropertyChanged(beat, "speakerRoleID", value),
-                allowCreateNew: true,
-                onCreateNew: (searchText) => CreateNewRole(searchText, (roleID) =>
+                onCreateNew: (roleID) => 
                 {
                     OnBeatPropertyChanged(beat, "speakerRoleID", roleID);
                     ShowBeatInspector(nodeView);
-                })
+                },
+                nodeView: nodeView
             );
-            speakerDropdown.Value = beat.SpeakerRoleID ?? "";
-            _inspectorContent.Add(speakerDropdown);
+            _inspectorContent.Add(speakerField);
             
             // Target role field
-            SearchableDropdown targetDropdown = new SearchableDropdown(
+            VisualElement targetField = CreateRoleFieldWithEdit(
                 label: "Target Role",
                 prefsKey: "TargetRole",
-                onGetItems: GetRoleDropdownItems,
+                currentValue: beat.TargetRoleID,
                 onValueChanged: (value) => OnBeatPropertyChanged(beat, "targetRoleID", value),
-                allowCreateNew: true,
-                onCreateNew: (searchText) => CreateNewRole(searchText, (roleID) =>
+                onCreateNew: (roleID) => 
                 {
                     OnBeatPropertyChanged(beat, "targetRoleID", roleID);
                     ShowBeatInspector(nodeView);
-                })
+                },
+                nodeView: nodeView
             );
-            targetDropdown.Value = beat.TargetRoleID ?? "";
-            _inspectorContent.Add(targetDropdown);
+            _inspectorContent.Add(targetField);
             
             // Variation Set field
             SearchableDropdown variationDropdown = new SearchableDropdown(
@@ -3247,6 +3245,261 @@ namespace Calliope.Editor.SceneTemplateEditor
 
             // Set the label
             _zoomLevelLabel.text = labelBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Creates a UI element that allows for selecting a role from a dropdown with an additional option to edit or create a new role;
+        /// the dropdown supports search functionality and is dynamically populated with available roles
+        /// </summary>
+        /// <param name="label">Label text displayed next to the dropdown menu</param>
+        /// <param name="prefsKey">Key used to persist user preferences related to the dropdown selection</param>
+        /// <param name="currentValue">The currently selected value in the dropdown</param>
+        /// <param name="onValueChanged">Callback triggered when the dropdown value changes</param>
+        /// <param name="onCreateNew">Callback triggered when a new role is created through the UI</param>
+        /// <param name="nodeView">The beat node context to which the dropdown is related</param>
+        /// <returns>A VisualElement containing the dropdown, an edit button, and optionally an inline role editor</returns>
+        private VisualElement CreateRoleFieldWithEdit(
+            string label,
+            string prefsKey,
+            string currentValue,
+            Action<string> onValueChanged,
+            Action<string> onCreateNew,
+            BeatNodeView nodeView
+        )
+        {
+            VisualElement container = new VisualElement();
+
+            // Row for dropdown + edit button
+            VisualElement row = new VisualElement();
+            row.style.flexDirection = FlexDirection.Row;
+            row.style.alignItems = Align.Center;
+
+            SearchableDropdown dropdown = new SearchableDropdown(
+                label: label,
+                prefsKey: prefsKey,
+                onGetItems: GetRoleDropdownItems,
+                onValueChanged: onValueChanged,
+                allowCreateNew: true,
+                onCreateNew: (searchText) => CreateNewRole(searchText, (roleID) =>
+                {
+                    onCreateNew?.Invoke(roleID);
+                })
+            );
+            dropdown.Value = currentValue ?? "";
+            dropdown.style.flexGrow = 1;
+            row.Add(dropdown);
+
+            // Edit button
+            Button editButton = new Button();
+            editButton.text = "Edit";
+            editButton.style.marginLeft = 4;
+            editButton.style.width = 40;
+            editButton.style.alignSelf = Align.FlexStart;
+            row.Add(editButton);
+
+            container.Add(row);
+
+            // Placeholder for inline editor
+            VisualElement editorContainer = new VisualElement();
+            container.Add(editorContainer);
+
+            // Track if editor is open
+            bool isEditorOpen = false;
+
+            editButton.clicked += () =>
+            {
+                if (isEditorOpen)
+                {
+                    // Close editor
+                    editorContainer.Clear();
+                    editButton.text = "Edit";
+                    isEditorOpen = false;
+                }
+                else
+                {
+                    // Open editor
+                    string roleID = dropdown.Value;
+                    if (!string.IsNullOrEmpty(roleID))
+                    {
+                        VisualElement editor = CreateInlineRoleEditor(roleID, () =>
+                        {
+                            editorContainer.Clear();
+                            editButton.text = "Edit";
+                            isEditorOpen = false;
+                            ShowBeatInspector(nodeView); // Refresh to show updated values
+                        });
+                        editorContainer.Add(editor);
+                        editButton.text = "Close";
+                        isEditorOpen = true;
+                    }
+                }
+            };
+
+            return container;
+        }
+        
+        /// <summary>
+        /// Creates an inline role editor for a specified role, providing the ability to make edits within the context of the associated scene template;
+        /// A callback action is invoked when the editor is closed
+        /// </summary>
+        /// <param name="roleID">The unique identifier of the role to be edited</param>
+        /// <param name="onClose">An action to be executed when the inline editor is closed</param>
+        /// <returns>A VisualElement instance representing the inline role editor UI</returns>
+        private VisualElement CreateInlineRoleEditor(string roleID, Action onClose)
+        {
+            // Find the role asset
+            SceneRoleSO roleAsset = null;
+            List<SceneRoleSO> allRoles = AssetCreator.FindAllAssets<SceneRoleSO>();
+            for (int i = 0; i < allRoles.Count; i++)
+            {
+                // Skip if the role doesn't exist or the role doesn't match the specified ID
+                if (!allRoles[i] || allRoles[i].RoleID != roleID) continue;
+                
+                roleAsset = allRoles[i];
+                break;
+            }
+
+            // Exit case - role not found
+            if (!roleAsset)
+            {
+                Label errorLabel = new Label("Role not found");
+                errorLabel.style.color = new Color(1f, 0.4f, 0.4f);
+                return errorLabel;
+            }
+
+            SerializedObject serializedRole = new SerializedObject(roleAsset);
+            
+            // Container for the inline editor
+            VisualElement container = new VisualElement();
+            container.style.marginLeft = 12;
+            container.style.marginTop = 4;
+            container.style.marginBottom = 8;
+            container.style.paddingLeft = 8;
+            container.style.paddingRight = 8;
+            container.style.paddingTop = 8;
+            container.style.paddingBottom = 8;
+            container.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);
+            container.style.borderLeftWidth = 2;
+            container.style.borderLeftColor = new Color(0.4f, 0.6f, 0.8f);
+
+            // Header with close button
+            VisualElement header = new VisualElement();
+            header.style.flexDirection = FlexDirection.Row;
+            header.style.justifyContent = Justify.SpaceBetween;
+            header.style.marginBottom = 8;
+
+            StringBuilder headerBuilder = new StringBuilder();
+            headerBuilder.Append("Editing Role: ");
+            headerBuilder.Append(roleAsset.DisplayName ?? roleID);
+            Label headerLabel = new Label(headerBuilder.ToString());
+            headerLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+            header.Add(headerLabel);
+
+            Button closeButton = new Button(() => onClose?.Invoke());
+            closeButton.text = "X";
+            closeButton.style.width = 20;
+            closeButton.style.height = 20;
+            header.Add(closeButton);
+
+            container.Add(header);
+
+            // Role ID field
+            TextField roleIDField = new TextField("Role ID");
+            roleIDField.value = roleAsset.RoleID ?? "";
+            roleIDField.RegisterValueChangedCallback(evt =>
+            {
+                SerializedProperty property = serializedRole.FindProperty("roleID");
+                
+                // Exit case - if the property doesn't exist
+                if (property == null) return;
+                
+                property.stringValue = evt.newValue;
+                serializedRole.ApplyModifiedProperties();
+                EditorUtility.SetDirty(roleAsset);
+                AssetDatabase.SaveAssets();
+            });
+            container.Add(roleIDField);
+
+            // Display Name field
+            TextField displayNameField = new TextField("Display Name");
+            displayNameField.value = roleAsset.DisplayName ?? "";
+            displayNameField.RegisterValueChangedCallback(evt =>
+            {
+                SerializedProperty property = serializedRole.FindProperty("displayName");
+                
+                // Exit case - if the property is not found
+                if (property == null) return;
+                
+                property.stringValue = evt.newValue;
+                serializedRole.ApplyModifiedProperties();
+                EditorUtility.SetDirty(roleAsset);
+                AssetDatabase.SaveAssets();
+            });
+            container.Add(displayNameField);
+
+            // Required Traits section
+            Label requiredLabel = new Label("Required Traits (comma-separated IDs)");
+            requiredLabel.style.marginTop = 8;
+            requiredLabel.style.fontSize = 11;
+            requiredLabel.style.color = new Color(0.7f, 0.7f, 0.7f);
+            container.Add(requiredLabel);
+
+            string requiredTraitsStr = roleAsset.RequiredTraitIDs != null 
+                ? string.Join(", ", roleAsset.RequiredTraitIDs)
+                : "";
+            TextField requiredTraitsField = new TextField();
+            requiredTraitsField.value = requiredTraitsStr;
+            requiredTraitsField.RegisterValueChangedCallback(evt =>
+            {
+                SerializedProperty property = serializedRole.FindProperty("requiredTraitIDs");
+                
+                // Exit case - the property doesn't exist
+                if (property == null) return;
+                
+                string[] traits = evt.newValue.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                property.arraySize = traits.Length;
+                for (int i = 0; i < traits.Length; i++)
+                {
+                    property.GetArrayElementAtIndex(i).stringValue = traits[i].Trim();
+                }
+                serializedRole.ApplyModifiedProperties();
+                EditorUtility.SetDirty(roleAsset);
+                AssetDatabase.SaveAssets();
+            });
+            container.Add(requiredTraitsField);
+
+            // Forbidden Traits section
+            Label forbiddenLabel = new Label("Forbidden Traits (comma-separated IDs)");
+            forbiddenLabel.style.marginTop = 8;
+            forbiddenLabel.style.fontSize = 11;
+            forbiddenLabel.style.color = new Color(0.7f, 0.7f, 0.7f);
+            container.Add(forbiddenLabel);
+
+            string forbiddenTraitsStr = roleAsset.ForbiddenTraitIDs != null
+                ? string.Join(", ", roleAsset.ForbiddenTraitIDs)
+                : "";
+            TextField forbiddenTraitsField = new TextField();
+            forbiddenTraitsField.value = forbiddenTraitsStr;
+            forbiddenTraitsField.RegisterValueChangedCallback(evt =>
+            { 
+                SerializedProperty property = serializedRole.FindProperty("forbiddenTraitIDs");
+
+                // Exit case - the property doesn't exist
+                if (property == null) return;
+                
+                string[] traits = evt.newValue.Split(new[] { ',', ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+                property.arraySize = traits.Length;
+                for (int i = 0; i < traits.Length; i++)
+                {
+                    property.GetArrayElementAtIndex(i).stringValue = traits[i].Trim();
+                }
+                serializedRole.ApplyModifiedProperties();
+                EditorUtility.SetDirty(roleAsset);
+                AssetDatabase.SaveAssets();
+            });
+            container.Add(forbiddenTraitsField);
+
+            return container;
         }
     }
 }
