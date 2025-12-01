@@ -1,4 +1,5 @@
 using System;
+using Calliope.Editor.BatchAssetCreator.Validation;
 using UnityEngine.UIElements;
 
 namespace Calliope.Editor.BatchAssetCreator.Tabs
@@ -40,5 +41,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// resetting it to its initial state while updating the UI and triggering necessary callbacks
         /// </summary>
         void ClearRows();
+
+        /// <summary>
+        /// Validates the specified base folder path to ensure it meets the necessary criteria for asset creation
+        /// </summary>
+        /// <param name="baseFolderPath">The path to the base folder where assets will be created</param>
+        /// <returns>A <see cref="ValidationResult"/> containing details about validation errors, warnings, and informational messages</returns>
+        public ValidationResult Validate(string baseFolderPath);
     }
 }

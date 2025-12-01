@@ -139,5 +139,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
 
             return count;
         }
+
+        /// <summary>
+        /// Retrieves the unique identifier for a specified FragmentRowData instance
+        /// </summary>
+        /// <param name="data">The FragmentRowData instance for which the unique identifier is being retrieved</param>
+        /// <returns>The unique identifier string associated with the provided FragmentRowData instance</returns>
+        protected override string GetRowID(FragmentRowData data) => data.ID;
     }
 }

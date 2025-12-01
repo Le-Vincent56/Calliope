@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Calliope.Editor.BatchAssetCreator.Tabs;
+using Calliope.Editor.BatchAssetCreator.Validation;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,6 +18,7 @@ namespace Calliope.Editor.BatchAssetCreator
         private Label _statusLabel;
         private VisualElement _tabContentContainer;
         private VisualElement _tabBar;
+        private ValidationDisplayElement _validationDisplay;
 
         private List<IBatchTab> _tabs;
 
@@ -61,6 +63,10 @@ namespace Calliope.Editor.BatchAssetCreator
             // Toolbar
             VisualElement toolbar = CreateToolbar();
             root.Add(toolbar);
+
+            // Add the validation display
+            _validationDisplay = new ValidationDisplayElement();
+            root.Add(_validationDisplay);
 
             // Tab content container
             _tabContentContainer = new VisualElement();
@@ -149,6 +155,12 @@ namespace Calliope.Editor.BatchAssetCreator
             clearButton.style.marginLeft = 16;
             toolbar.Add(clearButton);
 
+            // Create the Validate button
+            Button validateButton = new Button(OnValidateClicked);
+            validateButton.text = "Validate";
+            validateButton.style.marginLeft = 8;
+            toolbar.Add(validateButton);
+
             // Create the Create All button
             Button createAllButton = new Button(CreateAssets);
             createAllButton.text = "Create All";
@@ -159,6 +171,11 @@ namespace Calliope.Editor.BatchAssetCreator
             return toolbar;
         }
 
+        /// <summary>
+        /// Displays the content of the selected tab by index; updates the tab bar styling to highlight the active tab
+        /// and rebuilds the content area with the elements provided by the selected tab
+        /// </summary>
+        /// <param name="index">The index of the tab to display; must be within the range of available tabs</param>
         private void ShowTab(int index)
         {
             // Set the current index
@@ -242,6 +259,15 @@ namespace Calliope.Editor.BatchAssetCreator
         /// </summary>
         private void CreateAssets()
         {
+            ValidationResult result = _tabs[_currentTabIndex].Validate(_saveFolderPath);
+            
+            // Exit case - the validation failed
+            if (!result.IsValid)
+            {
+                _validationDisplay.DisplayResults(result);
+                return;
+            }
+            
             // Create the assets and get the amount created
             int createdCount = _tabs[_currentTabIndex].CreateAssets(_saveFolderPath);
 
@@ -260,6 +286,15 @@ namespace Calliope.Editor.BatchAssetCreator
             // Set the status
             _statusLabel.text = statusBuilder.ToString();
             _statusLabel.style.color = new Color(0.6f, 0.8f, 0.6f);
+        }
+
+        /// <summary>
+        /// Validates the current tab's settings and displays the results in the validation display element
+        /// </summary>
+        private void OnValidateClicked()
+        {
+            ValidationResult result = _tabs[_currentTabIndex].Validate(_saveFolderPath);
+            _validationDisplay.DisplayResults(result);
         }
     }
 }

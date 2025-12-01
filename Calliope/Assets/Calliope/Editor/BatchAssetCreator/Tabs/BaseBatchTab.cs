@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Calliope.Editor.BatchAssetCreator.RowData;
+using Calliope.Editor.BatchAssetCreator.Validation;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -309,6 +310,72 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             RefreshRows();
             OnRowsChanged?.Invoke();
         }
+
+        /// <summary>
+        /// Performs validation on the collection of rows in the tab, ensuring they meet the defined constraints
+        /// and detecting potential issues like duplicate identifiers or missing required fields
+        /// </summary>
+        /// <param name="baseFolderPath">The base folder path used to resolve file paths or validate relative file references within the rows</param>
+        /// <returns>A ValidationResult object containing the validation results and any associated error or warning messages</returns>
+        public virtual ValidationResult Validate(string baseFolderPath)
+        {
+            ValidationResult results = new ValidationResult();
+            HashSet<string> seenIDs = new HashSet<string>();
+
+            StringBuilder messageBuilder = new StringBuilder();
+            
+            for (int i = 0; i < Rows.Count; i++)
+            {
+                TRowData row = Rows[i];
+                
+                // Skip completely empty rows
+                if (!row.HasAnyData) continue;
+                
+                // Skip if the row is not valid
+                if (!row.IsValid)
+                {
+                    // Build the message
+                    messageBuilder.Clear();
+                    messageBuilder.Append("Row ");
+                    messageBuilder.Append(i + 1);
+                    messageBuilder.Append(" is incomplete: missing required fields");
+                    
+                    // Add the error
+                    results.AddError(messageBuilder.ToString(), i);
+                    continue;
+                }
+
+                // Get the Row ID
+                string rowID = GetRowID(row);
+
+                // Skip if the ID is empty
+                if (string.IsNullOrEmpty(rowID)) continue;
+                
+                // Skip if adding the Row ID was successful (no duplicates)
+                if (seenIDs.Add(rowID)) continue;
+                
+                // Build the message
+                messageBuilder.Clear();
+                messageBuilder.Append("Row ");
+                messageBuilder.Append(i + 1);
+                messageBuilder.Append(" has duplicate ID '");
+                messageBuilder.Append(rowID);
+                messageBuilder.Append("'");
+                        
+                // Add the error
+                results.AddError(messageBuilder.ToString(), i);
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Retrieves a unique identifier for the specified row of data; the implementation of this method
+        /// should define how the row's ID is determined based on its content or other properties
+        /// </summary>
+        /// <param name="row">The row data from which the identifier will be extracted or derived</param>
+        /// <returns>A string representing the unique identifier for the specified row</returns>
+        protected abstract string GetRowID(TRowData row);
 
         /// <summary>
         /// Ensures that a specific subfolder exists within the provided base folder path;

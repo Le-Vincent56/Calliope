@@ -134,5 +134,28 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
 
             return count;
         }
+
+        /// <summary>
+        /// Generates a unique identifier for the given row data by combining
+        /// its Role ID, Trait ID, and the Must Have Trait flag
+        /// </summary>
+        /// <param name="data">
+        /// The row data object containing the Role ID, Trait ID,
+        /// and Must Have Trait flag to construct the identifier
+        /// </param>
+        /// <returns>
+        /// A string representing the unique identifier for the row,
+        /// formatted as "RoleID_TraitID_MustHaveTrait"
+        /// </returns>
+        protected override string GetRowID(ConditionRowData data)
+        {
+            StringBuilder idBuilder = new StringBuilder();
+            idBuilder.Append(data.RoleID);
+            idBuilder.Append("_");
+            idBuilder.Append(data.TraitID);
+            idBuilder.Append("_");
+            idBuilder.Append(data.MustHaveTrait);
+            return idBuilder.ToString();
+        }
     }
 }

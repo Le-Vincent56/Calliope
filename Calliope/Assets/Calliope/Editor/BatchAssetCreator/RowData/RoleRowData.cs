@@ -11,5 +11,6 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
         public string ForbiddenTraits = "";     // Comma-separated
         
         public override bool IsValid => !string.IsNullOrEmpty(ID) && !string.IsNullOrEmpty(DisplayName);
+        public override bool HasAnyData => !string.IsNullOrEmpty(ID) || !string.IsNullOrEmpty(DisplayName) || !string.IsNullOrEmpty(RequiredTraits) || !string.IsNullOrEmpty(ForbiddenTraits);
     }
 }

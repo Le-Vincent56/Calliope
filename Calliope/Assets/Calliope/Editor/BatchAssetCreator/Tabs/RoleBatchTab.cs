@@ -129,5 +129,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
 
             return count;
         }
+
+        /// <summary>
+        /// Retrieves the unique identifier for the given row data
+        /// </summary>
+        /// <param name="data">The row data object containing the identifier to retrieve</param>
+        /// <returns>The unique identifier for the row data</returns>
+        protected override string GetRowID(RoleRowData data) => data.ID;
     }
 }

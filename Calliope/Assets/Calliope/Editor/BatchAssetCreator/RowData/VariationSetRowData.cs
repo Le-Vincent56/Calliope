@@ -10,5 +10,6 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
         public string Description = "";
         
         public override bool IsValid => !string.IsNullOrEmpty(ID) && !string.IsNullOrEmpty(DisplayName);
+        public override bool HasAnyData => !string.IsNullOrEmpty(ID) || !string.IsNullOrEmpty(DisplayName) || !string.IsNullOrEmpty(Description);
     }
 }

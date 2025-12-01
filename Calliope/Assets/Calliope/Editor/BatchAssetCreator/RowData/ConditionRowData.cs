@@ -11,5 +11,6 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
         public bool MustHaveTrait = true;
         
         public override bool IsValid => !string.IsNullOrEmpty(RoleID);
+        public override bool HasAnyData => !string.IsNullOrEmpty(RoleID) || !string.IsNullOrEmpty(TraitID);
     }
 }

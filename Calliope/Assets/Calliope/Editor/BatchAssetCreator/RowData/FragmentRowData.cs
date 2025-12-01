@@ -10,5 +10,6 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
         public string TraitAffinities = ""; // Format: "brave:1.5, kind:1.0"
         
         public override bool IsValid => !string.IsNullOrEmpty(ID) && !string.IsNullOrEmpty(Text);
+        public override bool HasAnyData => !string.IsNullOrEmpty(Text) || !string.IsNullOrEmpty(Text) || !string.IsNullOrEmpty(TraitAffinities);
     }
 }

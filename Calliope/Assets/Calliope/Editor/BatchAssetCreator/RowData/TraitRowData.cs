@@ -10,5 +10,6 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
         public int CategoryIndex = 0;
         
         public override bool IsValid => !string.IsNullOrEmpty(ID) && !string.IsNullOrEmpty(DisplayName);
+        public override bool HasAnyData => !string.IsNullOrEmpty(ID) || !string.IsNullOrEmpty(DisplayName);
     }
 }

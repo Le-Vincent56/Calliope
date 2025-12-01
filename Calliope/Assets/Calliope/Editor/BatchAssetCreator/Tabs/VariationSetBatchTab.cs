@@ -107,5 +107,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
 
             return count;
         }
+
+        /// <summary>
+        /// Retrieves the unique identifier (ID) for the specified VariationSetRowData object
+        /// </summary>
+        /// <param name="data">The VariationSetRowData object containing the ID to retrieve</param>
+        /// <returns>The unique identifier (ID) of the provided VariationSetRowData</returns>
+        protected override string GetRowID(VariationSetRowData data) => data.ID;
     }
 }
