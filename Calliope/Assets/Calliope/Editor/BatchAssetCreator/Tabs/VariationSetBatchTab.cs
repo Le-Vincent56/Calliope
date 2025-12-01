@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Text;
-using Calliope.Core.Enums;
 using Calliope.Editor.BatchAssetCreator.RowData;
 using Calliope.Unity.ScriptableObjects;
 using UnityEditor;
@@ -11,62 +8,55 @@ using UnityEngine.UIElements;
 namespace Calliope.Editor.BatchAssetCreator.Tabs
 {
     /// <summary>
-    /// Represents a batch asset creation tab specifically for managing traits;
-    /// it provides functionality for defining trait-related data, managing rows of
-    /// trait information, and creating asset files for those traits
+    /// Represents a batch tab for managing and editing Variation Set data in the Batch Asset Creator tool;
+    /// inherits functionality to handle operations related to VariationSetRowData objects
     /// </summary>
-    public class TraitBatchTab : BaseBatchTab<TraitRowData>
+    public class VariationSetBatchTab : BaseBatchTab<VariationSetRowData>
     {
-        public override string TabName => "Traits";
-        protected override string SubfolderName => "Traits";
+        public override string TabName => "Variation Sets";
+        protected override string SubfolderName => "Variation Sets";
 
-        private static readonly List<string> CategoryOptions = new List<string>(Enum.GetNames(typeof(TraitCategory)));
-        
         protected override ColumnDefinition[] Columns => new[]
         {
             new ColumnDefinition("ID", 120),
-            new ColumnDefinition("Display Name", flexGrow: 1),
-            new ColumnDefinition("Category", 140)
+            new ColumnDefinition("Display Name", 180),
+            new ColumnDefinition("Description", flexGrow: 1)
         };
-
+        
         /// <summary>
-        /// Builds UI fields for a single row of TraitRowData within the specified container
+        /// Configures the row fields in the given container based on the provided VariationSetRowData instance
         /// </summary>
-        /// <param name="container">The container in which the UI elements for the row will be added</param>
-        /// <param name="data">The TraitRowData object containing the information to populate the UI fields</param>
+        /// <param name="container">The visual element container where the row fields will be added</param>
+        /// <param name="data">The data object containing the values to populate the fields</param>
         /// <param name="rowIndex">The index of the row being built, used for contextual identification</param>
-        protected override void BuildRowFields(VisualElement container, TraitRowData data, int rowIndex)
+        protected override void BuildRowFields(VisualElement container, VariationSetRowData data, int rowIndex)
         {
-            // Add the ID field
+            // ID field
             TextField idField = new TextField();
             idField.value = data.ID;
             idField.RegisterValueChangedCallback(evt => data.ID = evt.newValue);
             container.Add(CreateCell(0, idField));
             
             container.Add(CreateSeparator());
-
-            // Add the Display Name field
+            
+            // Display name field
             TextField displayNameField = new TextField();
             displayNameField.value = data.DisplayName;
             displayNameField.RegisterValueChangedCallback(evt => data.DisplayName = evt.newValue);
             container.Add(CreateCell(1, displayNameField));
-
-            container.Add(CreateSeparator());
             
-            // Add the Category field
-            PopupField<string> categoryField = new PopupField<string>(
-                CategoryOptions,
-                data.CategoryIndex
-            );
-            categoryField.RegisterValueChangedCallback(evt => data.CategoryIndex = categoryField.index);
-            container.Add(CreateCell(2, categoryField));
+            // Description field
+            TextField descriptionField = new TextField();
+            descriptionField.value = data.Description;
+            descriptionField.RegisterValueChangedCallback(evt => data.Description = evt.newValue);
+            container.Add(CreateCell(2, descriptionField));
         }
 
         /// <summary>
-        /// Creates asset files for valid rows in the current tab and saves them to the specified folder path
+        /// Creates assets within the specified base folder, ensuring the folder structure is in place
         /// </summary>
-        /// <param name="baseFolderPath">The base folder path where the assets will be created; a subfolder specific to this tab will be used</param>
-        /// <returns>The number of assets successfully created and saved</returns>
+        /// <param name="baseFolderPath">The path to the base folder where assets will be created</param>
+        /// <returns>The number of assets successfully created</returns>
         public override int CreateAssets(string baseFolderPath)
         {
             int count = 0;
@@ -75,32 +65,31 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             
             for (int i = 0; i < Rows.Count; i++)
             {
-                TraitRowData data = Rows[i];
-                
-                // Skip over invalid rows
+                VariationSetRowData data = Rows[i];
+
+                // Exit case - skip invalid rows
                 if (!data.IsValid) continue;
 
-                TraitSO asset = ScriptableObject.CreateInstance<TraitSO>();
-
+                // Create the asset
+                VariationSetSO asset = ScriptableObject.CreateInstance<VariationSetSO>();
+                
                 // Set values
                 SerializedObject serialized = new SerializedObject(asset);
                 serialized.FindProperty("id").stringValue = data.ID;
                 serialized.FindProperty("displayName").stringValue = data.DisplayName;
-                serialized.FindProperty("category").enumValueIndex = data.CategoryIndex;
-                
-                // Save the asset
+                serialized.FindProperty("description").stringValue = data.Description;
                 serialized.ApplyModifiedProperties();
-
+                
                 // Create the file name
                 fileBuilder.Clear();
                 if (string.IsNullOrEmpty(data.ID))
                 {
-                    fileBuilder.Append("Trait_");
+                    fileBuilder.Append("VariationSet_");
                     fileBuilder.Append(i);
                 }
                 else
                 {
-                    fileBuilder.Append("Trait_");
+                    fileBuilder.Append("VariationSet_");
                     fileBuilder.Append(data.ID);
                 }
                 string fileName = fileBuilder.ToString();

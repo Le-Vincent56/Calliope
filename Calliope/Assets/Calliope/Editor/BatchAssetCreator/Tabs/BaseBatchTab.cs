@@ -16,9 +16,20 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
     /// <typeparam name="TRowData">The type of row data, which must inherit from BaseRowData</typeparam>
     public abstract class BaseBatchTab<TRowData> : IBatchTab where TRowData : BaseRowData, new()
     {
+        private static readonly Color RowColorEven = new Color(0.22f, .22f, 0.22f);
+        private static readonly Color RowColorOdd = new Color(0.28f, 0.28f, 0.28f);
+        private static readonly Color SeparatorColor = new Color(0.4f, 0.4f, 0.4f);
+        private static readonly Color HeaderColor = new Color(0.18f, 0.18f, 0.18f);
+        private static readonly Color HeaderTextColor = new Color(0.8f, 0.8f, 0.8f);
+        
         protected List<TRowData> Rows = new List<TRowData>();
         protected ScrollView RowsContainer;
         protected Action OnRowsChanged;
+
+        private const float RowNumberWidth = 32f;
+        private const float RemoveButtonWidth = 28f;
+        private const float SeparatorWidth = 1f;
+        private const float CellPadding = 8f;
         
         public int ValidRowCount
         {
@@ -35,6 +46,7 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         
         public abstract string TabName { get; }
         protected abstract string SubfolderName { get; }
+        protected abstract ColumnDefinition[] Columns { get; }
 
         /// <summary>
         /// Constructs the content for the tab, including a scrollable rows container
@@ -48,6 +60,10 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
 
             VisualElement container = new VisualElement();
             container.style.flexGrow = 1;
+            
+            // Header row
+            VisualElement headerRow = CreateHeaderRow();
+            container.Add(headerRow);
             
             // Scrollable rows container
             RowsContainer = new ScrollView();
@@ -94,30 +110,35 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             VisualElement container = new VisualElement();
             container.style.flexDirection = FlexDirection.Row;
             container.style.alignItems = Align.Center;
-            container.style.marginBottom = 4;
-            container.style.paddingLeft = 4;
-            container.style.paddingRight = 4;
+            container.style.paddingLeft = CellPadding;
+            container.style.paddingRight = CellPadding;
             container.style.paddingTop = 4;
             container.style.paddingBottom = 4;
-            container.style.backgroundColor = new Color(0.25f, 0.25f, 0.25f);
+            container.style.flexShrink = 0;
+            
+            // Alternating row colors
+            container.style.backgroundColor = (index % 2 == 0) ? RowColorEven : RowColorOdd;
             
             // Row number label
             Label indexLabel = new Label((index + 1).ToString());
-            indexLabel.style.width = 24;
+            indexLabel.style.width = RowNumberWidth;
             indexLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
-            indexLabel.style.color = new Color(0.6f, 0.6f, 0.6f);
-            
+            indexLabel.style.color = new Color(0.5f, 0.5f, 0.5f);
             container.Add(indexLabel);
             
+            // Add separator after index
+            container.Add(CreateSeparator());
+            
             // Build specific fields for this tab
-            BuildRowFields(container, Rows[index]);
+            BuildRowFields(container, Rows[index], index);
             
             // Remove button
             int capturedIndex = index;
             Button removeButton = new Button(() => RemoveRow(capturedIndex));
-            removeButton.text = "-";
-            removeButton.style.width = 24;
-            removeButton.style.marginLeft = 8;
+            removeButton.text = "X";
+            removeButton.style.width = RemoveButtonWidth;
+            removeButton.style.height = 20;
+            removeButton.style.marginLeft = CellPadding;
             removeButton.style.backgroundColor = new Color(0.5f, 0.2f, 0.2f);
             container.Add(removeButton);
             
@@ -125,12 +146,121 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         }
 
         /// <summary>
-        /// Constructs and adds the necessary fields for a single row in the UI,
-        /// using the data provided in the associated row data object
+        /// Creates a vertical separator element with a fixed width and height
+        /// and a predefined color, which can be used to visually separate UI components
         /// </summary>
-        /// <param name="container">The container where the row fields will be added</param>
-        /// <param name="rowData">The data object that provides the information needed to populate the row fields</param>
-        protected abstract void BuildRowFields(VisualElement container, TRowData rowData);
+        /// <returns>A visual element styled as a separator</returns>
+        protected VisualElement CreateSeparator()
+        {
+            VisualElement separator = new VisualElement();
+            separator.style.width = SeparatorWidth;
+            separator.style.height = 20;
+            separator.style.backgroundColor = SeparatorColor;
+            separator.style.marginLeft = CellPadding;
+            separator.style.marginRight = CellPadding;
+            return separator;
+        }
+
+        /// <summary>
+        /// Creates the header row for the batch asset tab, including the row number
+        /// label, column headers, and spacing for the remove button
+        /// </summary>
+        /// <returns>A visual element that represents the constructed header row</returns>
+        private VisualElement CreateHeaderRow()
+        {
+            VisualElement header = new VisualElement();
+            header.style.flexDirection = FlexDirection.Row;
+            header.style.alignItems = Align.Center;
+            header.style.backgroundColor = HeaderColor;
+            header.style.paddingTop = 6;
+            header.style.paddingBottom = 6;
+            header.style.paddingLeft = CellPadding;
+            header.style.paddingRight = CellPadding;
+            header.style.borderBottomWidth = 2;
+            header.style.borderBottomColor = SeparatorColor;
+            
+            // Row number header
+            Label rowHeader = new Label("Row");
+            rowHeader.style.width = RowNumberWidth;
+            rowHeader.style.unityTextAlign = TextAnchor.MiddleCenter;
+            rowHeader.style.color = HeaderTextColor;
+            rowHeader.style.unityFontStyleAndWeight = FontStyle.Bold;
+            header.Add(rowHeader);
+
+            header.Add(CreateSeparator());
+            
+            // Column headers
+            ColumnDefinition[] columns = Columns;
+            for (int i = 0; i < columns.Length; i++)
+            {
+                ColumnDefinition column = columns[i];
+                
+                // Create the label
+                Label columnHeader = new Label(column.Header);
+                columnHeader.style.color = HeaderTextColor;
+                columnHeader.style.unityFontStyleAndWeight = FontStyle.Bold;
+                columnHeader.style.unityTextAlign = TextAnchor.MiddleCenter;
+                columnHeader.style.paddingLeft = 4;
+
+                // Use fixed width or flex grow to determine column width
+                if (column.Width.HasValue) columnHeader.style.width = column.Width.Value;
+                else columnHeader.style.flexGrow = column.FlexGrow > 0 ? column.FlexGrow : 1;
+                
+                // Add the tool tip
+                if(!string.IsNullOrEmpty(column.Tooltip)) columnHeader.tooltip = column.Tooltip;
+                
+                header.Add(columnHeader);
+                
+                // Skip if the last column
+                if(i >= columns.Length - 1) continue;
+                
+                // Add a separator between columns
+                header.Add(CreateSeparator());
+            }
+            
+            // Spacer for remove button column
+            VisualElement removeHeaderSpacer = new VisualElement();
+            removeHeaderSpacer.style.width = RemoveButtonWidth + CellPadding;
+            header.Add(removeHeaderSpacer);
+            
+            return header;
+        }
+
+        /// <summary>
+        /// Creates a visual cell element based on the column definition, sets its layout properties,
+        /// and adds the specified content to it
+        /// </summary>
+        /// <param name="columnIndex">The index of the column for which the cell is being created</param>
+        /// <param name="content">The visual content to be added to the cell</param>
+        /// <returns>The constructed visual cell element with the specified content and layout</returns>
+        protected VisualElement CreateCell(int columnIndex, VisualElement content)
+        {
+            ColumnDefinition column = Columns[columnIndex];
+
+            // Create the cell
+            VisualElement cell = new VisualElement();
+            cell.style.flexDirection = FlexDirection.Row;
+            cell.style.alignItems = Align.Center;
+            
+            // Set the cell width based on the column definition
+            if(column.Width.HasValue) cell.style.width = column.Width.Value;
+            else cell.style.flexGrow = column.FlexGrow > 0 ? column.FlexGrow : 1;
+            
+            // Add the content to the cell
+            content.style.flexGrow = 1;
+            cell.Add(content);
+
+            return cell;
+        }
+
+        /// <summary>
+        /// Populates the provided container with fields representing the specified row data,
+        /// allowing customization and user interaction for the row at the given index
+        /// </summary>
+        /// <param name="container">The container to which the row fields are added</param>
+        /// <param name="rowData">The data object representing the row to be displayed and edited</param>
+        /// <param name="rowIndex">The index of the row being built, used for contextual identification</param>
+        protected abstract void BuildRowFields(VisualElement container, TRowData rowData, int rowIndex);
 
         /// <summary>
         /// Creates assets based on the data stored in the rows of the batch tab,

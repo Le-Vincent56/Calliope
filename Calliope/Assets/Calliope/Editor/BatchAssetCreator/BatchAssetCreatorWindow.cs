@@ -39,8 +39,12 @@ namespace Calliope.Editor.BatchAssetCreator
             // Gather tabs
             _tabs = new List<IBatchTab>
             {
+                new CharacterBatchTab(),
+                new TraitBatchTab(),
                 new FragmentBatchTab(),
-                new TraitBatchTab()
+                new VariationSetBatchTab(),
+                new RoleBatchTab(),
+                new ConditionBatchTab(),
             };
             
             // Create the root element

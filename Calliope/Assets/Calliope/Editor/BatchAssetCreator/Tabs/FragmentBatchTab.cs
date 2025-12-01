@@ -17,34 +17,42 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         public override string TabName => "Fragments";
         protected override string SubfolderName => "Fragments";
 
+        protected override ColumnDefinition[] Columns => new[]
+        {
+            new ColumnDefinition("ID", 120),
+            new ColumnDefinition("Text", flexGrow: 1),
+            new ColumnDefinition("Trait Affinities", 180, tooltip: "Format: trait:weight, trait:weight (e.g., brave:1.5, kind:1.0)")
+        };
+
         /// <summary>
         /// Constructs and populates fields for a row of FragmentRowData, adding them to the specified container
         /// </summary>
         /// <param name="container">The UI container to which the fields will be added</param>
         /// <param name="data">The FragmentRowData instance containing data for populating the row fields</param>
-        protected override void BuildRowFields(VisualElement container, FragmentRowData data)
+        /// <param name="rowIndex">The index of the row being built, used for contextual identification</param>
+        protected override void BuildRowFields(VisualElement container, FragmentRowData data, int rowIndex)
         {
             // Add the ID field
-            TextField idField = new TextField("ID");
+            TextField idField = new TextField();
             idField.value = data.ID;
-            idField.style.width = 150;
             idField.RegisterValueChangedCallback(evt => data.ID = evt.newValue);
-            container.Add(idField);
+            container.Add(CreateCell(0, idField));
+            
+            container.Add(CreateSeparator());
             
             // Add the Text field
-            TextField textField = new TextField("Text");
+            TextField textField = new TextField();
             textField.value = data.Text;
-            textField.style.flexGrow = 1;
             textField.RegisterValueChangedCallback(evt => data.Text = evt.newValue);
-            container.Add(textField);
+            container.Add(CreateCell(1, textField));
+            
+            container.Add(CreateSeparator());
             
             // Add the Trait Affinities field
             TextField affinitiesField = new TextField("Trait Affinities");
             affinitiesField.value = data.TraitAffinities;
-            affinitiesField.style.width = 200;
-            affinitiesField.tooltip = "Format: trait:weight, trait:weight (e.g., brave:1.5, kind:1.0)";
             affinitiesField.RegisterValueChangedCallback(evt => data.TraitAffinities = evt.newValue);
-            container.Add(affinitiesField);
+            container.Add(CreateCell(2, affinitiesField));
         }
 
         /// <summary>
