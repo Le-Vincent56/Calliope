@@ -30,6 +30,8 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             new ColumnDefinition("Trait ID", flexGrow: 1, tooltip: "The trait ID to check (e.g., brave, strong)"),
             new ColumnDefinition("Must Have", 80)
         };
+        
+        protected override string AssetTypeName => "TraitConditionSO";
 
         /// <summary>
         /// Builds the row fields for the UI container using the provided data

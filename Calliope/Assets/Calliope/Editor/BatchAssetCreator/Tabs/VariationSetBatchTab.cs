@@ -23,6 +23,8 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             new ColumnDefinition("Description", flexGrow: 1)
         };
         
+        protected override string AssetTypeName => "VariationSetSO";
+        
         /// <summary>
         /// Configures the row fields in the given container based on the provided VariationSetRowData instance
         /// </summary>

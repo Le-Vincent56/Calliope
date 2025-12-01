@@ -23,6 +23,8 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             new ColumnDefinition("Text", flexGrow: 1),
             new ColumnDefinition("Trait Affinities", 180, tooltip: "Format: trait:weight, trait:weight (e.g., brave:1.5, kind:1.0)")
         };
+        
+        protected override string AssetTypeName => "DialogueFragmentSO";
 
         /// <summary>
         /// Constructs and populates fields for a row of FragmentRowData, adding them to the specified container

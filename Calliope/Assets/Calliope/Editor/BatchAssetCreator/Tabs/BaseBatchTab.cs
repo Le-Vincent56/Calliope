@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Calliope.Editor.BatchAssetCreator.RowData;
 using Calliope.Editor.BatchAssetCreator.Validation;
@@ -48,6 +49,7 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         public abstract string TabName { get; }
         protected abstract string SubfolderName { get; }
         protected abstract ColumnDefinition[] Columns { get; }
+        protected abstract string AssetTypeName { get; }
 
         /// <summary>
         /// Constructs the content for the tab, including a scrollable rows container
@@ -365,6 +367,52 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
                 // Add the error
                 results.AddError(messageBuilder.ToString(), i);
             }
+            
+            StringBuilder assetTypeBuilder = new StringBuilder();
+            assetTypeBuilder.Append("t:");
+            assetTypeBuilder.Append(AssetTypeName);
+            string subfolder = EnsureSubfolderPath(baseFolderPath);
+            string[] existingGuids = AssetDatabase.FindAssets(assetTypeBuilder.ToString(), new[] { subfolder });
+            
+            HashSet<string> existingIDs = new HashSet<string>();
+            foreach (string guid in existingGuids)
+            {
+                // Extract the file name without the extension
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                string fileName = Path.GetFileNameWithoutExtension(path);
+                int underscoreIndex = fileName.IndexOf('_');
+                
+                // Skip if the file name does not contain an underscore, or if it's the last character in the string
+                if (underscoreIndex < 0 || underscoreIndex >= fileName.Length - 1) continue;
+                
+                // Add the ID to the set of existing IDs
+                existingIDs.Add(fileName.Substring(underscoreIndex + 1));
+            }
+            
+            // Check each valid row against existing assets
+            for (int i = 0; i < Rows.Count; i++)
+            {
+                TRowData row = Rows[i];
+
+                // Skip if the row is not valid
+                if (!row.IsValid) continue;
+                
+                string rowID = GetRowID(row);
+                
+                // Skip if the existing IDs doesn't contain the given row ID
+                if (!existingIDs.Contains(rowID)) continue;
+                
+                // Build the message
+                messageBuilder.Clear();
+                messageBuilder.Append("Row ");
+                messageBuilder.Append(i + 1);
+                messageBuilder.Append(": Asset with ID '");
+                messageBuilder.Append(rowID);
+                messageBuilder.Append("' already exists and will be overwritten");
+                
+                // Add the warning
+                results.AddWarning(messageBuilder.ToString(), i);
+            }
 
             return results;
         }
@@ -397,6 +445,22 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
                 AssetDatabase.CreateFolder(baseFolderPath, SubfolderName);
 
             return fullPath;
+        }
+
+        /// <summary>
+        /// Constructs the full path for the subfolder by combining the base folder path
+        /// with the subfolder name specific to the tab; ensures the subfolder path is
+        /// consistently formatted for use in operations such as asset validation or creation
+        /// </summary>
+        /// <param name="baseFolderPath">The base folder path to which the subfolder path will be appended</param>
+        /// <returns>The constructed subfolder path as a string</returns>
+        protected string EnsureSubfolderPath(string baseFolderPath)
+        {
+            StringBuilder pathBuilder = new StringBuilder();
+            pathBuilder.Append(baseFolderPath);
+            pathBuilder.Append("/");
+            pathBuilder.Append(SubfolderName);
+            return pathBuilder.ToString();
         }
 
         /// <summary>

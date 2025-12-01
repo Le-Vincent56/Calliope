@@ -24,6 +24,8 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             new ColumnDefinition("Required Traits", flexGrow: 1, tooltip: "Comma-separated trait IDs (e.g., brave, strong)"),
             new ColumnDefinition("Forbidden Traits", flexGrow: 1, tooltip: "Comma-separated trait IDs (e.g., brave, strong)")
         };
+        
+        protected override string AssetTypeName => "SceneRoleSO";
 
         /// <summary>
         /// Builds and populates the row fields in the given container using the specified data

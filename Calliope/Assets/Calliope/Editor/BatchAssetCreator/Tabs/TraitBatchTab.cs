@@ -28,6 +28,8 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             new ColumnDefinition("Display Name", flexGrow: 1),
             new ColumnDefinition("Category", 140)
         };
+        
+        protected override string AssetTypeName => "TraitSO";
 
         /// <summary>
         /// Builds UI fields for a single row of TraitRowData within the specified container

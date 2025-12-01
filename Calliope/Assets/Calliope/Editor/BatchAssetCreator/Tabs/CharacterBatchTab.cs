@@ -25,7 +25,9 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             new ColumnDefinition("Pronouns", 100),
             new ColumnDefinition("Traits", flexGrow: 1, tooltip: "Comma-separated trait IDs (e.g., brave, kind, wise)")
         };
-        
+
+        protected override string AssetTypeName => "CharacterSO";
+
         private static readonly List<string> PronounOptions = new List<string>
         {
             "They/Them",
