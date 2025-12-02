@@ -159,5 +159,17 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             idBuilder.Append(data.MustHaveTrait);
             return idBuilder.ToString();
         }
+
+        /// <summary>
+        /// Sets the RoleID and TraitID properties of a row based on the provided ID by parsing it into components
+        /// </summary>
+        /// <param name="row">The data object to which the extracted RoleID and TraitID values will be assigned</param>
+        /// <param name="id">The string identifier containing RoleID and TraitID components separated by an underscore</param>
+        protected override void SetRowID(ConditionRowData row, string id)
+        {
+            string[] parts = id.Split('_');
+            if(parts.Length >= 1) row.RoleID = parts[0];
+            if(parts.Length >= 2) row.TraitID = parts[1];
+        }
     }
 }

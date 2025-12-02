@@ -148,5 +148,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// <param name="data">The FragmentRowData instance for which the unique identifier is being retrieved</param>
         /// <returns>The unique identifier string associated with the provided FragmentRowData instance</returns>
         protected override string GetRowID(FragmentRowData data) => data.ID;
+
+        /// <summary>
+        /// Sets the ID of a specified row of FragmentRowData to the provided value
+        /// </summary>
+        /// <param name="row">The FragmentRowData instance whose ID is to be updated</param>
+        /// <param name="newID">The new ID to assign to the row</param>
+        protected override void SetRowID(FragmentRowData row, string newID) => row.ID = newID;
     }
 }

@@ -23,6 +23,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         private static readonly Color SeparatorColor = new Color(0.4f, 0.4f, 0.4f);
         private static readonly Color HeaderColor = new Color(0.18f, 0.18f, 0.18f);
         private static readonly Color HeaderTextColor = new Color(0.8f, 0.8f, 0.8f);
+        private static readonly Color InvalidRowBorderColor = new Color(0.8f, 0.2f, 0.2f);
+        private static readonly Color WarningRowBorderColor = new Color(0.8f, 0.6f, 0.2f);
+        
+        private Dictionary<int, VisualElement> _rowElements = new Dictionary<int, VisualElement>();
+        private HashSet<int> _invalidRowIndices = new HashSet<int>();
+        private HashSet<int> _warningRowIndices = new HashSet<int>();
         
         protected List<TRowData> Rows = new List<TRowData>();
         protected ScrollView RowsContainer;
@@ -32,6 +38,7 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         private const float RemoveButtonWidth = 28f;
         private const float SeparatorWidth = 1f;
         private const float CellPadding = 8f;
+        private const float DuplicateButtonWidth = 28f;
         
         public int ValidRowCount
         {
@@ -94,7 +101,11 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// </summary>
         public void RefreshRows()
         {
+            // Clear the container
             RowsContainer.Clear();
+            
+            // Clear the row cache
+            _rowElements.Clear();
 
             for (int i = 0; i < Rows.Count; i++)
             {
@@ -135,6 +146,17 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             // Build specific fields for this tab
             BuildRowFields(container, Rows[index], index);
             
+            // Duplicate button
+            int capturedIndexForDupe = index;
+            Button duplicateButton = new Button(() => DuplicateRow(capturedIndexForDupe));
+            duplicateButton.text = "D";
+            duplicateButton.tooltip = "Duplicate this row";
+            duplicateButton.style.width = DuplicateButtonWidth;
+            duplicateButton.style.height = 20;
+            duplicateButton.style.marginLeft = CellPadding;
+            duplicateButton.style.backgroundColor = new Color(0.3f, 0.4f, 0.5f);
+            container.Add(duplicateButton);
+            
             // Remove button
             int capturedIndex = index;
             Button removeButton = new Button(() => RemoveRow(capturedIndex));
@@ -144,6 +166,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             removeButton.style.marginLeft = CellPadding;
             removeButton.style.backgroundColor = new Color(0.5f, 0.2f, 0.2f);
             container.Add(removeButton);
+            
+            // Store reference for later updates
+            _rowElements[index] = container;
+            
+            // Apply validation styling if needed
+            ApplyRowValidationStyle(container, index);
             
             return container;
         }
@@ -221,10 +249,10 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
                 header.Add(CreateSeparator());
             }
             
-            // Spacer for remove button column
-            VisualElement removeHeaderSpacer = new VisualElement();
-            removeHeaderSpacer.style.width = RemoveButtonWidth + CellPadding;
-            header.Add(removeHeaderSpacer);
+            // Spacer for duplicate/remove button column
+            VisualElement buttonSpacer = new VisualElement();
+            buttonSpacer.style.width = RemoveButtonWidth + DuplicateButtonWidth + (CellPadding * 2);
+            header.Add(buttonSpacer);
             
             return header;
         }
@@ -311,6 +339,95 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             Rows.Add(new TRowData());
             RefreshRows();
             OnRowsChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Applies a validation style to a row container based on its validation state,
+        /// such as marking it as invalid, showing a warning, or clearing any borders
+        /// </summary>
+        /// <param name="container">The visual element container representing the row</param>
+        /// <param name="index">The index of the row being validated</param>
+        private void ApplyRowValidationStyle(VisualElement container, int index)
+        {
+            if (_invalidRowIndices.Contains(index))
+            {
+                // Apply invalid border
+                container.style.borderLeftWidth = 3;
+                container.style.borderLeftColor = InvalidRowBorderColor;
+            } 
+            else if (_warningRowIndices.Contains(index))
+            {
+                // If there are no invalid rows, but there are warnings, apply the warning border
+                container.style.borderLeftWidth = 3;
+                container.style.borderLeftColor = WarningRowBorderColor;
+            }
+            else
+            {
+                // Otherwise, apply no border
+                container.style.borderLeftWidth = 0;
+            }
+        }
+
+        /// <summary>
+        /// Updates the visual highlighting of rows based on their validation state;
+        /// rows with validation errors or warnings are styled accordingly to reflect
+        /// their status
+        /// </summary>
+        /// <param name="result">The validation result containing the messages used to determine the state of each row</param>
+        public void UpdateRowHighlighting(ValidationResult result)
+        {
+            // Clear previous state
+            _invalidRowIndices.Clear();
+            _warningRowIndices.Clear();
+
+            // Exit case - no validation result
+            if (result == null) return;
+            
+            // Categorize rows by their validation state
+            foreach (ValidationMessage message in result.Messages)
+            {
+                // Skipp if the row index is invalid
+                if (message.RowIndex < 0) continue;
+
+                // Add the row to the appropriate set
+                switch (message.Severity)
+                {
+                    case ValidationSeverity.Error:
+                        _invalidRowIndices.Add(message.RowIndex);
+                        break;
+                    
+                    case ValidationSeverity.Warning:
+                    {
+                        // Skip if the row is already marked as invalid
+                        if (_invalidRowIndices.Contains(message.RowIndex)) break; 
+                        
+                        _warningRowIndices.Add(message.RowIndex);
+                        break;
+                    }
+                }
+            }
+
+            // Update row borders
+            foreach (KeyValuePair<int, VisualElement> row in _rowElements)
+            {
+                ApplyRowValidationStyle(row.Value, row.Key);
+            }
+        }
+
+        /// <summary>
+        /// Clears all highlighting from the rows, including those marked as invalid or with warnings,
+        /// and re-applies the default validation style to all rows in the container
+        /// </summary>
+        public void ClearRowHighlighting()
+        {
+            _invalidRowIndices.Clear();
+            _warningRowIndices.Clear();
+            
+            // Update row borders
+            foreach (KeyValuePair<int, VisualElement> row in _rowElements)
+            {
+                ApplyRowValidationStyle(row.Value, row.Key);
+            }
         }
 
         /// <summary>
@@ -424,6 +541,81 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// <param name="row">The row data from which the identifier will be extracted or derived</param>
         /// <returns>A string representing the unique identifier for the specified row</returns>
         protected abstract string GetRowID(TRowData row);
+
+        /// <summary>
+        /// Duplicates the specified row by cloning its data, optionally auto-incrementing its ID,
+        /// and inserting the duplicated row immediately after the original
+        /// </summary>
+        /// <param name="index">The index of the row to duplicate</param>
+        protected void DuplicateRow(int index)
+        {
+            // Clone the row
+            TRowData original = Rows[index];
+            TRowData clone = (TRowData)original.Clone();
+            
+            // Auto-increment the ID if it ends with a number
+            string originalID = GetRowID(original);
+            if (!string.IsNullOrEmpty(originalID))
+            {
+                string newID = IncrementID(originalID);
+                SetRowID(clone, newID);
+            }
+            
+            // Insert after the current row
+            Rows.Insert(index + 1, clone);
+            RefreshRows();
+            OnRowsChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Generates an incremented version of the given identifier by appending or updating
+        /// a numerical suffix; if the identifier ends with a number, the number is incremented
+        /// while preserving any leading zeros; if no number is present, "_2" is appended
+        /// </summary>
+        /// <param name="id">The original identifier to be incremented</param>
+        /// <returns>An updated identifier with the numerical suffix incremented or a new suffix appended</returns>
+        protected string IncrementID(string id)
+        {
+            // Find a trailing number
+            int numberStart = id.Length;
+            while (numberStart > 0 && char.IsDigit(id[numberStart - 1]))
+            {
+                numberStart--;
+            }
+
+            // Exit case - no trailing number found
+            if (numberStart == id.Length)
+            {
+                return id + "_2";
+            }
+            
+            // Parse and increment the number
+            string prefix = id.Substring(0, numberStart);
+            string numberString = id.Substring(numberStart);
+            
+            // Increment the number
+            if (int.TryParse(numberString, out int number))
+            {
+                // Preserve leading zeros
+                string format = new string('0', numberString.Length);
+                return prefix + (number + 1).ToString(format);
+            }
+            
+            // Construct the ID
+            StringBuilder idBuilder = new StringBuilder();
+            idBuilder.Append(id);
+            idBuilder.Append("_2");
+            
+            return idBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Assigns a new unique identifier to the specified row, allowing updates to its identity
+        /// within the collection of rows
+        /// </summary>
+        /// <param name="row">The row to which the new identifier will be assigned</param>
+        /// <param name="newID">The new unique identifier to set for the provided row</param>
+        protected abstract void SetRowID(TRowData row, string newID);
 
         /// <summary>
         /// Ensures that a specific subfolder exists within the provided base folder path;

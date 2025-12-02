@@ -48,5 +48,18 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// <param name="baseFolderPath">The path to the base folder where assets will be created</param>
         /// <returns>A <see cref="ValidationResult"/> containing details about validation errors, warnings, and informational messages</returns>
         public ValidationResult Validate(string baseFolderPath);
+
+        /// <summary>
+        /// Updates the styling and visual highlights of rows based on the provided validation results,
+        /// categorizing rows as invalid, warning, or valid according to the validation messages
+        /// </summary>
+        /// <param name="result">The validation result containing messages that determine the state of each row</param>
+        void UpdateRowHighlighting(ValidationResult result);
+
+        /// <summary>
+        /// Removes all visual highlighting from the rows, including any styles indicating validation errors
+        /// or warnings, and resets each row to use the default visual style configuration
+        /// </summary>
+        void ClearRowHighlighting();
     }
 }

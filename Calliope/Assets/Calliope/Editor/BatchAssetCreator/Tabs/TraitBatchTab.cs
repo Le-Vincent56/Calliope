@@ -127,5 +127,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// <param name="data">The TraitRowData object containing the information of the row</param>
         /// <returns>A string representing the unique ID of the row</returns>
         protected override string GetRowID(TraitRowData data) => data.ID;
+
+        /// <summary>
+        /// Sets a new ID for the specified row of TraitRowData
+        /// </summary>
+        /// <param name="row">The TraitRowData object whose ID is to be updated</param>
+        /// <param name="newID">The new ID to assign to the row</param>
+        protected override void SetRowID(TraitRowData row, string newID) => row.ID = newID;
     }
 }

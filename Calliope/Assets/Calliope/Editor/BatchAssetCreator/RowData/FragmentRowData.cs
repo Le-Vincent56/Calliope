@@ -7,9 +7,23 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
     {
         public string ID = "";
         public string Text = "";
-        public string TraitAffinities = ""; // Format: "brave:1.5, kind:1.0"
+        public string TraitAffinities = "";     // Format: "brave:1.5, kind:1.0"
         
         public override bool IsValid => !string.IsNullOrEmpty(ID) && !string.IsNullOrEmpty(Text);
         public override bool HasAnyData => !string.IsNullOrEmpty(Text) || !string.IsNullOrEmpty(Text) || !string.IsNullOrEmpty(TraitAffinities);
+
+        /// <summary>
+        /// Creates and returns a deep copy of the current instance
+        /// </summary>
+        /// <returns>A new instance of the corresponding class type that is a copy of the current instance</returns>
+        public override BaseRowData Clone()
+        {
+            return new FragmentRowData
+            {
+                ID = ID, 
+                Text = Text, 
+                TraitAffinities = TraitAffinities
+            };
+        }
     }
 }

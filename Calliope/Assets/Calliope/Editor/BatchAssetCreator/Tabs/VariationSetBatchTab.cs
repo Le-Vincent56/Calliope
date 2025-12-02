@@ -116,5 +116,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// <param name="data">The VariationSetRowData object containing the ID to retrieve</param>
         /// <returns>The unique identifier (ID) of the provided VariationSetRowData</returns>
         protected override string GetRowID(VariationSetRowData data) => data.ID;
+
+        /// <summary>
+        /// Sets the ID of a specific row in the data set to a new value
+        /// </summary>
+        /// <param name="row">The row data object whose ID is to be updated</param>
+        /// <param name="newID">The new ID value to assign to the row</param>
+        protected override void SetRowID(VariationSetRowData row, string newID) => row.ID = newID;
     }
 }

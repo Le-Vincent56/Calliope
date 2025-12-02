@@ -151,5 +151,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// <param name="data">The character row data containing the identifier to retrieve</param>
         /// <returns>The unique identifier string of the character row</returns>
         protected override string GetRowID(CharacterRowData data) => data.ID;
+
+        /// <summary>
+        /// Sets the unique identifier for the specified character row data
+        /// </summary>
+        /// <param name="row">The character row data to which the ID will be assigned</param>
+        /// <param name="id">The new unique identifier to assign to the row</param>
+        protected override void SetRowID(CharacterRowData row, string id) => row.ID = id;
     }
 }

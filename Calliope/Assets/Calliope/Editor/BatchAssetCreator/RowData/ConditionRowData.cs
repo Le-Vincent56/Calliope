@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Calliope.Editor.BatchAssetCreator.RowData
 {
     /// <summary>
@@ -12,5 +14,20 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
         
         public override bool IsValid => !string.IsNullOrEmpty(RoleID);
         public override bool HasAnyData => !string.IsNullOrEmpty(RoleID) || !string.IsNullOrEmpty(TraitID);
+
+        /// <summary>
+        /// Creates and returns a deep copy of the current <c>ConditionRowData</c> instance
+        /// </summary>
+        /// <returns>A new instance of <c>ConditionRowData</c> that is a copy of the current instance</returns>
+        public override BaseRowData Clone()
+        {
+            return new ConditionRowData
+            {
+                ConditionType = ConditionType,
+                RoleID = RoleID,
+                TraitID = TraitID,
+                MustHaveTrait = MustHaveTrait
+            };
+        }
     }
 }

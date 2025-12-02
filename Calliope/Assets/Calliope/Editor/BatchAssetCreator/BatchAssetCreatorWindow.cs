@@ -178,6 +178,10 @@ namespace Calliope.Editor.BatchAssetCreator
         /// <param name="index">The index of the tab to display; must be within the range of available tabs</param>
         private void ShowTab(int index)
         {
+            // Clear any existing highlighting
+            _tabs[_currentTabIndex].ClearRowHighlighting();
+            _validationDisplay.Hide();
+            
             // Set the current index
             _currentTabIndex = index;
             
@@ -293,8 +297,14 @@ namespace Calliope.Editor.BatchAssetCreator
         /// </summary>
         private void OnValidateClicked()
         {
+            // Validate the tab
             ValidationResult result = _tabs[_currentTabIndex].Validate(_saveFolderPath);
+            
+            // Display the validation results
             _validationDisplay.DisplayResults(result);
+            
+            // Highlight rows based on validation results
+            _tabs[_currentTabIndex].UpdateRowHighlighting(result);
         }
     }
 }

@@ -138,5 +138,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// <param name="data">The row data object containing the identifier to retrieve</param>
         /// <returns>The unique identifier for the row data</returns>
         protected override string GetRowID(RoleRowData data) => data.ID;
+
+        /// <summary>
+        /// Sets a new ID for the specified row data object
+        /// </summary>
+        /// <param name="row">The row data object for which the ID will be updated</param>
+        /// <param name="newID">The new ID to assign to the row data object</param>
+        protected override void SetRowID(RoleRowData row, string newID) => row.ID = newID;
     }
 }
