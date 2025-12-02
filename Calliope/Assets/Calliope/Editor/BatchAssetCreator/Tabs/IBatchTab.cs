@@ -61,5 +61,12 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// or warnings, and resets each row to use the default visual style configuration
         /// </summary>
         void ClearRowHighlighting();
+
+        /// <summary>
+        /// Removes rows from the tab that are deemed to be empty based on the implemented tab logic,
+        /// ensuring only valid rows remain; updates the UI and triggers any necessary callbacks associated
+        /// with the row collection changes
+        /// </summary>
+        void ClearEmptyRows();
     }
 }

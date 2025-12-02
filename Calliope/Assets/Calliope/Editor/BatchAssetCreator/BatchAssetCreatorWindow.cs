@@ -150,8 +150,8 @@ namespace Calliope.Editor.BatchAssetCreator
             toolbar.Add(browseButton);
 
             // Create the Clear button
-            Button clearButton = new Button(ClearCurrentTab);
-            clearButton.text = "Clear";
+            Button clearButton = new Button(ShowClearMenu);
+            clearButton.text = "Clear ▾";
             clearButton.style.marginLeft = 16;
             toolbar.Add(clearButton);
 
@@ -247,12 +247,37 @@ namespace Calliope.Editor.BatchAssetCreator
         }
 
         /// <summary>
+        /// Displays a context menu with options to clear specific types of rows
+        /// from the currently active tab, providing choices for removing either
+        /// all rows or only empty rows
+        /// </summary>
+        private void ShowClearMenu()
+        {
+            GenericMenu menu = new GenericMenu();
+            menu.AddItem(new GUIContent("Clear Empty Rows"), false, ClearEmptyRows);
+            menu.AddItem(new GUIContent("Clear All Rows"), false, ClearCurrentTab);
+            menu.ShowAsContext();
+        }
+
+        /// <summary>
+        /// Clears rows that are empty from the currently active tab, ensuring the tab displays only valid rows;
+        /// hides the validation display element and updates the status information to reflect the changes
+        /// </summary>
+        private void ClearEmptyRows()
+        {
+            _tabs[_currentTabIndex].ClearEmptyRows();
+            _validationDisplay.Hide();
+            UpdateStatus();
+        }
+
+        /// <summary>
         /// Clears all data and rows associated with the currently active tab,
         /// resetting it to its initial state and updating the UI accordingly
         /// </summary>
         private void ClearCurrentTab()
         {
             _tabs[_currentTabIndex].ClearRows();
+            _validationDisplay.Hide();
             UpdateStatus();
         }
 

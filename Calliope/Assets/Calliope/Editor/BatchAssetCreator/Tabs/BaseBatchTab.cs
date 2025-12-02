@@ -618,6 +618,28 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         protected abstract void SetRowID(TRowData row, string newID);
 
         /// <summary>
+        /// Removes rows from the list that do not contain any data and ensures that at least one default row is present;
+        /// triggers the onRowsChanged callback to notify changes in the collection of rows
+        /// </summary>
+        public void ClearEmptyRows()
+        {
+            // Remove rows that have no data
+            for (int i = Rows.Count - 1; i >= 0; i--)
+            {
+                // Skip if the row has data
+                if (Rows[i].HasAnyData) continue;
+                
+                Rows.RemoveAt(i);
+            }
+            
+            // Ensure at least one row exists
+            if (Rows.Count == 0) Rows.Add(new TRowData());
+
+            RefreshRows();
+            OnRowsChanged?.Invoke();
+        }
+        
+        /// <summary>
         /// Ensures that a specific subfolder exists within the provided base folder path;
         /// if the subfolder does not exist, it will be created
         /// </summary>
