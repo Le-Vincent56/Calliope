@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Calliope.Core.Interfaces;
+using Calliope.Editor.BatchAssetCreator;
 using Calliope.Unity.ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor.UIElements;
 using Object = UnityEngine.Object;
 using FieldConfig = Calliope.Editor.SceneTemplateEditor.AssetCreationDialog.FieldConfig;
 
@@ -27,6 +27,7 @@ namespace Calliope.Editor.SceneTemplateEditor
         private string _currentSearchText = "";
         private Button _createBeatButton;
         private Button _cleanupButton;
+        private Button _batchCreatorButton;
         private VisualElement _inspectorContent;
         private BeatNodeView _selectedNode;
         
@@ -122,6 +123,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             _validationSection = root.Q<VisualElement>("ValidationSection");
             _validationButton = root.Q<Button>("ValidateButton");
             _searchField = root.Q<TextField>("SearchField");
+            _batchCreatorButton = root.Q<Button>("BatchCreatorButton");
             _clearSearchButton = root.Q<Button>("ClearSearchButton");
             _zoomInButton = root.Q<Button>("ZoomInButton");
             _zoomOutButton = root.Q<Button>("ZoomOutButton");
@@ -153,6 +155,12 @@ namespace Calliope.Editor.SceneTemplateEditor
             if (_clearSearchButton != null)
             {
                 _clearSearchButton.clicked += OnClearSearchClicked;
+            }
+            
+            // Set up the batch creator button
+            if (_batchCreatorButton != null)
+            {
+                _batchCreatorButton.clicked += OnBatchCreatorClicked;
             }
             
             // Set up the zoom in button
@@ -3799,5 +3807,11 @@ namespace Calliope.Editor.SceneTemplateEditor
             // Update the inspector
             ShowBeatInspector(_selectedNode);      
         }
+
+        /// <summary>
+        /// Handles the event triggered when the "Batch Creator" button is clicked;
+        /// opens the BatchAssetCreatorWindow, allowing the user to create multiple Calliope assets in bulk
+        /// </summary>
+        private void OnBatchCreatorClicked() => BatchAssetCreatorWindow.ShowWindow();
     }
 }
