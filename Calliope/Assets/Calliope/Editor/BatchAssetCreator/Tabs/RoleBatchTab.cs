@@ -21,8 +21,9 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         {
             new ColumnDefinition("ID", 100),
             new ColumnDefinition("Display Name", 140),
-            new ColumnDefinition("Required Traits", flexGrow: 1, tooltip: "Comma-separated trait IDs (e.g., brave, strong)"),
-            new ColumnDefinition("Forbidden Traits", flexGrow: 1, tooltip: "Comma-separated trait IDs (e.g., brave, strong)")
+            new ColumnDefinition("Preferred Traits", flexGrow: 1, tooltip: "Format: trait:weight, trait:weight (e.g., brave:1.5, kind:1.0)"),
+            new ColumnDefinition("Required Traits", width: 140, tooltip: "Comma-separated trait IDs (e.g., brave, strong)"),
+            new ColumnDefinition("Forbidden Traits", width: 140, tooltip: "Comma-separated trait IDs (e.g., brave, strong)")
         };
         
         protected override string AssetTypeName => "SceneRoleSO";
@@ -51,11 +52,19 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             
             container.Add(CreateSeparator());
             
+            // Preferred Traits field
+            TextField preferredField = new TextField();
+            preferredField.value = data.PreferredTraits;
+            preferredField.RegisterValueChangedCallback(evt => data.PreferredTraits = evt.newValue);
+            container.Add(CreateCell(2, preferredField));
+            
+            container.Add(CreateSeparator());
+            
             // Required Traits field
             TextField requiredField = new TextField();
             requiredField.value = data.RequiredTraits;
             requiredField.RegisterValueChangedCallback(evt => data.RequiredTraits = evt.newValue);
-            container.Add(CreateCell(2, requiredField));
+            container.Add(CreateCell(3, requiredField));
             
             container.Add(CreateSeparator());
             
@@ -63,7 +72,7 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             TextField forbiddenField = new TextField();
             forbiddenField.value = data.ForbiddenTraits;
             forbiddenField.RegisterValueChangedCallback(evt => data.ForbiddenTraits = evt.newValue);
-            container.Add(CreateCell(3, forbiddenField));
+            container.Add(CreateCell(4, forbiddenField));
         }
 
         /// <summary>
@@ -90,11 +99,60 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
                 serialized.FindProperty("roleID").stringValue = data.ID;
                 serialized.FindProperty("displayName").stringValue = data.DisplayName;
                 
+                // Parse trait affinities
+                if (!string.IsNullOrEmpty(data.PreferredTraits))
+                {
+                    string[] pairs = data.PreferredTraits.Split(',');
+                    
+                    // First pass: count valid pairs
+                    int validCount = 0;
+                    for (int j = 0; j < pairs.Length; j++)
+                    {
+                        string[] parts = pairs[j].Trim().Split(':');
+                        
+                        // Skip if the pair is invalid
+                        if (parts.Length != 2 || !float.TryParse(parts[1], out _)) continue;
+                        
+                        validCount++;
+                    }
+                    
+                    SerializedProperty affinitiesProperty = serialized.FindProperty("preferredTraits");
+                    affinitiesProperty.arraySize = validCount;
+                    
+                    // Second pass: populate valid pairs
+                    int arrayIndex = 0;
+                    for (int j = 0; j < pairs.Length; j++)
+                    {
+                        string[] parts = pairs[j].Trim().Split(':');
+                        
+                        // Skip if the pair is invalid
+                        if (parts.Length != 2) continue;
+                        if (!float.TryParse(parts[1].Trim(), out float weight)) continue;
+                        
+                        // Populate the array
+                        SerializedProperty element = affinitiesProperty.GetArrayElementAtIndex(arrayIndex++);
+                        element.FindPropertyRelative("TraitID").stringValue = parts[0].Trim();
+                        element.FindPropertyRelative("Weight").floatValue = weight;
+                    }
+                }
+                
                 // Parse required traits
                 if (!string.IsNullOrEmpty(data.RequiredTraits))
                 {
                     string[] traits = ParseCommaSeparated(data.RequiredTraits);
-                    SerializedProperty property = serialized.FindProperty("requiredTraits");
+                    SerializedProperty property = serialized.FindProperty("requiredTraitIDs");
+                    property.arraySize = traits.Length;
+                    for (int j = 0; j < traits.Length; j++)
+                    {
+                        property.GetArrayElementAtIndex(j).stringValue = traits[j];
+                    }
+                }
+                
+                // Parse forbidden traits
+                if (!string.IsNullOrEmpty(data.ForbiddenTraits))
+                {
+                    string[] traits = ParseCommaSeparated(data.ForbiddenTraits);
+                    SerializedProperty property = serialized.FindProperty("forbiddenTraitIDs");
                     property.arraySize = traits.Length;
                     for (int j = 0; j < traits.Length; j++)
                     {

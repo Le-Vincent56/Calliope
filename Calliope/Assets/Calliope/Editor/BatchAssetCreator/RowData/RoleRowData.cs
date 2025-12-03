@@ -7,11 +7,12 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
     {
         public string ID = "";
         public string DisplayName = "";
+        public string PreferredTraits = "";     // Comma-separated traits
         public string RequiredTraits = "";      // Comma-separated
         public string ForbiddenTraits = "";     // Comma-separated
         
         public override bool IsValid => !string.IsNullOrEmpty(ID) && !string.IsNullOrEmpty(DisplayName);
-        public override bool HasAnyData => !string.IsNullOrEmpty(ID) || !string.IsNullOrEmpty(DisplayName) || !string.IsNullOrEmpty(RequiredTraits) || !string.IsNullOrEmpty(ForbiddenTraits);
+        public override bool HasAnyData => !string.IsNullOrEmpty(ID) || !string.IsNullOrEmpty(DisplayName);
 
         /// <summary>
         /// Creates and returns a deep copy of the current instance
@@ -23,6 +24,7 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
             {
                 ID = ID, 
                 DisplayName = DisplayName, 
+                PreferredTraits = PreferredTraits,
                 RequiredTraits = RequiredTraits, 
                 ForbiddenTraits = ForbiddenTraits
             };

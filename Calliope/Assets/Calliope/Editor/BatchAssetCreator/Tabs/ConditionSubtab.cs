@@ -77,7 +77,7 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             container.Add(CreateHeaderRow());
 
             // Scrollable rows
-            _rowsContainer = new ScrollView();
+            _rowsContainer = new ScrollView(ScrollViewMode.Vertical);
             _rowsContainer.style.flexGrow = 1;
             container.Add(_rowsContainer);
 
@@ -313,6 +313,7 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             container.style.backgroundColor = (index % 2 == 0) 
                 ? RowColorEven 
                 : RowColorOdd;
+            container.style.flexShrink = 0;
 
             // Row number
             Label indexLabel = new Label((index + 1).ToString());

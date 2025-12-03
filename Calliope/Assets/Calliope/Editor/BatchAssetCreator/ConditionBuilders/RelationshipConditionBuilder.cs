@@ -20,7 +20,7 @@ namespace Calliope.Editor.BatchAssetCreator.ConditionBuilders
         public override ColumnDefinition[] Columns => new[]
         {
             new ColumnDefinition("From Role ID", flexGrow: 1),
-            new ColumnDefinition("To Role ID", flexGrow: 1),
+            new ColumnDefinition("To Role ID", width: 300),
             new ColumnDefinition("Type", 120, tooltip: "The relationship type between the two roles"),
             new ColumnDefinition("Threshold", 80, tooltip: "The minimum threshold for the relationship to be considered valid"),
             new ColumnDefinition(">=", 40, tooltip: "If checked: >=; if unchecked: <=")

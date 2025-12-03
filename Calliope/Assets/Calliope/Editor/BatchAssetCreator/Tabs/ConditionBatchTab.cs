@@ -51,12 +51,15 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         {
             _onRowsChanged = onRowsChanged;
 
-            // Initialize subtabs from registry
-            IReadOnlyList<IConditionRowBuilder> builders = ConditionBuilderRegistry.Builders;
-            _subtabs = new List<ConditionSubtab>(builders.Count);
-            for (int i = 0; i < builders.Count; i++)
+            // Initialize subtabs from registry (if not created already)
+            if (_subtabs == null)
             {
-                _subtabs.Add(new ConditionSubtab(builders[i]));
+                IReadOnlyList<IConditionRowBuilder> builders = ConditionBuilderRegistry.Builders;
+                _subtabs = new List<ConditionSubtab>(builders.Count);
+                for (int i = 0; i < builders.Count; i++)
+                {
+                    _subtabs.Add(new ConditionSubtab(builders[i]));
+                }
             }
 
             // Create the container
@@ -74,7 +77,7 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             container.Add(_subtabContent);
             
             // Show first subtab
-            ShowSubtab(0);
+            ShowSubtab(_currentSubtabIndex);
 
             return container;
         }

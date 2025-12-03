@@ -30,9 +30,9 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
 
         private static readonly List<string> PronounOptions = new List<string>
         {
-            "They/Them",
-            "He/Him",
-            "She/Her"
+            "They-Them",
+            "He-Him",
+            "She-Her"
         };
 
         /// <summary>
@@ -61,7 +61,6 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             
             // Pronoun fields
             PopupField<string> pronounField = new PopupField<string>(
-                "Pronouns", 
                 PronounOptions, 
                 data.PronounIndex
             );
@@ -101,7 +100,32 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
                 SerializedObject serialized = new SerializedObject(asset);
                 serialized.FindProperty("id").stringValue = data.ID;
                 serialized.FindProperty("displayName").stringValue = data.DisplayName;
-                serialized.FindProperty("pronouns").enumValueIndex = data.PronounIndex;
+                
+                // Set pronouns based on index
+                SerializedProperty pronounsProperty = serialized.FindProperty("pronouns");
+                switch (data.PronounIndex)
+                {
+                    case 0: // They/them
+                        pronounsProperty.FindPropertyRelative("Subject").stringValue = "They";
+                        pronounsProperty.FindPropertyRelative("Object").stringValue = "Them";
+                        pronounsProperty.FindPropertyRelative("Possessive").stringValue = "Their";
+                        pronounsProperty.FindPropertyRelative("Reflexive").stringValue = "Themselves";
+                        break;
+                    
+                    case 1: // He/Him
+                        pronounsProperty.FindPropertyRelative("Subject").stringValue = "He";
+                        pronounsProperty.FindPropertyRelative("Object").stringValue = "Him";
+                        pronounsProperty.FindPropertyRelative("Possessive").stringValue = "His";
+                        pronounsProperty.FindPropertyRelative("Reflexive").stringValue = "Himself";
+                        break;
+                    
+                    case 2: // She/Her
+                        pronounsProperty.FindPropertyRelative("Subject").stringValue = "She";
+                        pronounsProperty.FindPropertyRelative("Object").stringValue = "Her";
+                        pronounsProperty.FindPropertyRelative("Possessive").stringValue = "Her";
+                        pronounsProperty.FindPropertyRelative("Reflexive").stringValue = "Herself";
+                        break;
+                }
                 
                 // Parse traits
                 if (!string.IsNullOrEmpty(data.Traits))

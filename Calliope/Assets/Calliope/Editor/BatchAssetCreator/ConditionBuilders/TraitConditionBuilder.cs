@@ -21,7 +21,7 @@ namespace Calliope.Editor.BatchAssetCreator.ConditionBuilders
         public override ColumnDefinition[] Columns => new[]
         {
             new ColumnDefinition("Role ID", flexGrow: 1),
-            new ColumnDefinition("Trait ID", flexGrow: 1),
+            new ColumnDefinition("Trait ID", width: 300),
             new ColumnDefinition("Must Have", 80, tooltip: "If checked, the role must have the trait; if unchecked, the role must not have the trait")
         };
 
@@ -44,6 +44,7 @@ namespace Calliope.Editor.BatchAssetCreator.ConditionBuilders
             
             // Role ID field
             TextField roleField = new TextField();
+            roleField.style.whiteSpace = WhiteSpace.NoWrap;
             roleField.value = traitData.RoleID;
             roleField.RegisterValueChangedCallback(evt =>
             {
@@ -56,6 +57,7 @@ namespace Calliope.Editor.BatchAssetCreator.ConditionBuilders
             
             // Trait ID field
             TextField traitField = new TextField();
+            traitField.style.whiteSpace = WhiteSpace.NoWrap;
             traitField.value = traitData.TraitID;
             traitField.RegisterValueChangedCallback(evt =>
             {

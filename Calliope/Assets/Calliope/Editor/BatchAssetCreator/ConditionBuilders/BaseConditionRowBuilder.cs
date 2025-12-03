@@ -50,9 +50,14 @@ namespace Calliope.Editor.BatchAssetCreator.ConditionBuilders
                 cell.style.flexGrow = column.FlexGrow > 0 
                     ? column.FlexGrow 
                     : 1;
+                cell.style.flexShrink = 1;
+                cell.style.minWidth = 0;
             }
 
             content.style.flexGrow = 1;
+            content.style.overflow = Overflow.Hidden;
+            content.style.flexShrink = 1;
+            content.style.minWidth = 0;
             cell.Add(content);
 
             return cell;

@@ -279,6 +279,9 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             
             // Add the content to the cell
             content.style.flexGrow = 1;
+            content.style.overflow = Overflow.Hidden;
+            content.style.flexShrink = 1;
+            content.style.minWidth = 0;
             cell.Add(content);
 
             return cell;

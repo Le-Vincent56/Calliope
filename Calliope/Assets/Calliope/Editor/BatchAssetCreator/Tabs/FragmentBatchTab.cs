@@ -86,26 +86,37 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
                 // Parse trait affinities
                 if (!string.IsNullOrEmpty(data.TraitAffinities))
                 {
-                    SerializedProperty affinitiesProperty = serialized.FindProperty("traitAffinities");
                     string[] pairs = data.TraitAffinities.Split(',');
-                    affinitiesProperty.arraySize = pairs.Length;
-
+                    
+                    // First pass: count valid pairs
+                    int validCount = 0;
+                    for (int j = 0; j < pairs.Length; j++)
+                    {
+                        string[] parts = pairs[j].Trim().Split(':');
+                        
+                        // Skip if the pair is invalid
+                        if (parts.Length != 2 || !float.TryParse(parts[1], out _)) continue;
+                        
+                        validCount++;
+                    }
+                    
+                    SerializedProperty affinitiesProperty = serialized.FindProperty("traitAffinities");
+                    affinitiesProperty.arraySize = validCount;
+                    
+                    // Second pass: populate valid pairs
+                    int arrayIndex = 0;
                     for (int j = 0; j < pairs.Length; j++)
                     {
                         string[] parts = pairs[j].Trim().Split(':');
                         
                         // Skip if the pair is invalid
                         if (parts.Length != 2) continue;
-                        
-                        // Set the trait ID
-                        SerializedProperty element = affinitiesProperty.GetArrayElementAtIndex(j);
-                        element.FindPropertyRelative("traitID").stringValue = parts[0].Trim();
-
-                        // Skip if the weight is invalid
                         if (!float.TryParse(parts[1].Trim(), out float weight)) continue;
                         
-                        // Set the weight
-                        element.FindPropertyRelative("weight").floatValue = weight;
+                        // Populate the array
+                        SerializedProperty element = affinitiesProperty.GetArrayElementAtIndex(arrayIndex++);
+                        element.FindPropertyRelative("TraitID").stringValue = parts[0].Trim();
+                        element.FindPropertyRelative("Weight").floatValue = weight;
                     }
                 }
                 
