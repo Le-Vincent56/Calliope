@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace Calliope.Editor.BatchAssetCreator.RowData
 {
     /// <summary>
@@ -11,6 +9,11 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
         public string RoleID = "";
         public string TraitID = "";
         public bool MustHaveTrait = true;
+
+        public string ToRoleID = "";
+        public int RelationshipTypeIndex = 0;
+        public float Threshold = 50f;
+        public bool GreaterThanOrEqual = true;
         
         public override bool IsValid => !string.IsNullOrEmpty(RoleID);
         public override bool HasAnyData => !string.IsNullOrEmpty(RoleID) || !string.IsNullOrEmpty(TraitID);

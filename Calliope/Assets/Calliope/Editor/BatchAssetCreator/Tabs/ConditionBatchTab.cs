@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Calliope.Editor.BatchAssetCreator.RowData;
-using Calliope.Unity.ScriptableObjects;
+using Calliope.Editor.BatchAssetCreator.ConditionBuilders;
+using Calliope.Editor.BatchAssetCreator.RowData.Conditions;
+using Calliope.Editor.BatchAssetCreator.Validation;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,164 +14,254 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
     /// Represents a batch tab specifically used for managing and creating
     /// condition-based assets within the batch asset creation process of the editor
     /// </summary>
-    public class ConditionBatchTab : BaseBatchTab<ConditionRowData>
+    public class ConditionBatchTab : IBatchTab
     {
-        public override string TabName => "Conditions";
-        protected override string SubfolderName => "Conditions";
-
-        private static readonly List<string> ConditionTypeOptions = new List<string>
-        {
-            "Trait Condition",
-            "Relationship Condition"
-        };
-
-        protected override ColumnDefinition[] Columns => new[]
-        {
-            new ColumnDefinition("Type", 100),
-            new ColumnDefinition("Role ID", 120, tooltip: "The role ID to check (e.g., speaker, responder)"),
-            new ColumnDefinition("Trait ID", flexGrow: 1, tooltip: "The trait ID to check (e.g., brave, strong)"),
-            new ColumnDefinition("Must Have", 80)
-        };
+        private static readonly Color SubtabActiveColor = new Color(0.3f, 0.5f, 0.7f);
+        private static readonly Color SubtabInactiveColor = new Color(0.25f, 0.25f, 0.25f);
         
-        protected override string AssetTypeName => "TraitConditionSO";
+        private List<ConditionSubtab> _subtabs;
+        private List<Button> _subtabButtons;
+        private int _currentSubtabIndex = 0;
+        private VisualElement _subtabBar;
+        private VisualElement _subtabContent;
+        private Action _onRowsChanged;
 
-        /// <summary>
-        /// Builds the row fields for the UI container using the provided data
-        /// by configuring input elements such as dropdowns, text fields, and toggles,
-        /// and binds their values to the properties of the data instance
-        /// </summary>
-        /// <param name="container">The UI container where the row fields will be added</param>
-        /// <param name="data">The data object containing values to populate the fields and store updated values</param>
-        /// <param name="rowIndex">The index of the row being built, used for contextual identification</param>
-        protected override void BuildRowFields(VisualElement container, ConditionRowData data, int rowIndex)
+        public string TabName => "Conditions";
+
+        public int ValidRowCount
         {
-            // Condition Type field
-            PopupField<string> typeField = new PopupField<string>(
-                ConditionTypeOptions,
-                data.ConditionType
-            );
-            typeField.RegisterValueChangedCallback(evt => data.ConditionType = typeField.index);
-            container.Add(CreateCell(0, typeField));
-            
-            container.Add(CreateSeparator());
-            
-            // Role ID field
-            TextField roleField = new TextField();
-            roleField.value = data.RoleID;
-            roleField.RegisterValueChangedCallback(evt => data.RoleID = evt.newValue);
-            container.Add(CreateCell(1, roleField));
-            
-            container.Add(CreateSeparator());
-            
-            // Trait ID field
-            TextField traitField = new TextField();
-            traitField.value = data.TraitID;
-            traitField.RegisterValueChangedCallback(evt => data.TraitID = evt.newValue);
-            container.Add(CreateCell(2, traitField));
-            
-            container.Add(CreateSeparator());
-            
-            // Must have toggle
-            Toggle mustHaveToggle = new Toggle();
-            mustHaveToggle.value = data.MustHaveTrait;
-            mustHaveToggle.RegisterValueChangedCallback(evt => data.MustHaveTrait = evt.newValue);
-            container.Add(CreateCell(3, mustHaveToggle));
+            get
+            {
+                int count = 0;
+                for (int i = 0; i < _subtabs.Count; i++)
+                {
+                    count += _subtabs[i].ValidRowCount;
+                }
+                return count;
+            }
         }
 
         /// <summary>
-        /// Creates assets based on the provided rows and saves them in the specified folder path;
-        /// skips invalid rows during the process and returns the count of successfully created assets
+        /// Builds and returns the content structure for the condition batch tab,
+        /// including a subtab bar and a content area for displaying subtab-specific data
         /// </summary>
-        /// <param name="baseFolderPath">The path to the base folder where the assets should be created</param>
-        /// <returns>The number of assets successfully created</returns>
-        public override int CreateAssets(string baseFolderPath)
+        /// <param name="onRowsChanged">Callback invoked when rows are modified within the tab</param>
+        /// <returns>A VisualElement representing the condition batch tab's content layout</returns>
+        public VisualElement BuildContent(Action onRowsChanged)
+        {
+            _onRowsChanged = onRowsChanged;
+
+            // Initialize subtabs from registry
+            IReadOnlyList<IConditionRowBuilder> builders = ConditionBuilderRegistry.Builders;
+            _subtabs = new List<ConditionSubtab>(builders.Count);
+            for (int i = 0; i < builders.Count; i++)
+            {
+                _subtabs.Add(new ConditionSubtab(builders[i]));
+            }
+
+            // Create the container
+            VisualElement container = new VisualElement();
+            container.style.flexGrow = 1;
+
+            // Subtab bar
+            _subtabBar = CreateSubtabBar();
+            container.Add(_subtabBar);
+            
+            // Subtab content area
+            _subtabContent = new VisualElement();
+            _subtabContent.style.flexGrow = 1;
+            _subtabContent.style.marginTop = 8;
+            container.Add(_subtabContent);
+            
+            // Show first subtab
+            ShowSubtab(0);
+
+            return container;
+        }
+
+        /// <summary>
+        /// Creates a subtab bar containing clickable buttons for navigating between subtabs
+        /// </summary>
+        /// <returns>A VisualElement representing the subtab bar with buttons for each subtab</returns>
+        private VisualElement CreateSubtabBar()
+        {
+            // Set up the bar element
+            VisualElement bar = new VisualElement();
+            bar.style.flexDirection = FlexDirection.Row;
+            bar.style.marginBottom = 4;
+            
+            // Create the list of buttons
+            _subtabButtons = new List<Button>(_subtabs.Count);
+
+            for (int i = 0; i < _subtabs.Count; i++)
+            {
+                int capturedIndex = i;
+                ConditionSubtab subtab = _subtabs[i];
+
+                // Create the button
+                Button button = new Button(() => ShowSubtab(capturedIndex));
+                button.text = subtab.Builder.DisplayName;
+                button.style.marginRight = 4;
+                button.style.paddingLeft = 12;
+                button.style.paddingRight = 12;
+                button.style.paddingTop = 6;
+                button.style.paddingBottom = 6;
+                
+                _subtabButtons.Add(button);
+                bar.Add(button);
+            }
+
+            return bar;
+        }
+
+        /// <summary>
+        /// Displays the subtab at the specified index, updating the UI to reflect the currently active subtab
+        /// </summary>
+        /// <param name="index">The index of the subtab to display. Must be a valid index within the list of subtabs</param>
+        private void ShowSubtab(int index)
+        {
+            _currentSubtabIndex = index;
+            
+            // Update button styling
+            for (int i = 0; i < _subtabButtons.Count; i++)
+            {
+                _subtabButtons[i].style.backgroundColor = i == index 
+                    ? SubtabActiveColor
+                    : SubtabInactiveColor;
+            }
+            
+            // Rebuild content
+            _subtabContent.Clear();
+            _subtabContent.Add(_subtabs[index].BuildContent(_onRowsChanged));
+            
+            // Reapply validation highlighting if validation was previously run
+            ValidationResult subtabResult = _subtabs[index].Validate();
+            _subtabs[index].UpdateRowHighlighting(subtabResult);
+        }
+
+        /// <summary>
+        /// Clears all rows from the currently active subtab, resetting its contents entirely
+        /// </summary>
+        public void ClearRows() => _subtabs[_currentSubtabIndex].ClearRows();
+
+        /// <summary>
+        /// Removes all empty rows from the currently active subtab, ensuring only valid rows remain
+        /// </summary>
+        public void ClearEmptyRows() => _subtabs[_currentSubtabIndex].ClearEmptyRows();
+
+        /// <summary>
+        /// Creates assets for all subtabs by iterating through them and using their individual
+        /// CreateAssets implementations; the assets are created in a specified subfolder of the base folder
+        /// </summary>
+        /// <param name="baseFolderPath">The path to the base folder where assets will be created</param>
+        /// <returns>The total number of assets created across all subtabs</returns>
+        public int CreateAssets(string baseFolderPath)
         {
             int count = 0;
             string subfolder = EnsureSubfolder(baseFolderPath);
-            StringBuilder fileBuilder = new StringBuilder();
             
-            for (int i = 0; i < Rows.Count; i++)
+            // Create assets from all subtabs
+            for (int i = 0; i < _subtabs.Count; i++)
             {
-                ConditionRowData data = Rows[i];
-
-                // Skip over invalid rows
-                if (!data.IsValid) continue;
-
-                if (data.ConditionType == 0)
-                {
-                    TraitConditionSO asset = ScriptableObject.CreateInstance<TraitConditionSO>();
-                    
-                    // Set values
-                    SerializedObject serialized = new SerializedObject(asset);
-                    serialized.FindProperty("roleID").stringValue = data.RoleID;
-                    serialized.FindProperty("traitID").stringValue = data.TraitID;
-                    serialized.FindProperty("mustHaveTrait").boolValue = data.MustHaveTrait;
-                    serialized.ApplyModifiedProperties();
-                    
-                    // Create the file name
-                    string mustHaveStr = data.MustHaveTrait ? "Has" : "NotHas";
-                    fileBuilder.Clear();
-                    fileBuilder.Append("Condition_");
-                    fileBuilder.Append(data.RoleID);
-                    fileBuilder.Append("_");
-                    fileBuilder.Append(mustHaveStr);
-                    fileBuilder.Append("_");
-                    fileBuilder.Append(data.TraitID);
-                    string fileName = fileBuilder.ToString();
-                    
-                    // Build the path string
-                    fileBuilder.Clear();
-                    fileBuilder.Append(subfolder);
-                    fileBuilder.Append("/");
-                    fileBuilder.Append(fileName);
-                    fileBuilder.Append(".asset");
-                    string assetPath = fileBuilder.ToString();
-                    
-                    AssetDatabase.CreateAsset(asset, assetPath);
-                    count++;
-                }
-                else
-                {
-                    // TODO: Implement RelationshipConditionSO creation if needed
-                }
+                count += _subtabs[i].CreateAssets(subfolder);
             }
-
+            
             return count;
         }
 
         /// <summary>
-        /// Generates a unique identifier for the given row data by combining
-        /// its Role ID, Trait ID, and the Must Have Trait flag
+        /// Validates the specified base folder path by performing checks across all subtabs
+        /// and aggregates the validation results, including any error messages or warnings
         /// </summary>
-        /// <param name="data">
-        /// The row data object containing the Role ID, Trait ID,
-        /// and Must Have Trait flag to construct the identifier
-        /// </param>
-        /// <returns>
-        /// A string representing the unique identifier for the row,
-        /// formatted as "RoleID_TraitID_MustHaveTrait"
-        /// </returns>
-        protected override string GetRowID(ConditionRowData data)
+        /// <param name="baseFolderPath">The path to the base folder to be validated</param>
+        /// <returns>A ValidationResult containing the aggregated results and messages from all subtabs</returns>
+        public ValidationResult Validate(string baseFolderPath)
         {
-            StringBuilder idBuilder = new StringBuilder();
-            idBuilder.Append(data.RoleID);
-            idBuilder.Append("_");
-            idBuilder.Append(data.TraitID);
-            idBuilder.Append("_");
-            idBuilder.Append(data.MustHaveTrait);
-            return idBuilder.ToString();
+            ValidationResult result = new ValidationResult();
+            StringBuilder messageBuilder = new StringBuilder();
+            
+            // Validate all subtabs
+            for(int i = 0; i < _subtabs.Count; i++)
+            {
+                ValidationResult subtabResult = _subtabs[i].Validate();
+                
+                // Prefix errors with subtab name
+                foreach (ValidationMessage message in subtabResult.Messages)
+                {
+                    messageBuilder.Clear();
+                    
+                    // Add prefix
+                    messageBuilder.Append("[");
+                    messageBuilder.Append(_subtabs[i].Builder.DisplayName);
+                    messageBuilder.Append("] ");
+                    messageBuilder.Append(message.Message);
+
+                    // Add to result
+                    switch (message.Severity)
+                    {
+                        case ValidationSeverity.Error:
+                            result.AddError(messageBuilder.ToString(), message.RowIndex);
+                            break;
+                        
+                        case ValidationSeverity.Warning:
+                            result.AddWarning(messageBuilder.ToString(), message.RowIndex);
+                            break;
+                        
+                        default:
+                            result.AddInfo(messageBuilder.ToString(), message.RowIndex);
+                            break;
+                    }
+                }
+            }
+            
+            return result;
         }
 
         /// <summary>
-        /// Sets the RoleID and TraitID properties of a row based on the provided ID by parsing it into components
+        /// Updates the row highlighting for all subtabs within the condition batch tab based on validation results
         /// </summary>
-        /// <param name="row">The data object to which the extracted RoleID and TraitID values will be assigned</param>
-        /// <param name="id">The string identifier containing RoleID and TraitID components separated by an underscore</param>
-        protected override void SetRowID(ConditionRowData row, string id)
+        /// <param name="result">The validation result to be used for determining row highlighting</param>
+        public void UpdateRowHighlighting(ValidationResult result)
         {
-            string[] parts = id.Split('_');
-            if(parts.Length >= 1) row.RoleID = parts[0];
-            if(parts.Length >= 2) row.TraitID = parts[1];
+            for (int i = 0; i < _subtabs.Count; i++)
+            {
+                ValidationResult subtabResult = _subtabs[i].Validate();
+                _subtabs[i].UpdateRowHighlighting(subtabResult);
+            }
+        }
+
+        /// <summary>
+        /// Clears all highlighting applied to rows across the subtabs in the condition batch tab;
+        /// this is typically used to reset visual state after validation errors or user interaction
+        /// </summary>
+        public void ClearRowHighlighting()
+        {
+            for(int i = 0; i < _subtabs.Count; i++)
+            {
+                _subtabs[i].ClearRowHighlighting();
+            }
+        }
+
+        /// <summary>
+        /// Ensures that a subfolder named "Conditions" exists within the given base folder path;
+        /// if the "Conditions" folder does not exist, it is created
+        /// </summary>
+        /// <param name="baseFolderPath">The path to the base folder where the "Conditions" subfolder should exist</param>
+        /// <returns>The full path to the "Conditions" subfolder</returns>
+        private string EnsureSubfolder(string baseFolderPath)
+        {
+            // Create the full path
+            StringBuilder pathBuilder = new StringBuilder();
+            pathBuilder.Append(baseFolderPath);
+            pathBuilder.Append("/");
+            pathBuilder.Append("Conditions");
+            string fullPath = pathBuilder.ToString();
+            
+            // Create the folder if it doesn't exist
+            if(!AssetDatabase.IsValidFolder(fullPath)) 
+                AssetDatabase.CreateFolder(baseFolderPath, "Conditions");
+            
+            return fullPath;
         }
     }
 }

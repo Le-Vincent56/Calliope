@@ -47,6 +47,8 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             displayNameField.RegisterValueChangedCallback(evt => data.DisplayName = evt.newValue);
             container.Add(CreateCell(1, displayNameField));
             
+            container.Add(CreateSeparator());
+            
             // Description field
             TextField descriptionField = new TextField();
             descriptionField.value = data.Description;

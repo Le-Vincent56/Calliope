@@ -51,7 +51,7 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             container.Add(CreateSeparator());
             
             // Add the Trait Affinities field
-            TextField affinitiesField = new TextField("Trait Affinities");
+            TextField affinitiesField = new TextField();
             affinitiesField.value = data.TraitAffinities;
             affinitiesField.RegisterValueChangedCallback(evt => data.TraitAffinities = evt.newValue);
             container.Add(CreateCell(2, affinitiesField));
@@ -61,7 +61,7 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
         /// Creates asset files for the current set of rows and saves them to the specified folder path
         /// </summary>
         /// <param name="baseFolderPath">The base folder path where the assets will be created; a subfolder may also be created based on the implementation</param>
-        /// <returns>The number of assets successfully created and saved.</returns>
+        /// <returns>The number of assets successfully created and saved</returns>
         public override int CreateAssets(string baseFolderPath)
         {
             int count = 0;

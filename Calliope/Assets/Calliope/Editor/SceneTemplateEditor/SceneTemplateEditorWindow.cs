@@ -3790,7 +3790,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             return warnings;
         }
         
-        // <summary>
+        /// <summary>
         /// Refresh the Scene Template Editor Window when asset changes are detected
         /// </summary> 
         public void OnExternalAssetChange() 
