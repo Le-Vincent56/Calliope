@@ -28,6 +28,11 @@ namespace Calliope.Core.Interfaces
         /// IDs of all the traits this character possesses
         /// </summary>
         IReadOnlyList<string> TraitIDs { get; }
+        
+        /// <summary>
+        /// The faction this character belongs to (optional)
+        /// </summary>
+        string FactionID { get; }
 
         /// <summary>
         /// Determines if the character possesses a specific trait based on the provided trait ID

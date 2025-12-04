@@ -30,11 +30,12 @@ namespace Calliope.Runtime.Models
         /// <param name="relationships">
         /// Provides the relationship data between characters in the narrative system
         /// </param>
+        /// <param name="sceneContext">Optional scene-specific context storing key-value pairs relevant to the evaluation</param>
         /// <returns>
         /// A boolean value indicating whether the condition is met; returns true if the character
         /// associated with the specified role meets the required traits; otherwise, false
         /// </returns>
-        public bool Evaluate(IReadOnlyDictionary<string, ICharacter> cast, IRelationshipProvider relationships)
+        public bool Evaluate(IReadOnlyDictionary<string, ICharacter> cast, IRelationshipProvider relationships, ISceneContext sceneContext = null)
         {
             // Exit case - the character is not found from the role ID
             if (!cast.TryGetValue(RoleID, out ICharacter character)) return false;

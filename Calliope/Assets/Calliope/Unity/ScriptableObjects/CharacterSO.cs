@@ -26,6 +26,10 @@ namespace Calliope.Unity.ScriptableObjects
         [Tooltip("IDs of all the traits this character possesses")]
         [SerializeField] private string[] traitIDs;
         
+        [Header("Faction")]
+        [Tooltip("The faction this character belongs to (optional)")]
+        [SerializeField] private FactionSO faction;
+        
         [Header("Description")]
         [Tooltip("Character background and personality description")]
         [SerializeField] [TextArea(3, 5)] private string description;
@@ -34,6 +38,7 @@ namespace Calliope.Unity.ScriptableObjects
         public string DisplayName => displayName;
         public PronounSet Pronouns => pronouns;
         public IReadOnlyList<string> TraitIDs => traitIDs;
+        public string FactionID => faction ? faction.ID : "";
         public string Description => description;
 
         /// <summary>

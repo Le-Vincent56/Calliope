@@ -14,10 +14,12 @@ namespace Calliope.Unity.ScriptableObjects
         /// </summary>
         /// <param name="cast">A read-only dictionary representing the cast of characters, keyed by character ID</param>
         /// <param name="relationships">An object that provides access to relationship data between characters</param>
+        /// <param name="sceneContext">Optional scene-specific context storing key-value pairs relevant to the evaluation</param>
         /// <returns>Returns true if the condition is met; otherwise, false</returns>
         public abstract bool Evaluate(
             IReadOnlyDictionary<string, ICharacter> cast,
-            IRelationshipProvider relationships
+            IRelationshipProvider relationships,
+            ISceneContext sceneContext = null
         );
 
         /// <summary>

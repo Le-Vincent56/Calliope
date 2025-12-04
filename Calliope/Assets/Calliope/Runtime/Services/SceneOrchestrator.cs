@@ -16,17 +16,21 @@ namespace Calliope.Runtime.Services
         private readonly IRelationshipProvider _relationshipProvider;
         private readonly IEventBus _eventBus;
         private readonly ILogger _logger;
+        private readonly ISceneContext _sceneContext;
 
         private ISceneTemplate _currentScene;
         private IReadOnlyDictionary<string, ICharacter> _currentCast;
         private string _currentBeatID;
         private HashSet<string> _visitedBeats;
 
-        public SceneOrchestrator(IRelationshipProvider relationshipProvider, IEventBus eventBus, ILogger logger)
+        public ISceneContext SceneContext => _sceneContext;
+        
+        public SceneOrchestrator(IRelationshipProvider relationshipProvider, IEventBus eventBus, ILogger logger, ISceneContext sceneContext = null)
         {
             _relationshipProvider = relationshipProvider ?? throw new ArgumentNullException(nameof(relationshipProvider));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _sceneContext = sceneContext ?? new SceneContext();
             _visitedBeats = new HashSet<string>();
         }
 
@@ -88,6 +92,7 @@ namespace Calliope.Runtime.Services
             _currentCast = cast;
             _currentBeatID = scene.StartingBeatID;
             _visitedBeats.Clear();
+            _sceneContext.Clear();
             _visitedBeats.Add(_currentBeatID);
             
             // Build the log message
@@ -250,7 +255,7 @@ namespace Calliope.Runtime.Services
                     IBranchCondition condition = branch.Conditions[j];
                     
                     // Skip if the condition is met
-                    if (condition.Evaluate(_currentCast, _relationshipProvider)) continue;
+                    if (condition.Evaluate(_currentCast, _relationshipProvider, _sceneContext)) continue;
 
                     // Notify that a condition was not met
                     allConditionsMet = false;
@@ -343,6 +348,21 @@ namespace Calliope.Runtime.Services
             _currentCast = null;
             _currentBeatID = null;
             _visitedBeats.Clear();
+        }
+
+        /// <summary>
+        /// Records the selection of a specific fragment within a scene beat, associating it
+        /// with the beat identifier, fragment identifier, and speaker role identifier
+        /// </summary>
+        /// <param name="beatID">The unique identifier of the beat where the fragment is selected</param>
+        /// <param name="fragmentID">The unique identifier of the fragment being selected</param>
+        /// <param name="speakerRoleID">The unique identifier of the speaker role associated with the selected fragment</param>
+        public void RecordFragmentSelection(string beatID, string fragmentID, string speakerRoleID)
+        {
+            // Exit case - the beat ID is invalid
+            if (string.IsNullOrEmpty(beatID)) return;
+            
+            _sceneContext.RecordBeatVisit(beatID, fragmentID, speakerRoleID);
         }
     }
 }

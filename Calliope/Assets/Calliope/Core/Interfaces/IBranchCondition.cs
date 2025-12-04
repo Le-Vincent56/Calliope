@@ -9,20 +9,15 @@ namespace Calliope.Core.Interfaces
     public interface IBranchCondition
     {
         /// <summary>
-        /// Evaluates whether this condition is true given the state of the scene
+        /// Evaluates whether the branch condition is satisfied based on the provided character cast,
+        /// relationship data, and optional scene context
         /// </summary>
-        /// <param name="cast">
-        /// A read-only dictionary containing characters with their unique identifiers as keys and
-        /// corresponding character objects as values; the dictionary represents the cast of the narrative system
-        /// </param>
-        /// <param name="relationships">
-        /// An instance of the relationship provider that manages and evaluates relationships between characters
-        /// </param>
-        /// <returns>
-        /// Returns true if the condition for taking the branch is satisfied based on the provided cast and relationships;
-        /// otherwise, returns false
-        /// </returns>
-        bool Evaluate(IReadOnlyDictionary<string, ICharacter> cast, IRelationshipProvider relationships);
+        /// <param name="cast">A read-only dictionary mapping character IDs to their respective character objects</param>
+        /// <param name="relationships">An instance of a relationship provider that manages relationships between characters</param>
+        /// <param name="sceneContext">Optional scene-specific context storing key-value pairs relevant to the evaluation</param>
+        /// <returns>A boolean value indicating whether the condition is satisfied (true) or not (false)</returns>
+        bool Evaluate(IReadOnlyDictionary<string, ICharacter> cast, IRelationshipProvider relationships,
+            ISceneContext sceneContext = null);
 
         /// <summary>
         /// Human-readable description for debugging/editor display

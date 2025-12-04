@@ -27,10 +27,11 @@ namespace Calliope.Runtime.Models
         /// <param name="relationships">
         /// An instance of an IRelationshipProvider to query relationship values between characters
         /// </param>
+        /// <param name="sceneContext">Optional scene-specific context storing key-value pairs relevant to the evaluation</param>
         /// <returns>
         /// True if the relationship condition is satisfied, otherwise false
         /// </returns>
-        public bool Evaluate(IReadOnlyDictionary<string, ICharacter> cast, IRelationshipProvider relationships)
+        public bool Evaluate(IReadOnlyDictionary<string, ICharacter> cast, IRelationshipProvider relationships, ISceneContext sceneContext = null)
         {
             // Exit cases - the characters are not found from the roles
             if (!cast.TryGetValue(FromRoleID, out ICharacter fromChar)) return false;

@@ -27,8 +27,9 @@ namespace Calliope.Unity.ScriptableObjects
         /// </summary>
         /// <param name="cast">A read-only dictionary mapping character IDs to their respective character objects</param>
         /// <param name="relationships">An object providing access to relationship data between characters</param>
+        /// <param name="sceneContext">Optional scene-specific context storing key-value pairs relevant to the evaluation</param>
         /// <returns>Returns true if the trait condition is met; otherwise, false</returns>
-        public override bool Evaluate(IReadOnlyDictionary<string, ICharacter> cast, IRelationshipProvider relationships)
+        public override bool Evaluate(IReadOnlyDictionary<string, ICharacter> cast, IRelationshipProvider relationships, ISceneContext sceneContext = null)
         {
             // Exit case - invalid inputs
             if (cast == null || string.IsNullOrEmpty(roleID) || string.IsNullOrEmpty(traitID))

@@ -14,11 +14,15 @@ namespace Calliope.Runtime.Models
         public string DisplayName { get; set; }
         public PronounSet Pronouns { get; }
         public IReadOnlyList<string> TraitIDs { get; set; }
+        public string FactionID { get; set; }
 
-        public Character()
+        public Character(string id, string displayName, IReadOnlyList<string> traitIDs, PronounSet pronouns, string factionID = "")
         {
-            Pronouns = PronounSet.TheyThem;
-            TraitIDs = new List<string>();
+            ID = id;
+            DisplayName = displayName;
+            Pronouns = pronouns;
+            TraitIDs = traitIDs ?? new List<string>();
+            FactionID = factionID;
         }
 
         /// <summary>
