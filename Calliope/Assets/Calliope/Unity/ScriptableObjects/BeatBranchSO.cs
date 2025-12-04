@@ -22,45 +22,5 @@ namespace Calliope.Unity.ScriptableObjects
         
         public string NextBeatID => nextBeatID;
         public IReadOnlyList<IBranchCondition> Conditions => conditions;
-
-        private void OnValidate()
-        {
-            StringBuilder warningBuilder = new StringBuilder();
-            
-            // Validate target beat ID
-            if (string.IsNullOrEmpty(nextBeatID))
-            {
-                warningBuilder.Append("[BeatBranchSO] '");
-                warningBuilder.Append(name);
-                warningBuilder.Append("' has no target beat ID");
-                
-                Debug.LogWarning(warningBuilder.ToString(), this);
-            }
-            
-            // Exit case - no conditions were provided
-            if (conditions == null || conditions.Length <= 0) return;
-            
-            // Validate conditions
-            int nullCount = 0;
-            for (int i = 0; i < conditions.Length; i++)
-            {
-                // Skip over valid conditions
-                if (conditions[i] != null) continue;
-
-                nullCount++;
-            }
-
-            // Exit case - no null conditions
-            if (nullCount <= 0) return;
-                
-            warningBuilder.Clear();
-            warningBuilder.Append("[BeatBranchSO] '");
-            warningBuilder.Append(name);
-            warningBuilder.Append("' has ");
-            warningBuilder.Append(nullCount);
-            warningBuilder.Append(" null conditions. Assign BranchConditionSO assets");
-                    
-            Debug.LogWarning(warningBuilder.ToString(), this);
-        }
     }
 }

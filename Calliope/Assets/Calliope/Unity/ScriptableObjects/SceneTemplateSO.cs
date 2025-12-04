@@ -73,55 +73,5 @@ namespace Calliope.Unity.ScriptableObjects
 
             return _beatDictionary;
         }
-
-        private void OnValidate()
-        {
-            // Clear cached dictionary when data changes
-            _beatDictionary = null;
-            
-            // Auto-generate ID from the display name if empty
-            if (string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(displayName))
-                id = displayName.ToLower().Replace(" ", "-");
-            
-            // Ensure the display name is set (using the asset name as a fallback)
-            if (string.IsNullOrEmpty(displayName))
-                displayName = name;
-            
-            StringBuilder debugBuilder = new StringBuilder();
-            
-            // Exit case - there is no starting beat ID
-            if (string.IsNullOrEmpty(startingBeatID))
-            {
-                debugBuilder.Append("[SceneTemplateSO] '");
-                debugBuilder.Append(name);
-                debugBuilder.Append("' has no starting beat ID");
-                
-                Debug.LogWarning(debugBuilder.ToString(), this);
-                return;
-            }
-            
-            bool startBeatExists = false;
-            if (beats != null)
-            {
-                for (int i = 0; i < beats.Length; i++)
-                {
-                    // Skip if the beat doesn't exist or doesn't match the starting beat
-                    if (!beats[i] || beats[i].BeatID != startingBeatID) continue;
-                        
-                    startBeatExists = true;
-                    break;
-                }
-            }
-
-            // Exit case - the starting beat doesn't exist
-            if (startBeatExists) return;
-            
-            debugBuilder.Append("[SceneTemplateSO] '");
-            debugBuilder.Append(name);
-            debugBuilder.Append("' has invalid starting beat ID '");
-            debugBuilder.Append(startingBeatID);
-            debugBuilder.Append("': beat does not exist in the beats array");
-            Debug.LogWarning(debugBuilder.ToString(), this);
-        }
     }
 }

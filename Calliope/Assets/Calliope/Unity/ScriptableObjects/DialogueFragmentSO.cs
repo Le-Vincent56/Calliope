@@ -46,12 +46,5 @@ namespace Calliope.Unity.ScriptableObjects
         public IReadOnlyList<string> ForbiddenTraitIDs => forbiddenTraitIDs;
         public IReadOnlyList<RelationshipModifier> RelationshipModifiers => relationshipModifiers;
         public IReadOnlyList<string> Tags => tags;
-
-        private void OnValidate()
-        {
-            // Auto-generate ID if empty (fallback to asset name)
-            if (string.IsNullOrEmpty(id))
-                id = name;
-        }
     }
 }

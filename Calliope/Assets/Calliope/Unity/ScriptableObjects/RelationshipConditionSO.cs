@@ -98,29 +98,5 @@ namespace Calliope.Unity.ScriptableObjects
             
             return descriptionBuilder.ToString();
         }
-
-        private void OnValidate()
-        {
-            StringBuilder warningBuilder = new StringBuilder();
-            
-            if (string.IsNullOrEmpty(fromRoleID))
-            {
-                warningBuilder.Append("[RelationshipConditionSO] '");
-                warningBuilder.Append(name);
-                warningBuilder.Append("' has no from-role ID specified");
-                
-                Debug.LogWarning(warningBuilder.ToString(), this);
-            }
-
-            if (string.IsNullOrEmpty(toRoleID))
-            {
-                warningBuilder.Clear();
-                warningBuilder.Append("[RelationshipConditionSO] '");
-                warningBuilder.Append(name);
-                warningBuilder.Append("' has no to-role ID specified");
-                
-                Debug.LogWarning(warningBuilder.ToString(), this);           
-            }
-        }
     }
 }

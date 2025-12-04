@@ -35,42 +35,5 @@ namespace Calliope.Unity.ScriptableObjects
         public IReadOnlyList<IDialogueFragment> Variations => variations;
         public string Description => description;
         public IReadOnlyList<string> Tags => tags;
-
-        private void OnValidate()
-        {
-            // Auto-generate ID from the display name if empty
-            if (string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(displayName))
-                id = displayName.ToLower().Replace(" ", "-");
-            
-            // Ensure the display name is set (using the asset name as a fallback)
-            if (string.IsNullOrEmpty(displayName))
-                displayName = name;
-            
-            // Validate variations
-            if (variations is { Length: > 0 })
-            {
-                // Count nulls
-                int nullCount = 0;
-                for (int i = 0; i < variations.Length; i++)
-                {
-                    // Skip over valid variations
-                    if (variations[i]) continue;
-                    
-                    nullCount++;
-                }
-
-                // Exit case - no null variations
-                if (nullCount <= 0) return;
-                
-                // Log warning
-                StringBuilder warningBuilder = new StringBuilder();
-                warningBuilder.Append("[VariationSetSO] ");
-                warningBuilder.Append(name);
-                warningBuilder.Append(" has ");
-                warningBuilder.Append(nullCount);
-                warningBuilder.Append(" null variation(s). Assign DialogueFragmentSO assets");
-                Debug.LogWarning(warningBuilder.ToString(), this);
-            }
-        }
     }
 }

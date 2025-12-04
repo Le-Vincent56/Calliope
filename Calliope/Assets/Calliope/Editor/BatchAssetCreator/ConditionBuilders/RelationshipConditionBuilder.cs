@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Calliope.Core.Enums;
+using Calliope.Editor.BatchAssetCreator.Attributes;
 using Calliope.Editor.BatchAssetCreator.RowData.Conditions;
 using Calliope.Editor.BatchAssetCreator.Tabs;
 using Calliope.Unity.ScriptableObjects;
@@ -11,6 +12,12 @@ using UnityEngine.UIElements;
 
 namespace Calliope.Editor.BatchAssetCreator.ConditionBuilders
 {
+    /// <summary>
+    /// Defines a builder for creating, displaying, and processing rows of relationship-based condition data
+    /// within the batch asset creation workflow; this builder focuses on conditions related to relationships
+    /// between roles, allowing for the configuration of metadata such as relationship types and thresholds
+    /// </summary>
+    [ConditionBuilder(order: 20)]
     public class RelationshipConditionBuilder : BaseConditionRowBuilder
     {
         private static readonly List<string> RelationshipTypeOptions = new List<string>(Enum.GetNames(typeof(RelationshipType)));

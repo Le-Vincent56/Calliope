@@ -24,30 +24,5 @@ namespace Calliope.Unity.ScriptableObjects
         public string ID => id;
         public string DisplayName => displayName;
         public string Description => description;
-
-        private void OnValidate()
-        {
-            StringBuilder validationBuilder = new StringBuilder();
-            
-            if (string.IsNullOrEmpty(id))
-            {
-                validationBuilder.Clear();
-                validationBuilder.Append("[FactionSO] '");
-                validationBuilder.Append(name);
-                validationBuilder.Append("' has no ID set");
-                
-                Debug.LogWarning(validationBuilder.ToString(), this);
-            }
-
-            if (string.IsNullOrEmpty(displayName))
-            {
-                validationBuilder.Clear();
-                validationBuilder.Append("[FactionSO] '");
-                validationBuilder.Append(name);
-                validationBuilder.Append("' has no display name set");
-                
-                Debug.LogWarning(validationBuilder.ToString(), this);
-            }
-        }
     }
 }

@@ -3,37 +3,27 @@ using System.Collections.Generic;
 using System.Text;
 using Calliope.Core.Enums;
 using Calliope.Core.Interfaces;
+using UnityEngine;
 
-namespace Calliope.Runtime.Models
+namespace Calliope.Unity.ScriptableObjects
 {
     /// <summary>
-    /// Represents a condition that evaluates scene context properties based on a
-    /// specified key, a comparison operator, and a target value
+    /// Provides a condition logic for branching decisions based on scene context data
     /// </summary>
-    public class SceneContextCondition : IBranchCondition
+    [CreateAssetMenu(fileName = "New Scene Context Condition", menuName = "Calliope/Branch Condition/Scene Context Condition", order = 13)]
+    public class SceneContextConditionSO : BranchConditionSO
     {
-        /// <summary>
-        /// The context key to check
-        /// </summary>
-        public string Key { get; set; }
-        
-        /// <summary>
-        /// How to compare the value
-        /// </summary>
-        public ContextValueComparison Comparison { get; set; }
-        
-        /// <summary>
-        /// The target value for comparison (interpreted based on comparison type)
-        /// </summary>
-        public string TargetValue { get; set; }
+        [Header("Context Key")]
+        [Tooltip("The key to look up in the scene context")]
+        [SerializeField] private string key;
 
-        public SceneContextCondition()
-        {
-            Key = "";
-            Comparison = ContextValueComparison.Exists;
-            TargetValue = "";
-        }
+        [Header("Comparison")]
+        [Tooltip("How to compare the value")]
+        [SerializeField] private ContextValueComparison comparison = ContextValueComparison.Exists;
 
+        [Tooltip("Target value for comparison (used by Equals, GreaterThan, Contains, etc.)")]
+        [SerializeField] private string targetValue;
+        
         /// <summary>
         /// Evaluates the specified scene context condition by comparing the key's value
         /// in the provided scene context with the defined comparison operator and target value
@@ -44,25 +34,24 @@ namespace Calliope.Runtime.Models
         /// <returns>
         /// A boolean indicating whether the condition matches the provided scene context
         /// </returns>
-        public bool Evaluate(IReadOnlyDictionary<string, ICharacter> cast, IRelationshipProvider relationships,
-            ISceneContext sceneContext = null)
+        public override bool Evaluate(IReadOnlyDictionary<string, ICharacter> cast, IRelationshipProvider relationships, ISceneContext sceneContext = null)
         {
             // Exit case - invalid parameters
-            if(sceneContext == null || string.IsNullOrEmpty(Key)) return false;
+            if(sceneContext == null || string.IsNullOrEmpty(key)) return false;
 
-            switch (Comparison)
+            switch (comparison)
             {
                 case ContextValueComparison.Exists:
-                    return sceneContext.HasKey(Key);
+                    return sceneContext.HasKey(key);
                 
                 case ContextValueComparison.NotExists:
-                    return !sceneContext.HasKey(Key);
+                    return !sceneContext.HasKey(key);
                 
                 case ContextValueComparison.IsTrue:
-                    return sceneContext.GetValue<bool>(Key, false);
+                    return sceneContext.GetValue<bool>(key, false);
                 
                 case ContextValueComparison.IsFalse:
-                    return !sceneContext.GetValue<bool>(Key, true);
+                    return !sceneContext.GetValue<bool>(key, true);
                 
                 case ContextValueComparison.Equals:
                     return CompareEquals(sceneContext);
@@ -83,12 +72,12 @@ namespace Calliope.Runtime.Models
                     return CompareNumeric(sceneContext, (a, b) => a <= b);
                 
                 case ContextValueComparison.Contains:
-                    string containsValue = sceneContext.GetValue<string>(Key, "");
-                    return !string.IsNullOrEmpty(containsValue) && containsValue.Contains(TargetValue ?? "");
+                    string containsValue = sceneContext.GetValue<string>(key, "");
+                    return !string.IsNullOrEmpty(containsValue) && containsValue.Contains(targetValue ?? "");
                 
                 case ContextValueComparison.StartsWith:
-                    string startsWithValue = sceneContext.GetValue<string>(Key, "");
-                    return !string.IsNullOrEmpty(startsWithValue) && startsWithValue.StartsWith(TargetValue ?? "");
+                    string startsWithValue = sceneContext.GetValue<string>(key, "");
+                    return !string.IsNullOrEmpty(startsWithValue) && startsWithValue.StartsWith(targetValue ?? "");
                 
                 default:
                     return false;
@@ -104,19 +93,19 @@ namespace Calliope.Runtime.Models
         /// A string that describes the scene context condition, including the key being checked,
         /// the comparison operator being used, and the target value if it is required
         /// </returns>
-        public string GetDescription()
+        public override string GetDescription()
         {
             StringBuilder builder = new StringBuilder();
             builder.Append("Context['");
-            builder.Append(Key);
+            builder.Append(key);
             builder.Append("'] ");
-            builder.Append(Comparison);
+            builder.Append(comparison);
             
             // Exit case - no target value required
-            if (string.IsNullOrEmpty(TargetValue) || !RequiresTargetValue(Comparison)) return builder.ToString();
+            if (string.IsNullOrEmpty(targetValue) || !RequiresTargetValue(comparison)) return builder.ToString();
             
             builder.Append(" '");
-            builder.Append(TargetValue);
+            builder.Append(targetValue);
             builder.Append("'");
 
             return builder.ToString();
@@ -136,15 +125,15 @@ namespace Calliope.Runtime.Models
         private bool CompareEquals(ISceneContext context)
         {
             // Try numeric comparison first
-            if (float.TryParse(TargetValue, out float targetNum))
+            if (float.TryParse(targetValue, out float targetNum))
             {
-                float contextNum = context.GetValue<float>(Key, float.NaN);
+                float contextNum = context.GetValue<float>(key, float.NaN);
                 if (!float.IsNaN(contextNum)) return Math.Abs(contextNum - targetNum) < 0.0001f;
             }
             
             // Fall back to string comparison
-            string contextString = context.GetValue<string>(Key, null);
-            return string.Equals(contextString, TargetValue, StringComparison.Ordinal);
+            string contextString = context.GetValue<string>(key, null);
+            return string.Equals(contextString, targetValue, StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -163,9 +152,9 @@ namespace Calliope.Runtime.Models
         private bool CompareNumeric(ISceneContext context, Func<float, float, bool> comparer)
         {
             // Exit case - the target value is not a valid number
-            if(!float.TryParse(TargetValue, out float targetNum)) return false;
+            if(!float.TryParse(targetValue, out float targetNum)) return false;
             
-            float contextNum = context.GetValue<float>(Key, float.NaN);
+            float contextNum = context.GetValue<float>(key, float.NaN);
             
             // Exit case - the context value is not a valid number
             if(float.IsNaN(contextNum)) return false;

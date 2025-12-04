@@ -33,15 +33,26 @@ namespace Calliope.Editor.BatchAssetCreator
             window.titleContent = new GUIContent("Batch Asset Creator");
             window.minSize = new Vector2(700, 400);
         }
-        
+
+        /// <summary>
+        /// Opens the Batch Asset Creator window used for creating Calliope assets in bulk;
+        /// provides access specifically from the Scene Template Editor context
+        /// </summary>
         public static void ShowFromSceneTemplateEditor() => ShowWindow();
 
+        /// <summary>
+        /// Initializes the user interface for the Batch Asset Creator window,
+        /// including gathering and setting up tabs, creating UI elements such as
+        /// the tab bar, toolbar, validation display, tab content container, and
+        /// status label, and displaying the first tab by default
+        /// </summary>
         private void CreateGUI()
         {
             // Gather tabs
             _tabs = new List<IBatchTab>
             {
                 new CharacterBatchTab(),
+                new FactionBatchTab(),
                 new TraitBatchTab(),
                 new FragmentBatchTab(),
                 new VariationSetBatchTab(),

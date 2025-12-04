@@ -36,16 +36,5 @@ namespace Calliope.Unity.ScriptableObjects
         public TraitCategory Category => category;
         public string Description => description;
         public IReadOnlyList<string> ConflictingTraitIDs => conflictingTraitIDs;
-
-        private void OnValidate()
-        {
-            // Auto-generate ID from the display name if empty
-            if (string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(displayName))
-                id = displayName.ToLower().Replace(" ", "-");
-            
-            // Ensure the display name is set (using the asset name as a fallback)
-            if (string.IsNullOrEmpty(displayName))
-                displayName = name;
-        }
     }
 }

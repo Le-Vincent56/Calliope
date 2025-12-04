@@ -1,3 +1,5 @@
+using Calliope.Unity.ScriptableObjects;
+
 namespace Calliope.Editor.BatchAssetCreator.RowData
 {
     /// <summary>
@@ -9,9 +11,10 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
         public string DisplayName = "";
         public int PronounIndex = 0;
         public string Traits = "";
+        public FactionSO Faction = null;
         
         public override bool IsValid => !string.IsNullOrEmpty(ID) && !string.IsNullOrEmpty(DisplayName);
-        public override bool HasAnyData => !string.IsNullOrEmpty(ID) || !string.IsNullOrEmpty(DisplayName) || !string.IsNullOrEmpty(Traits);
+        public override bool HasAnyData => !string.IsNullOrEmpty(ID) || !string.IsNullOrEmpty(DisplayName) || !string.IsNullOrEmpty(Traits) || Faction;
 
         /// <summary>
         /// Creates and returns a deep copy of the current <c>CharacterRowData</c> instance
@@ -24,7 +27,8 @@ namespace Calliope.Editor.BatchAssetCreator.RowData
                 ID = ID,
                 DisplayName = DisplayName,
                 PronounIndex = PronounIndex,
-                Traits = Traits
+                Traits = Traits,
+                Faction = Faction
             };
         }
     }

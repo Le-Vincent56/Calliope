@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Calliope.Editor.BatchAssetCreator.Attributes;
 using Calliope.Editor.BatchAssetCreator.RowData.Conditions;
 using Calliope.Editor.BatchAssetCreator.Tabs;
 using Calliope.Unity.ScriptableObjects;
@@ -13,6 +14,7 @@ namespace Calliope.Editor.BatchAssetCreator.ConditionBuilders
     /// Represents a builder for creating, configuring, and managing trait-based condition rows
     /// within the batch asset creation editor
     /// </summary>
+    [ConditionBuilder(order: 10)]
     public class TraitConditionBuilder : BaseConditionRowBuilder
     {
         public override string DisplayName => "Trait Conditions";

@@ -3,6 +3,7 @@ using System.Text;
 using Calliope.Editor.BatchAssetCreator.RowData;
 using Calliope.Unity.ScriptableObjects;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -23,6 +24,7 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             new ColumnDefinition("ID", 100),
             new ColumnDefinition("Display Name", 140),
             new ColumnDefinition("Pronouns", 100),
+            new ColumnDefinition("Faction", 120),
             new ColumnDefinition("Traits", flexGrow: 1, tooltip: "Comma-separated trait IDs (e.g., brave, kind, wise)")
         };
 
@@ -69,11 +71,18 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
             
             container.Add(CreateSeparator());
             
+            // Faction field
+            ObjectField factionField = new ObjectField();
+            factionField.objectType = typeof(FactionSO);
+            factionField.value = data.Faction;
+            factionField.RegisterValueChangedCallback(evt => data.Faction = evt.newValue as FactionSO);
+            container.Add(CreateCell(3, factionField));
+            
             // Traits field
             TextField traitsField = new TextField();
             traitsField.value = data.Traits;
             traitsField.RegisterValueChangedCallback(evt => data.Traits = evt.newValue);
-            container.Add(CreateCell(3, traitsField));
+            container.Add(CreateCell(4, traitsField));
         }
 
         /// <summary>
@@ -126,6 +135,9 @@ namespace Calliope.Editor.BatchAssetCreator.Tabs
                         pronounsProperty.FindPropertyRelative("Reflexive").stringValue = "Herself";
                         break;
                 }
+                
+                // Set the faction
+                serialized.FindProperty("faction").objectReferenceValue = data.Faction;
                 
                 // Parse traits
                 if (!string.IsNullOrEmpty(data.Traits))

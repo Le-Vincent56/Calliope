@@ -35,16 +35,5 @@ namespace Calliope.Unity.ScriptableObjects
         public IReadOnlyList<TraitAffinity> PreferredTraits => preferredTraits;
         public IReadOnlyList<string> RequiredTraitIDs => requiredTraitIDs;
         public IReadOnlyList<string> ForbiddenTraitIDs => forbiddenTraitIDs;
-
-        private void OnValidate()
-        {
-            // Auto-generate ID from the display name if empty
-            if (string.IsNullOrEmpty(roleID) && !string.IsNullOrEmpty(displayName))
-                roleID = displayName.ToLower().Replace(" ", "-");
-            
-            // Ensure the display name is set (using the asset name as a fallback)
-            if (string.IsNullOrEmpty(displayName))
-                displayName = name;
-        }
     }
 }
