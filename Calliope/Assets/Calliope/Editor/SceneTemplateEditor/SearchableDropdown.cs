@@ -105,6 +105,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             // Text field for typing/display
             _textField = new TextField();
             _textField.style.flexGrow = 1;
+            _textField.isDelayed = true;
             _textField.RegisterValueChangedCallback(evt =>
             {
                 _currentValue = evt.newValue;

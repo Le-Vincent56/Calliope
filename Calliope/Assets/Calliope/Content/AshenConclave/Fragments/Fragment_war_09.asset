@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_war_09
+  m_EditorClassIdentifier: 
+  id: war_09
+  text: "{speaker.name}'s voice carries the weight of old campaigns and older losses.
+    \"I do not ask for this lightly. Sealing the breach will cost us\xE2\x80\x94perhaps
+    greatly. But the alternative costs us everything, including our very selves.\""
+  traitAffinities:
+  - TraitID: melancholic
+    Weight: 0.3
+  - TraitID: honorable
+    Weight: 0.4
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []

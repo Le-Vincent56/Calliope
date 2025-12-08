@@ -382,6 +382,7 @@ namespace Calliope.Editor.SceneTemplateEditor
             TextField beatIDField = new TextField("Beat ID");
             beatIDField.value = beat.BeatID ?? "";
             beatIDField.style.marginBottom = 8;
+            beatIDField.isDelayed = true;
             beatIDField.RegisterValueChangedCallback(evt => OnBeatPropertyChanged(beat, "beatID", evt.newValue));
             _inspectorContent.Add(beatIDField);
             
@@ -762,6 +763,13 @@ namespace Calliope.Editor.SceneTemplateEditor
                 return;
             }
 
+            // Save the old beat ID for migration purposes
+            string oldBeatID = null;
+            if (propertyName == "beatID")
+            {
+                oldBeatID = property.stringValue;
+            }
+            
             // Set the property value
             property.stringValue = newValue;
 
@@ -769,7 +777,22 @@ namespace Calliope.Editor.SceneTemplateEditor
             if (propertyName == "speakerRoleID" || propertyName == "targetRoleID")
                 AddRoleToTemplateIfMissing(newValue);
             
+            // Apply the changes
             serializedObject.ApplyModifiedProperties();
+            
+            // Migrate node position if beat ID changed
+            if (propertyName == "beatID" && _currentTemplate != null && !string.IsNullOrEmpty(oldBeatID))
+            {
+                // Load the current position of the beat
+                Vector2 currentPosition = NodePositionStorage.LoadPosition(_currentTemplate.ID, oldBeatID, Vector2.zero);
+
+                // Save the new key and delete the old key
+                if (currentPosition != Vector2.zero)
+                {
+                    NodePositionStorage.SavePosition(_currentTemplate.ID, newValue, currentPosition);
+                    NodePositionStorage.DeletePosition(_currentTemplate.ID, oldBeatID);
+                }
+            }
 
             // Mark the editor as dirty and save assets
             EditorUtility.SetDirty(beat);
@@ -1809,6 +1832,8 @@ namespace Calliope.Editor.SceneTemplateEditor
         private void OnGraphViewMouseMove(MouseMoveEvent evt)
         {
             Vector2 mousePos = evt.localMousePosition;
+
+            Vector2 transformedPos = (mousePos - _panOffset) / _zoomLevel;
             
             // Find the closest connection to the mouse
             BeatConnectionView closestConnection = null;
@@ -1816,7 +1841,7 @@ namespace Calliope.Editor.SceneTemplateEditor
 
             _graphContent.Query<BeatConnectionView>().ForEach(connection =>
             {
-                float distance = connection.GetDistanceToPoint(mousePos);
+                float distance = connection.GetDistanceToPoint(transformedPos);
 
                 // Exit case - if the distance is greater than the current closest
                 if (distance >= 15f) return;

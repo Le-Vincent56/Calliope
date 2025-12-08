@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_vs_ending_seal
+  m_EditorClassIdentifier: 
+  id: vs_ending_seal
+  displayName: 'Ending: Seal the Veil'
+  variations:
+  - {fileID: 11400000, guid: f3af23bd341c83ad3adfffae8c7b4bf5, type: 2}
+  - {fileID: 11400000, guid: 9086fd755b38899c49eb380c52dee2b1, type: 2}
+  - {fileID: 11400000, guid: c19090bf956a5a84d874039d5ec1f1ea, type: 2}
+  - {fileID: 11400000, guid: ce293489678e2fed884d6bf99e8dc1d9, type: 2}
+  - {fileID: 11400000, guid: 160ae2a57d45ea207b9c92a1b1e98628, type: 2}
+  - {fileID: 11400000, guid: 94d8f8c3f9351ea559e0f169178b565b, type: 2}
+  - {fileID: 11400000, guid: c0d6a8a8dfd8d0a00b67078161dc4c18, type: 2}
+  - {fileID: 11400000, guid: 9ba95f422e17e5774accd20074cde5a0, type: 2}
+  description: Decision to seal the Veil
+  tags: []

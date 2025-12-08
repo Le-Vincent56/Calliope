@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_end_seal_08
+  m_EditorClassIdentifier: 
+  id: end_seal_08
+  text: "The words fall like the closing of a tomb. \"The Veil will be mended. The
+    breach will close. And all touched by its corruption\u2014including the Veilscarred\u2014will
+    remain beyond, or face the consequence of attempting to cross back.\""
+  traitAffinities:
+  - TraitID: ruthless
+    Weight: 0.4
+  - TraitID: domineering
+    Weight: 0.4
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []

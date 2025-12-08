@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6de92db24f204b82aba0926cbd1e6659, type: 3}
+  m_Name: Character_healer
+  m_EditorClassIdentifier: 
+  id: healer
+  displayName: Mei Lin
+  pronouns:
+    Subject: She
+    Object: Her
+    Possessive: Her
+    Reflexive: Herself
+  traitIDs:
+  - sanguine
+  - deferential
+  - intuitive
+  - merciful
+  - stalwart
+  faction: {fileID: 11400000, guid: f59065f29f404a6bc8e57e7f91fafc6b, type: 2}
+  description: 

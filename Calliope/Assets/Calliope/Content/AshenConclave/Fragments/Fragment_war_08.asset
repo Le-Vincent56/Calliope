@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_war_08
+  m_EditorClassIdentifier: 
+  id: war_08
+  text: "\"Every scholar who 'studied' the breach is dead or worse,\" {speaker.name}
+    states flatly. \"Every diplomat who sought to 'negotiate' with what lies beyond
+    returned changed\u2014if they returned at all. Only one approach remains untried:
+    absolute closure.\""
+  traitAffinities:
+  - TraitID: analytical
+    Weight: 0.4
+  - TraitID: ruthless
+    Weight: 0.4
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []

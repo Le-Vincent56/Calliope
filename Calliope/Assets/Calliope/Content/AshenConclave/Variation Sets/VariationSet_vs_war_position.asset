@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_vs_war_position
+  m_EditorClassIdentifier: 
+  id: vs_war_position
+  displayName: War Position
+  variations:
+  - {fileID: 11400000, guid: 5d130898f5891b7969e4508f3769087f, type: 2}
+  - {fileID: 11400000, guid: c4dfebb294067e59fb37826578fcb724, type: 2}
+  - {fileID: 11400000, guid: 55e508391b84c2260ab3be1de2060f5d, type: 2}
+  - {fileID: 11400000, guid: 7b0779e9e463a4088bd252ec9478a079, type: 2}
+  - {fileID: 11400000, guid: 2c1ed3d1f90d4cb3fbb2de1d0352940f, type: 2}
+  - {fileID: 11400000, guid: ababdfbad73401ac58bf3cabc4dec162, type: 2}
+  - {fileID: 11400000, guid: 56fd985c93a03fe6c84f49c1e73c0046, type: 2}
+  - {fileID: 11400000, guid: cec9030d1cde4e4cda7e07750cf0258a, type: 2}
+  - {fileID: 11400000, guid: c4473c415476ce7a18302f7ee20a2c1b, type: 2}
+  - {fileID: 11400000, guid: 39ae7ceee4ae68383a2ad2664a8323a6, type: 2}
+  description: Military perspective on the Veil
+  tags: []

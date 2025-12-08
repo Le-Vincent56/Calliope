@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_vs_sovereign_addresses
+  m_EditorClassIdentifier: 
+  id: vs_sovereign_addresses
+  displayName: Sovereign Addresses
+  variations:
+  - {fileID: 11400000, guid: 5d95ee4d08fff8ca6a239af0bc5ca8a1, type: 2}
+  - {fileID: 11400000, guid: fde65cd96e0d4e35aad37fd88bb19fd4, type: 2}
+  - {fileID: 11400000, guid: 34a74e26c10e0a04691ed9350203fa39, type: 2}
+  - {fileID: 11400000, guid: 765bad35b88560f29978abaed0d6935a, type: 2}
+  - {fileID: 11400000, guid: 6fb3b6dd69a620b56be49b2c21233492, type: 2}
+  - {fileID: 11400000, guid: e8d370bf9ccd0067db8e9d0ea535753a, type: 2}
+  - {fileID: 11400000, guid: 7bd7dcd9c44d6e1dba8c384f8010ac0e, type: 2}
+  - {fileID: 11400000, guid: 049919d5d96e387919b3d430bc505070, type: 2}
+  description: Sovereign formally opens the council
+  tags: []

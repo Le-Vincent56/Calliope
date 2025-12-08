@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_end_seal_05
+  m_EditorClassIdentifier: 
+  id: end_seal_05
+  text: "\"The seal will be absolute,\" {speaker.name} decrees, and there is no room
+    for appeal in {speaker.pronouns.possessive} tone. \"Nothing crosses the threshold\u2014not
+    power, not knowledge, not the marked who carry its touch. This I command.\""
+  traitAffinities:
+  - TraitID: domineering
+    Weight: 0.5
+  - TraitID: ruthless
+    Weight: 0.4
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []

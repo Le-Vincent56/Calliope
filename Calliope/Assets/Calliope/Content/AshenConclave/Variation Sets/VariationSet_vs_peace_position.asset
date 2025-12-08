@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_vs_peace_position
+  m_EditorClassIdentifier: 
+  id: vs_peace_position
+  displayName: Peace Position
+  variations:
+  - {fileID: 11400000, guid: e42fa17392196abc08c441cb837f0fff, type: 2}
+  - {fileID: 11400000, guid: a055209065df3fc369590a84c502d553, type: 2}
+  - {fileID: 11400000, guid: 8d1045aa94af744a19ed7297bfaccad3, type: 2}
+  - {fileID: 11400000, guid: 49a3ba1760b62d215b033443d15a597e, type: 2}
+  - {fileID: 11400000, guid: 5247429ff383b04d4a830162cf3398c6, type: 2}
+  - {fileID: 11400000, guid: 5cb38ee5b00f60beb9087c46cc02308e, type: 2}
+  - {fileID: 11400000, guid: ebe4982876a54d39bbf6c16eba91a370, type: 2}
+  - {fileID: 11400000, guid: 3bd659747c4d1eab59f0db1acedcb6dd, type: 2}
+  - {fileID: 11400000, guid: 0b20e5c78b30910ecba5318f218b6953, type: 2}
+  - {fileID: 11400000, guid: 4ef042b5200317dc58a355a32397742a, type: 2}
+  description: Diplomatic perspective on the Veil
+  tags: []

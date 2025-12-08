@@ -269,6 +269,7 @@ Label {
     border-color: rgb(30, 30, 30);
     overflow: hidden;
     min-width: 200px;
+    max-width: 200px;
     transition-property: border-color, border-width, opacity, background-color;
     transition-duration: 0.1s;
     transition-timing-function: ease-out-sine;
@@ -296,6 +297,9 @@ Label {
     color: rgb(220, 220, 220);
     -unity-text-align: middle-center;
     flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .beat-node-body {
@@ -306,7 +310,9 @@ Label {
     font-size: 11px;
     color: rgb(180, 180, 180);
     margin-bottom: 4px;
-    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .beat-node-selected {

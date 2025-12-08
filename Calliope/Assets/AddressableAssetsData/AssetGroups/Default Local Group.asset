@@ -15,95 +15,407 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 683d2b1e5da1edcc697f41bef53ec7a0
   m_SerializeEntries:
-  - m_GUID: 074525671b4384baab95da332d9838ec
-    m_Address: Assets/Calliope/Samples/DemoContent/Traits/Trait_Cynical.asset
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Trait
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0d9318aa986f629f1934a09776a840e5
-    m_Address: Assets/Calliope/Samples/DemoContent/Traits/Trait_Kind.asset
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Trait
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 122eec5b45fea0c34bf9dddf1437fff5
-    m_Address: Assets/Calliope/Samples/DemoContent/Traits/Trait_Brave.asset
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Trait
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 27d2d07601b5125a295581326f77637e
-    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_Question.asset
+  - m_GUID: 01f8d277e112e747f9c67140f23f9721
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_reason_position.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Variation Set
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 592be4f2582fb6c1badc2815753e0d77
-    m_Address: Assets/Calliope/Content/SceneTemplates/Scene_CampfireDiscussion.asset
+  - m_GUID: 029b7e1f7217d1ed08e98160e1640868
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_outcast_noble.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 07d3f130de655043d9a2faea61df68bf
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_curious.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0bdc0b6af08444ed7aa49ef6712c0bef
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_peacekeeper.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0f8faa3d8116943689ebf33e12117864
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_reckless.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 149a9ca3eb0b6e8ecae477e5d3a082ff
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_analytical.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1813973cc689f40b0a524625ee4400e4
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_sanguine.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 195f5e5a2ad9dfe398a18b0770250406
+    m_Address: Assets/Calliope/Content/AshenConclave/Scenes/Scene_AshenConclave.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Scene
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 63f82e78ccb44c311b617d71a0375eee
-    m_Address: Assets/Calliope/Samples/DemoContent/Characters/Character_Sera.asset
+  - m_GUID: 1d82b568893824fb08c488f526ac57ef
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_charismatic.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1dcbcfb250f3d2078ab9f2f62650187a
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_sealed_heart.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e7808e077f1ddd8486a85e727c04771
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_faith_invoked.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 28738ac79443b257a855dd1ca5bad994
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_narrator.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6cf4765a0c2f94762b6cffbe67640e1a
-    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_Opening.asset
+  - m_GUID: 31a393435bf060086bda5bba897e93bc
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_ending_harness.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Variation Set
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 86049a4ea702f88a49642d595386315e
-    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_BraveResponse.asset
+  - m_GUID: 3b47c2475eaeddd9383f515362da0a65
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_honorable.asset
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Variation Set
+    - Trait
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a2759412c49e6381ca300b1805727288
-    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_CynicalResponse.asset
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Variation Set
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a3836a4014d570c2b8198e7ecfe9abd5
-    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_KindResponse.asset
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Variation Set
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b2babc7d31354b75bb072fe7a8d7e4ed
-    m_Address: Assets/Calliope/Samples/DemoContent/VariationSets/VariationSet_TavernGreeting.asset
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Variation Set
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: c7ce7864ac78e3be3888e37ac16d45de
-    m_Address: Assets/Calliope/Samples/DemoContent/Characters/Character_Finn.asset
+  - m_GUID: 3bd82a635566cc3e4872b9b796f404bb
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_zealot.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ce4b2ff785e4844a2be454d5c6d565c7
-    m_Address: Assets/Calliope/Content/VariationSets/VariationSet_End.asset
+  - m_GUID: 3ed624c81b264639098f9b8225295add
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_wrathful.asset
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Variation Set
+    - Trait
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ecf49e9c5a6bf46b693246b9eb947bd0
-    m_Address: Assets/Calliope/Samples/DemoContent/Characters/Character_Aldric.asset
+  - m_GUID: 42c3f9d9fee92c2859dabc0c49e9466f
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_scholar.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fac5f9ad725cbabd0affba053071a686
-    m_Address: Assets/Calliope/Samples/DemoContent/Scenes/Scene_TavernGreeting.asset
+  - m_GUID: 454b2f40b0252f8d88a65f21a124d868
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_berserker.asset
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Scene
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5221b8e0f21bde6dd81815f2a9af9bd4
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_ideological_clash.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 585aa099ebd1c047b855a9376a749959
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_oath_bound.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5ded0d50ff7184610864f2a84a2b553a
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_veilscarred.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 600dbeeba04164210b2f45120b06f686
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_sovereign.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c37d4d985e7af03d84476659ec656ba
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_alchemist.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c5b4bc9348477920becc6d9ae3b896a
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_secret_revealed.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7033cbe66406c69f9aa95714293372e9
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_melancholic.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 738f5721de5471283b37bb523a4f8e09
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_ending_exile.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 73e8f2c5977db11af91adf1d2818bacb
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_mystic.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7609cc67c459a1caf9ced0f78621a913
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_diplomat.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 77010b3064ca5a49e88d43bfc904de73
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_fearless.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 780cb35d9e6f951a69166100128762e5
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_young_heir.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78b0466eaab67b5f3a2702f4adf934d5
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_dogmatic.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7a2c84bc4b42864c89b63e6cb3b950be
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_exile.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e0e04cff5e04fa7c8100bd40bfca8a1
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_final_arguments.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 813bb1b671daf70edb37d09b6e4d00c0
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_cautious.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8206be8eca507407facc86659724233f
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_blood_debted.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 88f4dd9639de39481a76400a9696bc49
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_merchant.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8b996bd515482459bafc95585c66a32f
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_violence_threatens.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d861a06fb942e8cc843e117cca97738
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_veil_touched.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9860b6f066d596f5484b57fe926b31fa
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_expedient.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9df759f00f8c07f32a73d331e06736c7
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_sovereign_addresses.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a00c7e9aaf3d5231a8fce91962d4f841
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_intervention.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a0b6020b766ae13f2a24bc61ce054f58
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_war_position.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a853ebe90c1b88bd7881f6cd6ed1e7e3
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_ending_fracture.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b38284b25c1ad879e92ffb4f09e2dfdd
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_ending_seal.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3acf1a195399ef47b9917dd1e981149
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_tensions_rise.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b5e60fbe5e834295ca365c75cec11427
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_compromise.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b73c5951ef53631c599049a61b40bdf5
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_peace_position.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bab3e672608108c26b15e5207d928409
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_intuitive.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0017abd19f866c209b93e0b25671b13
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_prophetic.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0534cb843e69f1658d3a72d7e3159f2
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_stalwart.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c358f5bcc2e713119ad8c66968a376d6
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_commander.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c6fd6639e193e7d11abcfda4b853d7c5
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_opening.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7a1126abdce28cf187c9bdc354326e9
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_deferential.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cc71286516f842110a88fe5dc38ddbee
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_veilscarred_presented.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce562b09d7df89a31927f26ad55c1f69
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_narrator.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d32f4b1f329a5a469bb0ad285df5b7a4
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_ending_delay.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d577fa768475d5f1da1a3c36b90777ef
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_merciful.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d89232bbc49610d918deada1f6872d28
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_veteran.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da9e87a653d20db14a6616ed0fd87002
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_spymaster.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df64ccd2ff99c8f8881c18bffcd31a54
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_domineering.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e65efa73be9d79a08baad94b1ce45226
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_healer.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e87b221d1abf727ac82bb2bdb3681a3c
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_old_grudge.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec755274daf15ee929597917bfb22250
+    m_Address: Assets/Calliope/Content/AshenConclave/Characters/Character_general.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eeee9f6d4efd6fd3eaa330efc5e17cdb
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_reclusive.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f3cbd3609ec8d5fe19dce2de02d42f8b
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_counter_argument.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fbf0e3e664633a82385189147716f3d9
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_phlegmatic.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd927a273d2fc3caf9163d816ad8d7ad
+    m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_ruthless.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Trait
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: efccc689fa40cfb2bb2b07fd56236888, type: 2}

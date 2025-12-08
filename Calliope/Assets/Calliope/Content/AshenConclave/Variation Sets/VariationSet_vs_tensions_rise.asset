@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_vs_tensions_rise
+  m_EditorClassIdentifier: 
+  id: vs_tensions_rise
+  displayName: Tensions Rise
+  variations:
+  - {fileID: 11400000, guid: 0f58bba5ecde1da2094459c613e47aaf, type: 2}
+  - {fileID: 11400000, guid: b0a41ef5cda7b5742a97245551c59d58, type: 2}
+  - {fileID: 11400000, guid: 2c07eff885b9d245eb219e8fe88bfc2a, type: 2}
+  - {fileID: 11400000, guid: d753a3b6660067571b7c4a3d00a4c45e, type: 2}
+  - {fileID: 11400000, guid: f068c799900989dec88406a14c899d12, type: 2}
+  - {fileID: 11400000, guid: 281123893c190960fa54dea1f0f18355, type: 2}
+  - {fileID: 11400000, guid: 1d367ae3102e49ae58adbba00e0ec20c, type: 2}
+  - {fileID: 11400000, guid: 940a53d56ccf61331bab295a5801293d, type: 2}
+  description: Provocation raises stakes
+  tags: []

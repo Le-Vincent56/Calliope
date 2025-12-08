@@ -52,11 +52,17 @@ namespace Calliope.Unity.ScriptableObjects
         public string Description => description;
         public IReadOnlyList<string> Tags => tags;
 
+        /// <summary>
+        /// Rebuilds and retrieves a dictionary of scene beats, ensuring the keys are the beat IDs
+        /// and the values are the corresponding ISceneBeat objects
+        /// </summary>
+        /// <returns>
+        /// A read-only dictionary where the key is the beat ID string, and the value
+        /// is the corresponding ISceneBeat instance; returns an empty dictionary if no beats are provided
+        /// </returns>
         private IReadOnlyDictionary<string, ISceneBeat> GetBeatDictionary()
         {
-            // Exit case - beat dictionary is already cached
-            if (_beatDictionary != null) return _beatDictionary;
-            
+            // Always rebuild dictionary to ensure it reflects current beat IDs
             _beatDictionary = new Dictionary<string, ISceneBeat>();
 
             // Exit case - no beats were provided
@@ -67,7 +73,7 @@ namespace Calliope.Unity.ScriptableObjects
                 SceneBeatSO beat = beats[i];
                 if (beat && !string.IsNullOrEmpty(beat.BeatID))
                 {
-                    _beatDictionary.Add(beat.BeatID, beat);
+                    _beatDictionary[beat.BeatID] = beat;
                 }
             }
 

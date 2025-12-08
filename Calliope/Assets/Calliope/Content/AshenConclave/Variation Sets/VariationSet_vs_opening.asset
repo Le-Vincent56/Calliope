@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_vs_opening
+  m_EditorClassIdentifier: 
+  id: vs_opening
+  displayName: Opening Narration
+  variations:
+  - {fileID: 11400000, guid: 20bea6996a95ac158ac664c244917581, type: 2}
+  - {fileID: 11400000, guid: f1965eeea69b48bdf85e5690a9b9e33a, type: 2}
+  - {fileID: 11400000, guid: fe214f807dde4d47481086ff4c581a32, type: 2}
+  - {fileID: 11400000, guid: 788118ea64d4d9defbef3012186a7069, type: 2}
+  - {fileID: 11400000, guid: a2e05a3fe65202323ad8f1abca6abc80, type: 2}
+  - {fileID: 11400000, guid: de03138865461ad1caeb9fb3456266d6, type: 2}
+  - {fileID: 11400000, guid: d1469bea1fad0c32880a72e5049a78a8, type: 2}
+  - {fileID: 11400000, guid: eec25701dcd5e4dc6b2e731570c047bd, type: 2}
+  description: Sets the scene as council members gather
+  tags: []

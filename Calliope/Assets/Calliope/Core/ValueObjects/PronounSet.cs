@@ -21,8 +21,8 @@ namespace Calliope.Core.ValueObjects
         }
         
         // Convenience Presets
-        public static PronounSet HeHim => new PronounSet("He", "Him", "His", "Himself");
-        public static PronounSet SheHer => new PronounSet("She", "Her", "Her", "Herself");
-        public static PronounSet TheyThem => new PronounSet("They", "Them", "Their", "Themselves");
+        public static PronounSet HeHim => new PronounSet("he", "him", "his", "himself");
+        public static PronounSet SheHer => new PronounSet("she", "her", "her", "herself");
+        public static PronounSet TheyThem => new PronounSet("they", "them", "their", "themselves");
     }
 }

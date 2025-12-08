@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_vs_veilscarred_presented
+  m_EditorClassIdentifier: 
+  id: vs_veilscarred_presented
+  displayName: Veilscarred Presented
+  variations:
+  - {fileID: 11400000, guid: 92a657bd92a64f7c5b740e33970c98a5, type: 2}
+  - {fileID: 11400000, guid: 41adc1eb7b7ddab308a090b230d4e294, type: 2}
+  - {fileID: 11400000, guid: 837a5b338f4b64e00954a986739d4bd0, type: 2}
+  - {fileID: 11400000, guid: 524081a1b403c5fa0a10c8d8c5479763, type: 2}
+  - {fileID: 11400000, guid: 8f30854f7712424d1be835f942dd2fd9, type: 2}
+  - {fileID: 11400000, guid: 04bc96337aa2566eab3531db3ca0f63c, type: 2}
+  - {fileID: 11400000, guid: 874e0b53d5e9995f6829928c51394b44, type: 2}
+  - {fileID: 11400000, guid: 0837f7617ae6e491d98d9cd027284968, type: 2}
+  - {fileID: 11400000, guid: ad0cd7825d6030c038c87af4e6ce7732, type: 2}
+  - {fileID: 11400000, guid: 505d65c5bf5aefd329e5af61ff7e392e, type: 2}
+  description: The Veilscarred is brought before the council
+  tags: []

@@ -1,0 +1,358 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8483460703798284518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Tensions Rise
+  m_EditorClassIdentifier: 
+  beatID: tensions_rise
+  speakerRoleID: wild_card
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: b3acf1a195399ef47b9917dd1e981149, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: 7722052198681365946}
+  defaultNextBeatID: 
+--- !u!114 &-7890691173185315384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_counter_argument_to_tensions_rise
+  m_EditorClassIdentifier: 
+  nextBeatID: tensions_rise
+  conditions: []
+--- !u!114 &-7530531913238201480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Peace Position
+  m_EditorClassIdentifier: 
+  beatID: peace_speaks_first
+  speakerRoleID: voice_of_peace
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: b73c5951ef53631c599049a61b40bdf5, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: -2418047696122074345}
+  defaultNextBeatID: 
+--- !u!114 &-5489039024587603993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Veilscarred Presented
+  m_EditorClassIdentifier: 
+  beatID: presented
+  speakerRoleID: sovereign_role
+  targetRoleID: witness
+  variationSet: {fileID: 11400000, guid: cc71286516f842110a88fe5dc38ddbee, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: -3523618645906276420}
+  defaultNextBeatID: 
+--- !u!114 &-5138502270665391381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: War Position
+  m_EditorClassIdentifier: 
+  beatID: war_speaks_first
+  speakerRoleID: voice_of_war
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: a0b6020b766ae13f2a24bc61ce054f58, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: 7236665723506635158}
+  defaultNextBeatID: 
+--- !u!114 &-3523618645906276420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_presented_to_address
+  m_EditorClassIdentifier: 
+  nextBeatID: address
+  conditions: []
+--- !u!114 &-3181665396217360671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_address_to_peace_speaks_first
+  m_EditorClassIdentifier: 
+  nextBeatID: peace_speaks_first
+  conditions:
+  - {fileID: 11400000, guid: 56a5978560150eb86817be03477d193a, type: 2}
+--- !u!114 &-2418047696122074345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_peace_speaks_first_to_counter_from_war
+  m_EditorClassIdentifier: 
+  nextBeatID: counter_from_war
+  conditions: []
+--- !u!114 &-480618605317636836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_counter_from_war_to_tensions_rise
+  m_EditorClassIdentifier: 
+  nextBeatID: tensions_rise
+  conditions: []
+--- !u!114 &-400802766401714607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_opening_to_presented
+  m_EditorClassIdentifier: 
+  nextBeatID: presented
+  conditions: []
+--- !u!114 &-106174080736575980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Ending Seal
+  m_EditorClassIdentifier: 
+  beatID: ending_seal
+  speakerRoleID: sovereign_role
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: b38284b25c1ad879e92ffb4f09e2dfdd, type: 2}
+  isEndBeat: 1
+  branches: []
+  defaultNextBeatID: 
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 451256f7760843bb9de55f7c09f8f3ea, type: 3}
+  m_Name: Scene_AshenConclave
+  m_EditorClassIdentifier: 
+  id: scene_ashen_conclave
+  displayName: The Ashen Conclave
+  triggerType: 0
+  roles:
+  - {fileID: 11400000, guid: 81ed5ab2303e1b6fca7a10ac728db896, type: 2}
+  - {fileID: 11400000, guid: 9e77f582572fe2a7c8bdaa7b0eb3b351, type: 2}
+  - {fileID: 11400000, guid: f9135264589bd104c8090befc37702de, type: 2}
+  - {fileID: 11400000, guid: e08689eb7f3a48a4487192b428da1c5d, type: 2}
+  - {fileID: 11400000, guid: 96584314a08342cf3ade2ab3f0735f81, type: 2}
+  - {fileID: 11400000, guid: 8d7545919adef373385356a1b469941b, type: 2}
+  beats:
+  - {fileID: 5069484824581817366}
+  - {fileID: -5489039024587603993}
+  - {fileID: 3631552153303033141}
+  - {fileID: -5138502270665391381}
+  - {fileID: -7530531913238201480}
+  - {fileID: -8483460703798284518}
+  - {fileID: -106174080736575980}
+  - {fileID: 7440682013635278543}
+  - {fileID: 7466417176858415366}
+  startingBeatID: opening
+  description: 
+  tags: []
+--- !u!114 &3631552153303033141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Sovereign Address
+  m_EditorClassIdentifier: 
+  beatID: address
+  speakerRoleID: sovereign_role
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: 9df759f00f8c07f32a73d331e06736c7, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: 3796505185448921884}
+  - {fileID: -3181665396217360671}
+  defaultNextBeatID: war_speaks_first
+--- !u!114 &3796505185448921884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_address_to_war_speaks_first
+  m_EditorClassIdentifier: 
+  nextBeatID: war_speaks_first
+  conditions: []
+--- !u!114 &5069484824581817366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Opening Narration
+  m_EditorClassIdentifier: 
+  beatID: opening
+  speakerRoleID: narrator
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: c6fd6639e193e7d11abcfda4b853d7c5, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: -400802766401714607}
+  defaultNextBeatID: 
+--- !u!114 &7236665723506635158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_war_speaks_first_to_counter_from_peace
+  m_EditorClassIdentifier: 
+  nextBeatID: counter_from_peace
+  conditions: []
+--- !u!114 &7440682013635278543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Counter from Peace
+  m_EditorClassIdentifier: 
+  beatID: counter_from_peace
+  speakerRoleID: voice_of_peace
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: f3cbd3609ec8d5fe19dce2de02d42f8b, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: 8580934392019524931}
+  defaultNextBeatID: 
+--- !u!114 &7466417176858415366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Counter from War
+  m_EditorClassIdentifier: 
+  beatID: counter_from_war
+  speakerRoleID: voice_of_war
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: f3cbd3609ec8d5fe19dce2de02d42f8b, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: -480618605317636836}
+  defaultNextBeatID: 
+--- !u!114 &7722052198681365946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_tensions_rise_to_ending_seal
+  m_EditorClassIdentifier: 
+  nextBeatID: ending_seal
+  conditions: []
+--- !u!114 &8580934392019524931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_counter_from_peace_to_tensions_rise
+  m_EditorClassIdentifier: 
+  nextBeatID: tensions_rise
+  conditions: []

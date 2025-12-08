@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_tension_08
+  m_EditorClassIdentifier: 
+  id: tension_08
+  text: "{speaker.name} paces like a caged animal, all restless energy and barely
+    leashed violence. \"We should be mobilizing armies, fortifying defenses\u2014instead
+    we hold councils! This is how civilizations fall\u2014debating solutions while
+    the solution devours them!\""
+  traitAffinities:
+  - TraitID: reckless
+    Weight: 0.5
+  - TraitID: wrathful
+    Weight: 0.4
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []
