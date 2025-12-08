@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Calliope.Core.Interfaces;
 using Calliope.Infrastructure.Events;
 using Calliope.Infrastructure.Logging;
+using Calliope.Runtime.Diagnostics;
 using Calliope.Runtime.Saliency;
 using Calliope.Runtime.Services;
 using Calliope.Unity.Repositories;
@@ -47,6 +48,9 @@ namespace Calliope.Unity.Components
         public DialogueLineBuilder DialogueLineBuilder { get; private set; }
         public CharacterCaster CharacterCaster { get; private set; }
         public SceneOrchestrator SceneOrchestrator { get; private set; }
+
+        public DiagnosticSceneOrchestratorDecorator DiagnosticOrchestrator { get; private set;  }
+        public DiagnosticDialogueLineBuilderDecorator DiagnosticLineBuilder { get; private set; }
 
         private async void Awake()
         {
@@ -137,6 +141,25 @@ namespace Calliope.Unity.Components
             );
             CharacterCaster = new CharacterCaster(Logger, SelectionContext.Random);
             SceneOrchestrator = new SceneOrchestrator(RelationshipProvider, EventBus, Logger);
+
+            // Initialize diagnostics
+            DiagnosticsManager.Instance.Initialize(EventBus);
+            
+            DiagnosticOrchestrator = new DiagnosticSceneOrchestratorDecorator(
+                SceneOrchestrator,
+                RelationshipProvider,
+                EventBus,
+                DiagnosticsManager.Instance
+            );
+
+            DiagnosticLineBuilder = new DiagnosticDialogueLineBuilderDecorator(
+                DialogueLineBuilder,
+                FragmentScorer, 
+                SaliencyStrategy,
+                RelationshipProvider,
+                EventBus,
+                DiagnosticsManager.Instance
+            );
             
             // Set to initialized
             _initialized = true;
