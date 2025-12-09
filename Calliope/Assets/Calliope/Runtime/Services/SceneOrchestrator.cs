@@ -11,7 +11,7 @@ namespace Calliope.Runtime.Services
     /// Orchestrates scene flow: beat progression, branching logic, and scene completion;
     /// maintains the current scene state and determines next beats based on conditions
     /// </summary>
-    public class SceneOrchestrator
+    public class SceneOrchestrator : ISceneOrchestrator
     {
         private readonly IRelationshipProvider _relationshipProvider;
         private readonly IEventBus _eventBus;
@@ -331,7 +331,7 @@ namespace Calliope.Runtime.Services
         /// <summary>
         /// Ends the currently active scene and resets all the related state in the orchestrator
         /// </summary>
-        private void EndScene()
+        public void EndScene()
         {
             if (_currentScene != null)
             {

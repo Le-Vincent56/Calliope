@@ -11,7 +11,7 @@ namespace Calliope.Runtime.Diagnostics
     /// Decorator that wraps DialogueLineBuilder to capture and publish diagnostic events
     /// for fragment scoring and selection
     /// </summary>
-    public class DiagnosticDialogueLineBuilderDecorator
+    public class DiagnosticDialogueLineBuilderDecorator : IDialogueLineBuilder
     {
         private readonly DialogueLineBuilder _inner;
         private readonly IFragmentScorer _scorer;
@@ -246,6 +246,9 @@ namespace Calliope.Runtime.Diagnostics
                 _eventBus.Unsubscribe<LinePreparedEvent>(OnLinePrepared);
                 _isCapturing = false;
             }
+            
+            // Mark the selected fragment
+            MarkSelectedFragment(allCandidateResults, _capturedSelectedFragmentID);
 
             // Publish event (simplified - would need similar logic as BuildLine)
             _eventBus.Publish(new DiagnosticFragmentSelectionEvent(

@@ -45,12 +45,9 @@ namespace Calliope.Unity.Components
         public ISelectionContext SelectionContext { get; private set; }
         public TextAssembler TextAssembler { get; private set; }
         public RelationshipModifierApplier RelationshipApplier { get; private set; }
-        public DialogueLineBuilder DialogueLineBuilder { get; private set; }
+        public IDialogueLineBuilder DialogueLineBuilder { get; private set; }
         public CharacterCaster CharacterCaster { get; private set; }
-        public SceneOrchestrator SceneOrchestrator { get; private set; }
-
-        public DiagnosticSceneOrchestratorDecorator DiagnosticOrchestrator { get; private set;  }
-        public DiagnosticDialogueLineBuilderDecorator DiagnosticLineBuilder { get; private set; }
+        public ISceneOrchestrator SceneOrchestrator { get; private set; }
 
         private async void Awake()
         {
@@ -129,7 +126,7 @@ namespace Calliope.Unity.Components
             RelationshipApplier = new RelationshipModifierApplier(RelationshipProvider, Logger);
             
             // Scene creation
-            DialogueLineBuilder = new DialogueLineBuilder(
+            DialogueLineBuilder innerLinerBuilder = new DialogueLineBuilder(
                 FragmentScorer,
                 SaliencyStrategy,
                 TextAssembler,
@@ -140,20 +137,20 @@ namespace Calliope.Unity.Components
                 Logger
             );
             CharacterCaster = new CharacterCaster(Logger, SelectionContext.Random);
-            SceneOrchestrator = new SceneOrchestrator(RelationshipProvider, EventBus, Logger);
+            SceneOrchestrator innerOrchestrator = new SceneOrchestrator(RelationshipProvider, EventBus, Logger);
 
             // Initialize diagnostics
             DiagnosticsManager.Instance.Initialize(EventBus);
             
-            DiagnosticOrchestrator = new DiagnosticSceneOrchestratorDecorator(
-                SceneOrchestrator,
+            SceneOrchestrator = new DiagnosticSceneOrchestratorDecorator(
+                innerOrchestrator,
                 RelationshipProvider,
                 EventBus,
                 DiagnosticsManager.Instance
             );
 
-            DiagnosticLineBuilder = new DiagnosticDialogueLineBuilderDecorator(
-                DialogueLineBuilder,
+            DialogueLineBuilder = new DiagnosticDialogueLineBuilderDecorator(
+                innerLinerBuilder,
                 FragmentScorer, 
                 SaliencyStrategy,
                 RelationshipProvider,

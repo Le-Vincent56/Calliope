@@ -12,7 +12,7 @@ namespace Calliope.Runtime.Diagnostics
     /// Decorator that wraps SceneOrchestrator to capture and publish diagnostic events
     /// for beat transitions and branch evaluations
     /// </summary>
-    public class DiagnosticSceneOrchestratorDecorator
+    public class DiagnosticSceneOrchestratorDecorator : ISceneOrchestrator
     {
         private readonly SceneOrchestrator _inner;
         private readonly IRelationshipProvider _relationshipProvider;
@@ -279,5 +279,17 @@ namespace Calliope.Runtime.Diagnostics
         /// <param name="fragmentID">The unique identifier of the fragment being selected</param>
         /// <param name="speakerRoleID">The unique identifier of the speaker role associated with the selected fragment</param>
         public void RecordFragmentSelection(string beatID, string fragmentID, string speakerRoleID) => _inner.RecordFragmentSelection(beatID, fragmentID, speakerRoleID);
+        
+        /// <summary>
+        /// Determines whether a scene is currently active by delegating the check to the underlying scene orchestrator
+        /// </summary>
+        /// <returns>True if a scene is currently active; otherwise, false</returns>
+        public bool IsSceneActive() => _inner.IsSceneActive();
+
+        /// <summary>
+        /// Ends the currently active scene by delegating the operation to the decorated scene orchestrator;
+        /// captures diagnostic data if applicable before resetting scene-related state
+        /// </summary>
+        public void EndScene() => _inner.EndScene();
     }
 }

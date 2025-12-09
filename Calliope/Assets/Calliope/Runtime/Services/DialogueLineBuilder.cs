@@ -10,7 +10,7 @@ namespace Calliope.Runtime.Services
     /// <summary>
     /// Builds dialogue lines based on a variety of input parameters, relationships, and scoring strategies
     /// </summary>
-    public class DialogueLineBuilder
+    public class DialogueLineBuilder : IDialogueLineBuilder
     {
         private readonly IFragmentScorer _scorer;
         private readonly ISaliencyStrategy _selectionStrategy;
