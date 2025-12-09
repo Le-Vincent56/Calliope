@@ -26,3 +26,10 @@ MonoBehaviour:
   forbiddenTraitIDs: []
   relationshipModifiers: []
   tags: []
+  contextModifiers:
+  - Key: tension_level
+    Operation: 1
+    Value: 8
+  - Key: war_influence
+    Operation: 1
+    Value: 1

@@ -17,6 +17,7 @@ namespace Calliope.Runtime.Models
         public IReadOnlyList<string> RequiredTraitIDs { get; set; }
         public IReadOnlyList<string> ForbiddenTraitIDs { get; set; }
         public IReadOnlyList<string> Tags { get; set; }
+        public IReadOnlyList<ContextModifier> ContextModifiers { get; set; }
 
         public DialogueFragment()
         {
@@ -25,6 +26,7 @@ namespace Calliope.Runtime.Models
             RequiredTraitIDs = new List<string>();
             ForbiddenTraitIDs = new List<string>();
             Tags = new List<string>();
+            ContextModifiers = new List<ContextModifier>();
         }
     }
 }

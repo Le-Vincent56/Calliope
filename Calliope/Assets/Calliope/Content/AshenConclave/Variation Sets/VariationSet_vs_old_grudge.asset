@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_old_grudge
   displayName: Old Grudge Surfaces
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: 109ac48801253b6a291a56fd21b598f4, type: 2}
+  - {fileID: 11400000, guid: 1f5edc42fb1624405bfaf8515b266798, type: 2}
+  - {fileID: 11400000, guid: 7bfe1fa1cdc4b4323a931c546b2cc516, type: 2}
+  - {fileID: 11400000, guid: bc8610f5c4b3b499b8f5229a961d6200, type: 2}
+  - {fileID: 11400000, guid: 7d0c7d9789bc05a15bb9584871874b98, type: 2}
+  - {fileID: 11400000, guid: 8a83fcac8033e3ca9b628a0013fd59e5, type: 2}
+  - {fileID: 11400000, guid: b402af3519c94725ea1f51ee8ed6b8d9, type: 2}
+  - {fileID: 11400000, guid: 11d88f8890ff65b3e8c63433e774333c, type: 2}
   description: Personal history poisons the debate
   tags: []

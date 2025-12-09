@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_compromise
   displayName: Compromise Proposed
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: c7cda9219a6e003b8a2b783a2d52eb99, type: 2}
+  - {fileID: 11400000, guid: d01c587cbb1f6ebedb400c175d1f45b8, type: 2}
+  - {fileID: 11400000, guid: 2985f02ac490bacd8ba6c2b689a1460f, type: 2}
+  - {fileID: 11400000, guid: be7b04d92a70a616f88723ff3d184926, type: 2}
+  - {fileID: 11400000, guid: e0cbc45aa81bb6075a0d93cad36fa6e7, type: 2}
+  - {fileID: 11400000, guid: 355f8c49e70e89594aee0d99e1d93b87, type: 2}
+  - {fileID: 11400000, guid: a5a903835d0594daaa6507ce55a8465c, type: 2}
+  - {fileID: 11400000, guid: d24db42449920449ebbf023ea58785fd, type: 2}
   description: A middle path is suggested
   tags: []

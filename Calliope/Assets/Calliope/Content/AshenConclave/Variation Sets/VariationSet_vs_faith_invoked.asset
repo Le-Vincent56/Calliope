@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_faith_invoked
   displayName: Faith Invoked
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: e130e63fa000fd436ade1dd98e17deb7, type: 2}
+  - {fileID: 11400000, guid: be8ec80aaa1511cf89ac7854cbf1d137, type: 2}
+  - {fileID: 11400000, guid: 38c75bd0eaadfb5ffa374123001823a8, type: 2}
+  - {fileID: 11400000, guid: 0c95a984b386a476a8c4b8b2729fd63d, type: 2}
+  - {fileID: 11400000, guid: 4e20bd11dea67997580eb7f19f6c1f2f, type: 2}
+  - {fileID: 11400000, guid: 030920907ffe2a4699851be76383cf8a, type: 2}
+  - {fileID: 11400000, guid: e4af27fd2d358d8df98863a280234c3a, type: 2}
+  - {fileID: 11400000, guid: 5109e252af0a129818f886c159812208, type: 2}
   description: Divine mandate invoked
   tags: []

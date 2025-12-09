@@ -1,4 +1,5 @@
 using System.Collections;
+using Calliope.Core.Interfaces;
 using Calliope.Infrastructure.Events;
 using TMPro;
 using UnityEngine;
@@ -67,6 +68,10 @@ namespace Calliope.Unity.Components
             Show();
         }
 
+        /// <summary>
+        /// Makes the dialogue panel visible by initiating a fade-in animation and setting the internal state to showing;
+        /// ensures that the panel does not attempt to show if it is already visible
+        /// </summary>
         public override void Show()
         {
             // Exit case - already showing
@@ -77,8 +82,13 @@ namespace Calliope.Unity.Components
             _isShowing = true;
         }
 
+        /// <summary>
+        /// Hides the dialogue panel by initiating a fade-out animation and updating the internal state to not showing;
+        /// ensures that the panel does not attempt to hide if it is already invisible
+        /// </summary>
         public override void Hide()
         {
+            // Exit case - already hidden
             if (!_isShowing) return;
 
             StopAllCoroutines();
@@ -86,6 +96,10 @@ namespace Calliope.Unity.Components
             _isShowing = false;
         }
 
+        /// <summary>
+        /// Clears the dialogue panel by resetting the text of the speaker name and dialogue text components to empty strings;
+        /// ensures a clean slate for presenting new dialogue content
+        /// </summary>
         public override void Clear()
         {
             if(speakerNameText)
@@ -111,10 +125,50 @@ namespace Calliope.Unity.Components
             // Check if there's another beat to advance to
             bool advanced = Calliope.Instance.SceneOrchestrator.AdvanceToNextBeat();
 
-            // If advancing to another beat, do not hide the dialogue panel
-            if (advanced) return;
-            
-            Hide();
+            // If not advanced (end of scene), hide the dialogue panel
+            if (!advanced)
+            {
+                Hide();
+                return;
+            }
+
+            PresentCurrentBeat();
+        }
+
+        /// <summary>
+        /// Retrieves and processes the current beat of the active dialogue scene to prepare and present the associated dialogue line;
+        /// this involves acquiring the associated speaker, optional target character, and variations within the beat
+        /// to build a dialogue line with the appropriate context and modifiers
+        /// </summary>
+        private void PresentCurrentBeat()
+        {
+            Calliope calliope = Calliope.Instance;
+
+            // Get the current beat
+            ISceneBeat beat = calliope.SceneOrchestrator.GetCurrentBeat();
+
+            // Exit case - no current beat
+            if (beat == null) return;
+
+            // Get the speaker and target characters
+            ICharacter speaker = calliope.SceneOrchestrator.GetCharacterForRole(beat.SpeakerRoleID);
+            ICharacter target = !string.IsNullOrEmpty(beat.TargetRoleID)
+                ? calliope.SceneOrchestrator.GetCharacterForRole(beat.TargetRoleID)
+                : null;
+
+            // Get the variation set
+            IVariationSet variationSet = calliope.VariationSetRepository.GetByID(beat.VariationSetID);
+
+            // Exit case - no variation set found
+            if (variationSet == null) return;
+
+            // Build and present the line (this publishes LinePreparedEvent which triggers PresentLine)
+            calliope.DialogueLineBuilder.BuildLine(
+                variationSet.Variations,
+                speaker,
+                target,
+                applyRelationshipModifiers: true
+            );
         }
 
         /// <summary>

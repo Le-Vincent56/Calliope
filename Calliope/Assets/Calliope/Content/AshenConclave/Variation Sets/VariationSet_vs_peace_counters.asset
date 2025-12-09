@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_vs_peace_counters
+  m_EditorClassIdentifier: 
+  id: vs_peace_counters
+  displayName: Peace Counters War
+  variations:
+  - {fileID: 11400000, guid: efb4d7230ce263124b88207fcd089dfd, type: 2}
+  - {fileID: 11400000, guid: 5568a259b94f02fb3a3786b2d5f4907b, type: 2}
+  - {fileID: 11400000, guid: 7a59dfd366ffdca078665304b9166485, type: 2}
+  - {fileID: 11400000, guid: 48bc0aa85813ad9f5a9add89e4c2bb20, type: 2}
+  - {fileID: 11400000, guid: 9d81b1e11bfb22068baef41807c35ad3, type: 2}
+  - {fileID: 11400000, guid: f2a3cde4e7140233c87620c79036c409, type: 2}
+  - {fileID: 11400000, guid: 74779d4b4b1b4bd8591a1e5fda8a1d05, type: 2}
+  - {fileID: 11400000, guid: 7d998963d5b4355a5b6f679eb1389356, type: 2}
+  description: Peace responds specifically to aggressive/war arguments
+  tags: []

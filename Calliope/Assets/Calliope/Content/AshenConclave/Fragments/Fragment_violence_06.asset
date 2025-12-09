@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_violence_06
+  m_EditorClassIdentifier: 
+  id: violence_06
+  text: '"You mistake my patience for weakness," {speaker.name} warns, {speaker.pronouns.possessive}
+    voice dropping to a deadly whisper. "I''ve been patient. I''ve listened. And
+    now I''m done."'
+  traitAffinities:
+  - TraitID: domineering
+    Weight: 0.5
+  - TraitID: fearless
+    Weight: 0.4
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []
+  contextModifiers:
+  - Key: violence_path_taken
+    Operation: 3
+    Value: 0

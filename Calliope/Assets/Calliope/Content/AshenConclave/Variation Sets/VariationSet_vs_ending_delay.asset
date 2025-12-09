@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_ending_delay
   displayName: 'Ending: Delay Decision'
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: 0d842193d2559e0d5aa7c1b380f70e65, type: 2}
+  - {fileID: 11400000, guid: 725f087977097dd74bb1e0ea8acf6947, type: 2}
+  - {fileID: 11400000, guid: 9fbaf2c192230f6d891d79dca2d95e70, type: 2}
+  - {fileID: 11400000, guid: 33975f4a053f1771e8ab922458318066, type: 2}
+  - {fileID: 11400000, guid: 5a571ebb120e69a87a6942f53e00c0ca, type: 2}
+  - {fileID: 11400000, guid: b4c441042a620e0faae259beaf52d485, type: 2}
+  - {fileID: 11400000, guid: 86f8c731c20347a879024a9536ff3cb7, type: 2}
+  - {fileID: 11400000, guid: 93af9593ab2e3d0598c6c2268fdb484e, type: 2}
   description: Decision to reconvene later
   tags: []

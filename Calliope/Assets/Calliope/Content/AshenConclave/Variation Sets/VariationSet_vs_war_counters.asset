@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_vs_war_counters
+  m_EditorClassIdentifier: 
+  id: vs_war_counters
+  displayName: War Counters Peace
+  variations:
+  - {fileID: 11400000, guid: 1976fc50a10bfa904adb96e3f330f2db, type: 2}
+  - {fileID: 11400000, guid: 28cc580ec1bc121ffa6670d86c43cd0e, type: 2}
+  - {fileID: 11400000, guid: 9539c48bbc44928618a0aacf817b57a4, type: 2}
+  - {fileID: 11400000, guid: db875a4af8572f376bc641fc7cee280a, type: 2}
+  - {fileID: 11400000, guid: 38c8654f9e2a9ce9a9e949d110584cb5, type: 2}
+  - {fileID: 11400000, guid: 940a20c03ef161fbe8ce377a761db227, type: 2}
+  - {fileID: 11400000, guid: 7ce56784e820676888f923331077ac0f, type: 2}
+  - {fileID: 11400000, guid: 5bd309f8ee14af1ddbdacafaf3fd50fb, type: 2}
+  description: War respoding specifically to diplomatic/peace arguments
+  tags: []

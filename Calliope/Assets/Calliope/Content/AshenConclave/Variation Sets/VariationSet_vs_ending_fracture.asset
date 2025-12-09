@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_ending_fracture
   displayName: 'Ending: Council Fractures'
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: 2fd15d38858ddf80f8655da6499dafd0, type: 2}
+  - {fileID: 11400000, guid: 69b566446ac107881bbbb6c24a83f140, type: 2}
+  - {fileID: 11400000, guid: 85d9f6aedfef31160ac2a97885086e55, type: 2}
+  - {fileID: 11400000, guid: fb3ba518c45134d2d818c7ed82f20078, type: 2}
+  - {fileID: 11400000, guid: 95515503236c0d24ba05fde72575d24d, type: 2}
+  - {fileID: 11400000, guid: 43740a949199ec96283cd8719405e8d6, type: 2}
+  - {fileID: 11400000, guid: a356a21515e0c1e92bb2a031af35e427, type: 2}
+  - {fileID: 11400000, guid: a8c5d5eaaa62fd93f9bb0087dc2d98bc, type: 2}
   description: Council splinters into factions
   tags: []

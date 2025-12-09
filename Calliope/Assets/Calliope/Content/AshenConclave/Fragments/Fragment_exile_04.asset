@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_exile_04
+  m_EditorClassIdentifier: 
+  id: exile_04
+  text: '"The Veilscarred is a beacon," {speaker.name} explains coldly. "Whatever
+    hungers beyond is drawn to that   beacon. Remove it from our lands, and perhaps
+    the attention follows."'
+  traitAffinities:
+  - TraitID: analytical
+    Weight: 0.4
+  - TraitID: expedient
+    Weight: 0.5
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []

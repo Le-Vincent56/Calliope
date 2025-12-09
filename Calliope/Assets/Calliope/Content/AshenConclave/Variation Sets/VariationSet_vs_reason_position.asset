@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_reason_position
   displayName: Reason Position
-  variations: []
+  variations:
+  - {fileID: 0}
   description: Scholarly perspective on the Veil
   tags: []

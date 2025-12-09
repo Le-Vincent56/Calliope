@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Calliope.Core.Interfaces;
 using Calliope.Core.ValueObjects;
@@ -38,13 +39,18 @@ namespace Calliope.Unity.ScriptableObjects
         [Header("Metadata")]
         [Tooltip("Tags for filtering and organization")]
         [SerializeField] private string[] tags;
+
+        [Header("Context Modifiers")]
+        [Tooltip("Modifications to scene context when this fragment is selected")]
+        [SerializeField] private ContextModifier[] contextModifiers;
         
         public string ID => id;
         public string Text => text;
-        public IReadOnlyList<TraitAffinity> TraitAffinities => traitAffinities;
-        public IReadOnlyList<string> RequiredTraitIDs => requiredTraitIDs;
-        public IReadOnlyList<string> ForbiddenTraitIDs => forbiddenTraitIDs;
-        public IReadOnlyList<RelationshipModifier> RelationshipModifiers => relationshipModifiers;
-        public IReadOnlyList<string> Tags => tags;
+        public IReadOnlyList<TraitAffinity> TraitAffinities => traitAffinities ?? Array.Empty<TraitAffinity>();
+        public IReadOnlyList<string> RequiredTraitIDs => requiredTraitIDs ?? Array.Empty<string>();
+        public IReadOnlyList<string> ForbiddenTraitIDs => forbiddenTraitIDs ?? Array.Empty<string>();
+        public IReadOnlyList<RelationshipModifier> RelationshipModifiers => relationshipModifiers ?? Array.Empty<RelationshipModifier>();
+        public IReadOnlyList<string> Tags => tags ?? Array.Empty<string>();
+        public IReadOnlyList<ContextModifier> ContextModifiers => contextModifiers ?? Array.Empty<ContextModifier>();
     }
 }

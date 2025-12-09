@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_grudge_01
+  m_EditorClassIdentifier: 
+  id: grudge_01
+  text: '{speaker.name} rounds on {target.name}, old fury blazing fresh. "You speak
+    of peace as though you''ve earned the right. Tell them what your ''diplomacy''
+    cost us at Ashenmoor. Tell them about the regiment you left to die."'
+  traitAffinities:
+  - TraitID: wrathful
+    Weight: 0.6
+  - TraitID: fearless
+    Weight: 0.4
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []

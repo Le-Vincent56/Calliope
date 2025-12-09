@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_peace_opens_07
+  m_EditorClassIdentifier: 
+  id: peace_opens_07
+  text: "{speaker.name}'s voice is soft but carries to every corner. \"We could seal
+    the breach and feel  safe for a generation. Or we could understand it\u2014and
+    be safe forever. Which legacy do we want?\""
+  traitAffinities:
+  - TraitID: sanguine
+    Weight: 0.4
+  - TraitID: charismatic
+    Weight: 0.5
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []
+  contextModifiers:
+  - Key: tension_level
+    Operation: 2
+    Value: 3
+  - Key: peace_influence
+    Operation: 1
+    Value: 1

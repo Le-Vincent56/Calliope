@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_intervention
   displayName: Intervention Attempt
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: 29095b9216ec21538872b4c15659bb1b, type: 2}
+  - {fileID: 11400000, guid: 9aa64b7b905e38ed6a2b5493f79f7451, type: 2}
+  - {fileID: 11400000, guid: fac3f52a7afe3bf64ba51846ca515254, type: 2}
+  - {fileID: 11400000, guid: e6b26202414a909cf9ff26ec17ac51a4, type: 2}
+  - {fileID: 11400000, guid: c4791e4de58b56362929b9ed74637305, type: 2}
+  - {fileID: 11400000, guid: 6549a75454e8155ca90148f118183642, type: 2}
+  - {fileID: 11400000, guid: 6ba65e6ab82d86a1da5279a0a814f213, type: 2}
+  - {fileID: 11400000, guid: ff8e3b4f3357c1baeafca273bd3d338a, type: 2}
   description: Attempt to restore order
   tags: []

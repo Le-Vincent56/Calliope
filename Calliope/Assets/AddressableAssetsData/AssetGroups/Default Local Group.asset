@@ -93,6 +93,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Variation Set
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 332b99f7efba7466d9353d170d0d19e8
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_war_opens.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3b47c2475eaeddd9383f515362da0a65
     m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_honorable.asset
     m_ReadOnly: 0
@@ -125,6 +131,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5221b8e0f21bde6dd81815f2a9af9bd4
     m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_ideological_clash.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53fbc674d624f37e895db3e2c842079f
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_peace_opens.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Variation Set
@@ -182,6 +194,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 76d4f3cc7288101d195ce73784675097
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_war_counters.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 77010b3064ca5a49e88d43bfc904de73
     m_Address: Assets/Calliope/Content/AshenConclave/Traits/Trait_fearless.asset
@@ -380,6 +398,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Character
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e7430900254b715588e0e1f496ab9688
+    m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_peace_counters.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Variation Set
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e87b221d1abf727ac82bb2bdb3681a3c
     m_Address: Assets/Calliope/Content/AshenConclave/Variation Sets/VariationSet_vs_old_grudge.asset

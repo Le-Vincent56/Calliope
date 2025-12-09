@@ -19,17 +19,21 @@ namespace Calliope.Editor.DialogueTimeline
     public class DialogueTimelineWindow : EditorWindow
     {
         private readonly List<TimelineEntry> _entries = new List<TimelineEntry>();
-        private readonly List<TimelineNodeView> _nodeViews = new List<TimelineNodeView>();
         private TimelineEntry _selectedEntry;
-        private TimelineNodeView _selectedNodeView;
 
         private bool _autoScroll = true;
         private bool _isConnected;
         private DiagnosticBeatTransitionEvent _pendingBeatTransition;
 
+        private const int MaxVisibleNodes = 50;
+        private const float UpdateIntervalSeconds = 0.1f;
+        private readonly Queue<DiagnosticFragmentSelectionEvent> _pendingFragmentEvents = new Queue<DiagnosticFragmentSelectionEvent>();
+        private readonly Queue<DiagnosticBeatTransitionEvent> _pendingBeatEvents = new Queue<DiagnosticBeatTransitionEvent>();
+        private double _lastUpdateTime;
+        private bool _updateSubscribed;
+        
         private Label _statusLabel;
-        private ScrollView _timelineScrollView;
-        private VisualElement _timelineGraph;
+        private ListView _timelineListView;
         private ScrollView _detailScrollView;
         private Label _emptyLabel;
 
@@ -48,6 +52,11 @@ namespace Calliope.Editor.DialogueTimeline
         private void OnDisable()
         {
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            
+            if(_timelineListView != null)
+                _timelineListView.selectionChanged -= OnListSelectionChanged;
+            
+            UnscheduleUpdate();
             Disconnect();
         }
 
@@ -107,20 +116,27 @@ namespace Calliope.Editor.DialogueTimeline
             VisualElement content = new VisualElement();
             content.AddToClassList("timeline-content");
 
-            // Timeline scroll view
-            _timelineScrollView = new ScrollView(ScrollViewMode.Horizontal);
-            _timelineScrollView.AddToClassList("timeline-scroll-view");
-
-            _timelineGraph = new VisualElement();
-            _timelineGraph.AddToClassList("timeline-graph");
-
-            _emptyLabel = new Label("Enter Play Mode and run a scene to see the dialogue timeline"); 
+            // Timeline list view
+            _timelineListView = new ListView
+            {
+                fixedItemHeight = 80,
+                itemsSource = _entries,
+                makeItem = MakeTimelineItem,
+                bindItem = BindTimelineItem,
+                selectionType = SelectionType.Single
+            };
+            _timelineListView.AddToClassList("timeline-list-view");
+            _timelineListView.selectionChanged += OnListSelectionChanged;
+            
+            _emptyLabel = new Label("Enter Play Mode and run a scene to see the dialogue timeline");
             _emptyLabel.AddToClassList("timeline-empty-text");
-            _timelineGraph.Add(_emptyLabel);
 
-            _timelineScrollView.Add(_timelineGraph);
-            content.Add(_timelineScrollView);
-
+            VisualElement timelineContainer = new VisualElement();
+            timelineContainer.AddToClassList("timeline-scroll-view");
+            timelineContainer.Add(_emptyLabel);
+            timelineContainer.Add(_timelineListView);
+            content.Add(timelineContainer);
+            
             // Detail panel
             VisualElement detailPanel = new VisualElement();
             detailPanel.AddToClassList("detail-panel");
@@ -258,6 +274,116 @@ namespace Calliope.Editor.DialogueTimeline
         }
 
         /// <summary>
+        /// Creates and configures a new VisualElement to represent a timeline item within the Dialogue Timeline window;
+        /// the timeline item includes labels for index, beat, speaker, text, and timestamp, styled with appropriate class lists
+        /// </summary>
+        /// <returns>A VisualElement representing the configured timeline item, including its child elements</returns>
+        private VisualElement MakeTimelineItem()
+        {
+            VisualElement item = new VisualElement();
+            item.AddToClassList("timeline-list-item");
+
+            Label indexLabel = new Label();
+            indexLabel.name = "index";
+            indexLabel.AddToClassList("timeline-item-index");
+            item.Add(indexLabel);
+
+            VisualElement mainContent = new VisualElement();
+            mainContent.AddToClassList("timeline-item-content");
+
+            Label beatLabel = new Label();
+            beatLabel.name = "beat";
+            beatLabel.AddToClassList("timeline-item-beat");
+            mainContent.Add(beatLabel);
+
+            Label speakerLabel = new Label();
+            speakerLabel.name = "speaker";
+            speakerLabel.AddToClassList("timeline-item-speaker");
+            mainContent.Add(speakerLabel);
+
+            Label textLabel = new Label();
+            textLabel.name = "text";
+            textLabel.AddToClassList("timeline-item-text");
+            mainContent.Add(textLabel);
+
+            item.Add(mainContent);
+
+            Label timestampLabel = new Label();
+            timestampLabel.name = "timestamp";
+            timestampLabel.AddToClassList("timeline-item-timestamp");
+            item.Add(timestampLabel);
+            
+            // Cache references in userData for fast access during binding
+            item.userData = new TimelineItemElements
+            {
+                Root = item,
+                Index = indexLabel,
+                Beat = beatLabel,
+                Speaker = speakerLabel,
+                Text = textLabel,
+                Timestamp = timestampLabel
+            };
+
+            return item;
+        }
+
+        /// <summary>
+        /// Binds a timeline entry to a specified UI element based on its index;
+        /// updates the UI element's text content and styles based on the data
+        /// from the timeline entry at the given index
+        /// </summary>
+        /// <param name="element">The UI element to bind data to</param>
+        /// <param name="index">The index of the timeline entry to bind; must be within the valid range of timeline entries</param>
+        private void BindTimelineItem(VisualElement element, int index)
+        {
+            // Exit case - the index is out of range
+            if (index < 0 || index >= _entries.Count) return;
+
+            // Exit case - no/incorrect cached data found
+            if (element.userData is not TimelineItemElements elements) return;
+            
+            TimelineEntry entry = _entries[index];
+            
+            StringBuilder indexBuilder = new StringBuilder();
+            indexBuilder.Append("#");
+            indexBuilder.Append(index + 1);
+            
+            elements.Index.text = indexBuilder.ToString();
+            elements.Beat.text = entry.BeatID ?? "Unknown";
+            elements.Speaker.text = entry.SpeakerName ?? "(No speaker)";
+            elements.Text.text = TruncateText(entry.DialogueText, 80);
+            elements.Timestamp.text = entry.Timestamp.ToString("HH:mm:ss");
+
+            // Style based on position
+            element.RemoveFromClassList("timeline-item-start");
+            element.RemoveFromClassList("timeline-item-end");
+
+            // Style the element if it's the start or end of the timeline'
+            if (index == 0)
+                element.AddToClassList("timeline-item-start");
+            if (entry.BeatTransition?.WasEndBeat == true)
+                element.AddToClassList("timeline-item-end");
+        }
+
+        /// <summary>
+        /// Handles changes in the selected items of a list, updating the internal state
+        /// to reflect the first selected entry and refreshing the detail panel accordingly
+        /// </summary>
+        /// <param name="selection">An enumerable collection of objects representing the current selection in the list</param>
+        private void OnListSelectionChanged(IEnumerable<object> selection)
+        {
+            _selectedEntry = null;
+
+            foreach (object item in selection)
+            {
+                _selectedEntry = item as TimelineEntry;
+                break;
+            }
+
+            UpdateDetailPanel();
+        }
+
+        /// <summary>
         /// Handles the diagnostic event triggered during a beat transition within the Calliope Dialogue system;
         /// stores the details of the transition event for further processing or visualization
         /// in the Dialogue Timeline window
@@ -268,27 +394,132 @@ namespace Calliope.Editor.DialogueTimeline
         /// </param>
         private void OnBeatTransition(DiagnosticBeatTransitionEvent evt)
         {
-            _pendingBeatTransition = evt;
+            _pendingBeatEvents.Enqueue(evt);
+            ScheduleUpdate();
         }
 
         /// <summary>
-        /// Handles the selection of a dialogue fragment by updating the corresponding timeline entry with
-        /// fragment data, speaker information, and assembled dialogue text; if no matching entry is found,
-        /// a new one is created and added to the timeline; updates visual components such as the node view
-        /// and detail panel if necessary
+        /// Handles the event triggered when a dialogue fragment is selected within the Calliope Dialogue system;
+        /// processes a <see cref="DiagnosticFragmentSelectionEvent"/> by queuing it for further updates
+        /// and initiating necessary UI scheduling within the Dialogue Timeline window
         /// </summary>
         /// <param name="evt">
-        /// The event containing fragment selection details, including the speaker, assembled text,
-        /// and related beat information
+        /// The <see cref="DiagnosticFragmentSelectionEvent"/> containing information
+        /// about the selected dialogue fragment, such as its ID, speaker, target, and selection details
         /// </param>
         private void OnFragmentSelection(DiagnosticFragmentSelectionEvent evt)
+        {
+            _pendingFragmentEvents.Enqueue(evt);
+            ScheduleUpdate();
+        }
+
+        /// <summary>
+        /// Ensures that the method responsible for processing pending events
+        /// is subscribed to Unity's Editor update cycle; if already subscribed,
+        /// no action is taken; this is used to defer or schedule processing
+        /// of queued events such as beat transitions and fragment selections
+        /// </summary>
+        private void ScheduleUpdate()
+        {
+            // Exit case - processing is already subscribed to Editor updates
+            if (_updateSubscribed) return;
+
+            _updateSubscribed = true;
+            EditorApplication.update += ProcessPendingEvents;
+        }
+
+        /// <summary>
+        /// Unsubscribes the editor update callback to stop processing pending events
+        /// for the Dialogue Timeline window, ensuring that unnecessary updates
+        /// are avoided when they are no longer required, thereby improving
+        /// performance and resource usage
+        /// </summary>
+        private void UnscheduleUpdate()
+        {
+            // Exit case - the processing is already unsubscribed from Editor updates
+            if (!_updateSubscribed) return;
+
+            _updateSubscribed = false;
+            EditorApplication.update -= ProcessPendingEvents;
+        }
+
+        /// <summary>
+        /// Processes any pending diagnostic events for the dialogue timeline
+        /// by handling beat transitions and fragment selections, ensuring that
+        /// the timeline remains up-to-date and relevant within the Unity Editor;
+        /// also manages throttled updates and auto-scroll behavior for improved
+        /// user experience when visualizing ongoing events
+        /// </summary>
+        private void ProcessPendingEvents()
+        {
+            // Exit case - not in play mode or not connected
+            if (!EditorApplication.isPlaying || !_isConnected)
+            {
+                UnscheduleUpdate();
+                return;
+            }
+
+            // Exit case - no pending events
+            if (_pendingFragmentEvents.Count == 0 && _pendingBeatEvents.Count == 0)
+            {
+                UnscheduleUpdate();
+                return;
+            }
+
+            // Throttle updates
+            double currentTime = EditorApplication.timeSinceStartup;
+            
+            // Exit case - not enough time has elapsed since the last update
+            if (currentTime - _lastUpdateTime < UpdateIntervalSeconds) return;
+            
+            _lastUpdateTime = currentTime;
+
+            // Process all pending beat transitions first (store the latest for pairing)
+            DiagnosticBeatTransitionEvent latestBeatTransition = _pendingBeatTransition;
+            while (_pendingBeatEvents.Count > 0)
+            {
+                latestBeatTransition = _pendingBeatEvents.Dequeue();
+            }
+            _pendingBeatTransition = latestBeatTransition;
+
+            // Process all pending fragment selections
+            int addedCount = 0;
+            while (_pendingFragmentEvents.Count > 0)
+            {
+                DiagnosticFragmentSelectionEvent evt = _pendingFragmentEvents.Dequeue();
+                ProcessFragmentSelection(evt);
+                addedCount++;
+            }
+
+            // Trim old nodes if we exceeded the limit
+            TrimOldNodes();
+
+            // Auto-scroll once after all additions (not per-node)
+            if (addedCount > 0 && _autoScroll)
+            {
+                ScrollToEnd();
+            }
+
+            // Unsubscribe since we processed everything
+            UnscheduleUpdate();
+        }
+
+        /// <summary>
+        /// Processes a diagnostic event describing the selection of a specific dialogue fragment,
+        /// using the provided event data to create and configure a new timeline entry; the method assigns
+        /// fragment details, speaker information, and any pending beat transitions to the entry
+        /// </summary>
+        /// <param name="evt">
+        /// The diagnostic event related to the fragment selection, containing metadata
+        /// such as the speaker, beat ID, and assembled dialogue text
+        /// </param>
+        private void ProcessFragmentSelection(DiagnosticFragmentSelectionEvent evt)
         {
             string beatID = _pendingBeatTransition?.ToBeatID
                             ?? _pendingBeatTransition?.FromBeatID
                             ?? evt.BeatID
                             ?? "Unknown";
 
-            // Create entry with both transition and fragment data
             TimelineEntry entry = new TimelineEntry(beatID)
             {
                 Index = _entries.Count,
@@ -298,91 +529,60 @@ namespace Calliope.Editor.DialogueTimeline
                 SpeakerRoleID = null,
                 DialogueText = evt.AssembledText
             };
-            
-            // Clear the pending transition
+
             _pendingBeatTransition = null;
-            
-            AddEntry(entry);
+            AddEntryInternal(entry);
         }
 
         /// <summary>
-        /// Adds a new timeline entry to the list of timeline entries, updates the associated
-        /// visual elements, and optionally scrolls to the latest entry in the timeline
+        /// Removes the oldest timeline nodes and their associated UI elements when the total number
+        /// of nodes exceeds the configured maximum limit; this ensures the timeline remains within
+        /// a manageable size for better performance and user experience; updates the indices
+        /// of remaining entries to reflect their current order
         /// </summary>
-        /// <param name="entry">
-        /// The timeline entry to be added; this entry encapsulates data such as beat ID, index,
-        /// speaker information, and any associated diagnostic events
-        /// </param>
-        private void AddEntry(TimelineEntry entry)
+        private void TrimOldNodes()
         {
-            _entries.Add(entry);
-
-            // Hide empty label
-            _emptyLabel.style.display = DisplayStyle.None;
-
-            // Create node view
-            TimelineNodeView nodeView = new TimelineNodeView(entry);
-            nodeView.OnSelected += OnNodeSelected;
-            _nodeViews.Add(nodeView);
-            _timelineGraph.Add(nodeView);
-
-            // Auto-scroll disabled
-            if (!_autoScroll) return;
-            
-            // Auto-scroll to latest
-            EditorApplication.delayCall += () =>
+            while (_entries.Count > MaxVisibleNodes)
             {
-                // Exit case - no timeline scroll view exists
-                if (_timelineScrollView == null) return;
-                    
-                // Scroll to the bottom
-                _timelineScrollView.scrollOffset = new Vector2(
-                    float.MaxValue,
-                    _timelineScrollView.scrollOffset.y
-                );
-            };
-        }
+                _entries.RemoveAt(0);
+            }
 
-        /// <summary>
-        /// Updates the visual representation of a timeline node associated with the provided timeline entry;
-        /// this method ensures that the corresponding node view is refreshed to reflect the latest state or content of the entry
-        /// </summary>
-        /// <param name="entry">
-        /// The timeline entry whose associated node view needs to be updated; this entry contains the latest
-        /// data to be reflected in the visual representation
-        /// </param>
-        private void UpdateNodeView(TimelineEntry entry)
-        {
-            foreach (TimelineNodeView nodeView in _nodeViews)
+            // Update indices on remaining entries
+            for (int i = 0; i < _entries.Count; i++)
             {
-                // Skip if the entry does not match the node view's entry
-                if (nodeView.Entry != entry) continue;
-                
-                nodeView.UpdateContent();
-                break;
+                _entries[i].Index = i;
             }
         }
 
         /// <summary>
-        /// Handles the selection of a timeline node; this method updates the internal state
-        /// to reflect the newly selected node, deselects the previously selected node, and
-        /// triggers an update to the detail panel to display information related to the newly selected entry
+        /// Automatically scrolls the timeline to ensure the last node in the view is visible;
+        /// utilizes a scheduling mechanism to wait for layout completion before adjusting
+        /// the scroll position, ensuring accurate placement of the view at the timeline's end;
+        /// if the scroll view or node list is empty, this method exits without performing any operation
         /// </summary>
-        /// <param name="nodeView">
-        /// The timeline node view that has been selected; this parameter provides access to
-        /// the associated timeline entry and allows the new selection to be visually and logically marked
-        /// </param>
-        private void OnNodeSelected(TimelineNodeView nodeView)
+        private void ScrollToEnd()
         {
-            // Deselect previous
-            _selectedNodeView?.SetSelected(false);
+            // Exit case - no timeline or entries
+            if (_timelineListView == null || _entries.Count == 0) return;
 
-            // Select new
-            _selectedNodeView = nodeView;
-            _selectedEntry = nodeView.Entry;
-            nodeView.SetSelected(true);
+            _timelineListView.ScrollToItem(_entries.Count - 1);
+        }
 
-            UpdateDetailPanel();
+        /// <summary>
+        /// Adds a new timeline entry to the internal collection, updates the UI elements
+        /// to reflect the addition, and hides the empty state indicator if it is visible
+        /// </summary>
+        /// <param name="entry">
+        /// The timeline entry to be added, containing information such as
+        /// the beat ID, speaker details, dialogue text, and associated transitions or selections
+        /// </param>
+        private void AddEntryInternal(TimelineEntry entry)
+        {
+            _entries.Add(entry);
+            _emptyLabel.style.display = DisplayStyle.None;
+
+            // Refresh the list view
+            _timelineListView.RefreshItems();
         }
 
         /// <summary>
@@ -393,6 +593,10 @@ namespace Calliope.Editor.DialogueTimeline
         /// </summary>
         private void UpdateDetailPanel()
         {
+            // Exit case - active playback happening
+            if (_pendingFragmentEvents.Count > 0 || _pendingBeatEvents.Count > 0) 
+                return;
+            
             _detailScrollView.Clear();
 
             // Exit case - no entry selected
@@ -515,19 +719,19 @@ namespace Calliope.Editor.DialogueTimeline
         /// </summary>
         private void ClearTimeline()
         {
-            // Clear all entries and node views
-            _entries.Clear();
-            _nodeViews.Clear();
-            _selectedEntry = null;
-            _selectedNodeView = null;
+            // Clear all event data
+            _pendingFragmentEvents.Clear();
+            _pendingBeatEvents.Clear();
+            _pendingBeatTransition = null;
+            UnscheduleUpdate();
 
             // Clear timeline graph if it exists
-            if (_timelineGraph != null)
-            {
-                _timelineGraph.Clear();
-                _timelineGraph.Add(_emptyLabel);
+            _entries.Clear();
+            _selectedEntry = null;
+            _timelineListView?.RefreshItems();
+            
+            if(_emptyLabel != null)
                 _emptyLabel.style.display = DisplayStyle.Flex;
-            }
 
             // Exit case - no detail scroll view exists
             if (_detailScrollView == null) return;
@@ -537,6 +741,34 @@ namespace Calliope.Editor.DialogueTimeline
             Label placeholder = new Label("Select a node to view details");
             placeholder.AddToClassList("detail-placeholder");
             _detailScrollView.Add(placeholder);
+        }
+        
+        /// <summary>
+        /// Truncates the given text to the specified maximum length; if truncation occurs,
+        /// the resulting string is suffixed with ellipses ("..."). If the input text is null or empty,
+        /// a default placeholder message is returned
+        /// </summary>
+        /// <param name="text">The input text to be truncated</param>
+        /// <param name="maxLength">The maximum allowable length for the truncated string, including the ellipses</param>
+        /// <returns>
+        /// A string that is either the original text (if its length is within the limit) or
+        /// a truncated version of it with ellipses
+        /// </returns>
+        private string TruncateText(string text, int maxLength)
+        {
+            // Exit case - no text
+            if (string.IsNullOrEmpty(text))
+                return "(No dialogue yet)";
+
+            // Exit case - the text does not need to be truncated
+            if (text.Length <= maxLength) return text;
+            
+            // Truncate the text
+            StringBuilder truncatedBuilder = new StringBuilder();
+            truncatedBuilder.Append(text[..maxLength]);
+            truncatedBuilder.Append("...");
+
+            return truncatedBuilder.ToString();
         }
     }
 }

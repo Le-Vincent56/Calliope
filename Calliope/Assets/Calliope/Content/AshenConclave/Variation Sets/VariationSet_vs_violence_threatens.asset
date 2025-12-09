@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_violence_threatens
   displayName: Violence Threatens
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: 3299c4000f3e326e2b4b490570ed0878, type: 2}
+  - {fileID: 11400000, guid: e236d53428a4efa5281073bb809ecb3a, type: 2}
+  - {fileID: 11400000, guid: cbd0014711a15c4998971154af8b9461, type: 2}
+  - {fileID: 11400000, guid: 36f3b2708c90b07eb9140170e2f92c7f, type: 2}
+  - {fileID: 11400000, guid: 20bc529d88d751b2c8aba03b5e94bb53, type: 2}
+  - {fileID: 11400000, guid: 9a96bb7cc88ae8eba9aa33912b19a08d, type: 2}
+  - {fileID: 11400000, guid: 0ec9f793048e2228c807e0b317a0d07b, type: 2}
+  - {fileID: 11400000, guid: b749a609fde03cf78b0f0f170c24ea0e, type: 2}
   description: Situation nearly erupts
   tags: []

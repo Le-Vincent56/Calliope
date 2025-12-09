@@ -25,3 +25,13 @@ MonoBehaviour:
   forbiddenTraitIDs: []
   relationshipModifiers: []
   tags: []
+  contextModifiers:
+  - Key: tension_level
+    Operation: 1
+    Value: 18
+  - Key: war_influence
+    Operation: 1
+    Value: 1
+  - Key: violence_threatened
+    Operation: 3
+    Value: 1

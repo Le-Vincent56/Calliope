@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_ending_exile
   displayName: 'Ending: Exile Veilscarred'
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: 99386c45b6e65fe3d81d74697f06c74e, type: 2}
+  - {fileID: 11400000, guid: 1021440ec50fc87488592cd83334d99e, type: 2}
+  - {fileID: 11400000, guid: 82783fc4e12e863ac8bec6d6e2829679, type: 2}
+  - {fileID: 11400000, guid: f24c9464de2efeb55989993641d9a4f7, type: 2}
+  - {fileID: 11400000, guid: fd2691b9ab221e45496918cd94a724c8, type: 2}
+  - {fileID: 11400000, guid: c601c1fd6289a6da3803dacfab404d14, type: 2}
+  - {fileID: 11400000, guid: 41512607120c87f2ebdba2f8824c6da2, type: 2}
+  - {fileID: 11400000, guid: 634053b9aa0b7de95812e4c5fbf02771, type: 2}
   description: Decision to banish the Veilscarred
   tags: []

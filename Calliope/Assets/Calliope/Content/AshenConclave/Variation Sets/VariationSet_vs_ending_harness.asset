@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_ending_harness
   displayName: 'Ending: Harness Power'
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: a6922580fdcaf3198995c31f3eb3f4a6, type: 2}
+  - {fileID: 11400000, guid: f527f5ab175c04f328becbe36b0bfc23, type: 2}
+  - {fileID: 11400000, guid: 0a371b9fe4b370bc7b84aad605200aa5, type: 2}
+  - {fileID: 11400000, guid: a350659492f774635988e6d5ff56fb95, type: 2}
+  - {fileID: 11400000, guid: 1aa07d06ab54dfe4bbfca0b4df0ba436, type: 2}
+  - {fileID: 11400000, guid: 6f17ae938d4661fe98f98432b25f9263, type: 2}
+  - {fileID: 11400000, guid: 41055d21da18bfbd3908b630d6af3b14, type: 2}
+  - {fileID: 11400000, guid: 7961e2161ab5c0df9a0cef8e91b3caf0, type: 2}
   description: Decision to harness the power
   tags: []

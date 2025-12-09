@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_war_opens_03
+  m_EditorClassIdentifier: 
+  id: war_opens_03
+  text: "{speaker.name} plants both hands on the table, leaning forward. \"The Veil
+    is breached. That is not a problem to be studied or negotiated with. It is an
+    invasion\u2014and I know how to end invasions.\""
+  traitAffinities:
+  - TraitID: fearless
+    Weight: 0.5
+  - TraitID: stalwart
+    Weight: 0.4
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []
+  contextModifiers:
+  - Key: tension_level
+    Operation: 1
+    Value: 8
+  - Key: war_influence
+    Operation: 1
+    Value: 1

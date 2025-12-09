@@ -48,5 +48,11 @@ namespace Calliope.Core.Interfaces
         /// Optional tags for additional filtering (e.g., "angry", "sarcastic")
         /// </summary>
         IReadOnlyList<string> Tags { get; }
+        
+        /// <summary>
+        /// Context modifiers applied when this fragment is selected;
+        /// enables data-driven scene state tracking
+        /// </summary>
+        IReadOnlyList<ContextModifier> ContextModifiers { get; }
     }
 }

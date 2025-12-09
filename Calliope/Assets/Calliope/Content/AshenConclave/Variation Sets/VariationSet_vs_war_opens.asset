@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7b91be0d07447a7828195e9aaa9df16, type: 3}
+  m_Name: VariationSet_vs_war_opens
+  m_EditorClassIdentifier: 
+  id: vs_war_opens
+  displayName: War Opens Debate
+  variations:
+  - {fileID: 11400000, guid: 2b87c7a3cfa52f0c7a9a7f74c0cf2319, type: 2}
+  - {fileID: 11400000, guid: 7b9637b7dced9ce5c9361e476b7ac503, type: 2}
+  - {fileID: 11400000, guid: bf5c5da9984c88d2b829eca1be1f2bbc, type: 2}
+  - {fileID: 11400000, guid: b2d65b6bd68ad328984b8da27fee17d0, type: 2}
+  - {fileID: 11400000, guid: 8b48c02e8b3a70733bb9d253e905e28a, type: 2}
+  - {fileID: 11400000, guid: 6cd02cfd4b413e5bf8c641c7daac476d, type: 2}
+  - {fileID: 11400000, guid: cc2f8d75b6537cab3a62a0f1ab386172, type: 2}
+  - {fileID: 11400000, guid: 538227fe1e4f7e36b8ea354caf9af776, type: 2}
+  description: War's opening position
+  tags: []

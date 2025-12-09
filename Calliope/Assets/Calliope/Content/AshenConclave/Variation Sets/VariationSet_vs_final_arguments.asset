@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_final_arguments
   displayName: Final Arguments
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: ea1c36336830849599012c0032c2def9, type: 2}
+  - {fileID: 11400000, guid: 125d823f913249d76a4063c3b129d2a6, type: 2}
+  - {fileID: 11400000, guid: 9c95e80233d021231ac5d9a7ed80d3ac, type: 2}
+  - {fileID: 11400000, guid: 25dd494e7b08b16758d3d576b3c700bf, type: 2}
+  - {fileID: 11400000, guid: 4489bb2a310ce08f89a06c4f4c36f141, type: 2}
+  - {fileID: 11400000, guid: bcfebf34ec29668b7b85fcc365488bf8, type: 2}
+  - {fileID: 11400000, guid: 4b902a93d51681b23ac9e38a9b0c19c6, type: 2}
+  - {fileID: 11400000, guid: a593028bad4ef6f48a893be6aa3b33c7, type: 2}
   description: Last please before decision
   tags: []

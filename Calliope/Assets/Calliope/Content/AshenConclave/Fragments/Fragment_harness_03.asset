@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_harness_03
+  m_EditorClassIdentifier: 
+  id: harness_03
+  text: "{speaker.name}'s voice carries the weight of destiny. \"We stand at the
+    threshold of a new age. Those who would seal the door condemn us to darkness.
+    I choose light\u2014however dangerous its source.\""
+  traitAffinities:
+  - TraitID: sanguine
+    Weight: 0.4
+  - TraitID: curious
+    Weight: 0.4
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aad1a48a906442ea9deb1b27beb96db, type: 3}
+  m_Name: Fragment_compromise_01
+  m_EditorClassIdentifier: 
+  id: compromise_01
+  text: "{speaker.name} raises both hands in a gesture of peace. \"There is another
+    way\u2014one that requires neither total surrender nor total war. Hear me before
+    you choose blood.\""
+  traitAffinities:
+  - TraitID: charismatic
+    Weight: 0.5
+  - TraitID: merciful
+    Weight: 0.5
+  requiredTraitIDs: []
+  forbiddenTraitIDs: []
+  relationshipModifiers: []
+  tags: []
+  contextModifiers:
+  - Key: compromise_path_taken
+    Operation: 3
+    Value: 0

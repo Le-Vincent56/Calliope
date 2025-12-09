@@ -58,6 +58,13 @@ namespace Calliope.Editor.SceneTemplateEditor
         private const float MinZoom = 0.25f;
         private const float MaxZoom = 2f;
         private const float ZoomStep = 0.1f;
+
+        private void OnDisable()
+        {
+            EditorApplication.update -= OnConditionPickerUpdate;
+            _createBeatButton.clicked -= OnCreateBeatClicked;
+            _cleanupButton.clicked -= CleanupOrphanedBranches;
+        }
         
         [MenuItem("Window/Calliope/Scene Template Editor")]
         public static void ShowWindow()

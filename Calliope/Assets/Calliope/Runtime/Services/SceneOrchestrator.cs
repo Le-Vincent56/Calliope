@@ -17,6 +17,7 @@ namespace Calliope.Runtime.Services
         private readonly IEventBus _eventBus;
         private readonly ILogger _logger;
         private readonly ISceneContext _sceneContext;
+        private readonly ContextModifierApplier _contextModifierApplier;
 
         private ISceneTemplate _currentScene;
         private IReadOnlyDictionary<string, ICharacter> _currentCast;
@@ -31,7 +32,10 @@ namespace Calliope.Runtime.Services
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _sceneContext = sceneContext ?? new SceneContext();
+            _contextModifierApplier = new ContextModifierApplier();
             _visitedBeats = new HashSet<string>();
+
+            _eventBus.Subscribe<LinePreparedEvent>(OnLinePrepared);
         }
 
         /// <summary>
@@ -348,6 +352,30 @@ namespace Calliope.Runtime.Services
             _currentCast = null;
             _currentBeatID = null;
             _visitedBeats.Clear();
+        }
+
+        /// <summary>
+        /// Handles the event triggered when a line is prepared, recording the selected fragment's details for the active scene and beat
+        /// </summary>
+        /// <param name="evt">The event containing the details of the prepared line, including the selected dialogue fragment</param>
+        private void OnLinePrepared(LinePreparedEvent evt)
+        {
+            // Only record if we have an active scene
+            if (_currentScene == null || string.IsNullOrEmpty(_currentBeatID)) return;
+            
+            // Get the current beat's speaker role
+            ISceneBeat currentBeat = GetCurrentBeat();
+            if (currentBeat == null) return;
+            
+            // Record the selection
+            string fragmentID = evt.SelectedFragment?.ID ?? "";
+            RecordFragmentSelection(_currentBeatID, fragmentID, currentBeat.SpeakerRoleID);
+            
+            // Exit case - no selected fragment
+            if (evt.SelectedFragment == null) return;
+            
+            // Apply any context modifiers defined on the fragment
+            _contextModifierApplier.ApplyModifiers(evt.SelectedFragment, _sceneContext);
         }
 
         /// <summary>

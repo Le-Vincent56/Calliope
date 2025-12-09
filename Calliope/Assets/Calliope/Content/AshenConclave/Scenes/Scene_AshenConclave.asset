@@ -1,5 +1,61 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8971327185964744442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_ideological_clash_to_intervention_attempt
+  m_EditorClassIdentifier: 
+  nextBeatID: intervention_attempt
+  conditions: []
+--- !u!114 &-8550315731342829069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: 'Ending: Fracture'
+  m_EditorClassIdentifier: 
+  beatID: ending_fracture
+  speakerRoleID: sovereign_role
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: a853ebe90c1b88bd7881f6cd6ed1e7e3, type: 2}
+  isEndBeat: 1
+  branches: []
+  defaultNextBeatID: 
+--- !u!114 &-8519168787732976596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Intervention Attempt
+  m_EditorClassIdentifier: 
+  beatID: intervention_attempt
+  speakerRoleID: voice_of_peace
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: a00c7e9aaf3d5231a8fce91962d4f841, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: 1110886898692874294}
+  - {fileID: -3309881615352404773}
+  - {fileID: 1439031515893776891}
+  - {fileID: 4472154385347051311}
+  defaultNextBeatID: violence_threatens
 --- !u!114 &-8483460703798284518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18,8 +74,88 @@ MonoBehaviour:
   variationSet: {fileID: 11400000, guid: b3acf1a195399ef47b9917dd1e981149, type: 2}
   isEndBeat: 0
   branches:
-  - {fileID: 7722052198681365946}
+  - {fileID: -3505788417583786982}
+  - {fileID: -414203761369992957}
+  - {fileID: -1767463320550786464}
+  defaultNextBeatID: ideological_clash
+--- !u!114 &-8365381306512794757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: 'Ending: Delay'
+  m_EditorClassIdentifier: 
+  beatID: ending_delay
+  speakerRoleID: sovereign_role
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: d32f4b1f329a5a469bb0ad285df5b7a4, type: 2}
+  isEndBeat: 1
+  branches: []
   defaultNextBeatID: 
+--- !u!114 &-8305885196503512253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_secret_revealed_to_final_arguments
+  m_EditorClassIdentifier: 
+  nextBeatID: final_arguments
+  conditions: []
+--- !u!114 &-8276841643917589355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_final_arguments_to_ending_delay
+  m_EditorClassIdentifier: 
+  nextBeatID: ending_delay
+  conditions:
+  - {fileID: 11400000, guid: e1af788f83cf6793587881fb3d668102, type: 2}
+--- !u!114 &-8160433400092517219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_final_arguments_to_ending_seal
+  m_EditorClassIdentifier: 
+  nextBeatID: ending_seal
+  conditions:
+  - {fileID: 11400000, guid: a238b35800de741b2ad314d5e7338b81, type: 2}
+--- !u!114 &-8131556748420555824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_final_arguments_to_ending_exile
+  m_EditorClassIdentifier: 
+  nextBeatID: ending_exile
+  conditions:
+  - {fileID: 11400000, guid: f5f293c2adb044a4e8d4b6139ff375d8, type: 2}
 --- !u!114 &-7890691173185315384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34,6 +170,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextBeatID: tensions_rise
   conditions: []
+--- !u!114 &-7872470782667772419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Sovereign Decision
+  m_EditorClassIdentifier: 
+  beatID: ending_harness
+  speakerRoleID: sovereign_role
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: 31a393435bf060086bda5bba897e93bc, type: 2}
+  isEndBeat: 1
+  branches: []
+  defaultNextBeatID: 
+--- !u!114 &-7698902613644147875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_final_arguments_to_ending_harness
+  m_EditorClassIdentifier: 
+  nextBeatID: ending_harness
+  conditions:
+  - {fileID: 11400000, guid: ff04c095325ae4b6090a9127e27ab118, type: 2}
 --- !u!114 &-7530531913238201480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,10 +216,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
   m_Name: Peace Position
   m_EditorClassIdentifier: 
-  beatID: peace_speaks_first
+  beatID: peace_opens
   speakerRoleID: voice_of_peace
   targetRoleID: 
-  variationSet: {fileID: 11400000, guid: b73c5951ef53631c599049a61b40bdf5, type: 2}
+  variationSet: {fileID: 11400000, guid: 53fbc674d624f37e895db3e2c842079f, type: 2}
   isEndBeat: 0
   branches:
   - {fileID: -2418047696122074345}
@@ -74,6 +244,20 @@ MonoBehaviour:
   branches:
   - {fileID: -3523618645906276420}
   defaultNextBeatID: 
+--- !u!114 &-5237959935296514703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_compromise_proposed_to_final_arguments
+  m_EditorClassIdentifier: 
+  nextBeatID: final_arguments
+  conditions: []
 --- !u!114 &-5138502270665391381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,14 +270,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
   m_Name: War Position
   m_EditorClassIdentifier: 
-  beatID: war_speaks_first
+  beatID: war_opens
   speakerRoleID: voice_of_war
   targetRoleID: 
-  variationSet: {fileID: 11400000, guid: a0b6020b766ae13f2a24bc61ce054f58, type: 2}
+  variationSet: {fileID: 11400000, guid: 332b99f7efba7466d9353d170d0d19e8, type: 2}
   isEndBeat: 0
   branches:
   - {fileID: 7236665723506635158}
   defaultNextBeatID: 
+--- !u!114 &-4930137268550225010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Faith Invoked
+  m_EditorClassIdentifier: 
+  beatID: faith_invoked
+  speakerRoleID: voice_of_faith
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: 1e7808e077f1ddd8486a85e727c04771, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: -245013224330040081}
+  defaultNextBeatID: 
+--- !u!114 &-4416507050627957733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_violence_threatens_to_final_arguments
+  m_EditorClassIdentifier: 
+  nextBeatID: final_arguments
+  conditions: []
 --- !u!114 &-3523618645906276420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,6 +326,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextBeatID: address
   conditions: []
+--- !u!114 &-3505788417583786982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_tensions_rise_to_old_grudge_surfaces
+  m_EditorClassIdentifier: 
+  nextBeatID: old_grudge_surfaces
+  conditions:
+  - {fileID: 11400000, guid: 4dcf197605b14b16fbbfc4984d11e926, type: 2}
+--- !u!114 &-3309881615352404773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_intervention_attempt_to_compromise_proposed
+  m_EditorClassIdentifier: 
+  nextBeatID: compromise_proposed
+  conditions:
+  - {fileID: 11400000, guid: a6d78ee897921f0a8800d7ec2e696627, type: 2}
 --- !u!114 &-3181665396217360671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,9 +368,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
   m_Name: Branch_address_to_peace_speaks_first
   m_EditorClassIdentifier: 
-  nextBeatID: peace_speaks_first
+  nextBeatID: peace_opens
   conditions:
   - {fileID: 11400000, guid: 56a5978560150eb86817be03477d193a, type: 2}
+--- !u!114 &-2818027242213212413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Secret Revealed
+  m_EditorClassIdentifier: 
+  beatID: secret_revealed
+  speakerRoleID: voice_of_shadow
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: 6c5b4bc9348477920becc6d9ae3b896a, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: -8305885196503512253}
+  defaultNextBeatID: 
 --- !u!114 &-2418047696122074345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,8 +403,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
   m_Name: Branch_peace_speaks_first_to_counter_from_war
   m_EditorClassIdentifier: 
-  nextBeatID: counter_from_war
+  nextBeatID: war_counters
   conditions: []
+--- !u!114 &-1804892967061501115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Violence Threatens
+  m_EditorClassIdentifier: 
+  beatID: violence_threatens
+  speakerRoleID: voice_of_war
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: 8b996bd515482459bafc95585c66a32f, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: -4416507050627957733}
+  defaultNextBeatID: 
+--- !u!114 &-1767463320550786464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_tensions_rise_to_intervention_attempt
+  m_EditorClassIdentifier: 
+  nextBeatID: intervention_attempt
+  conditions: []
+--- !u!114 &-1542528295122365260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: ideological_clash
+  m_EditorClassIdentifier: 
+  beatID: ideological_clash
+  speakerRoleID: voice_of_faith
+  targetRoleID: voice_of_reason
+  variationSet: {fileID: 11400000, guid: 5221b8e0f21bde6dd81815f2a9af9bd4, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: -8971327185964744442}
+  defaultNextBeatID: 
+--- !u!114 &-657105850463629469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: 'Ending: Exile'
+  m_EditorClassIdentifier: 
+  beatID: ending_exile
+  speakerRoleID: sovereign_role
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: 738f5721de5471283b37bb523a4f8e09, type: 2}
+  isEndBeat: 1
+  branches: []
+  defaultNextBeatID: 
 --- !u!114 &-480618605317636836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,6 +491,20 @@ MonoBehaviour:
   m_Name: Branch_counter_from_war_to_tensions_rise
   m_EditorClassIdentifier: 
   nextBeatID: tensions_rise
+  conditions: []
+--- !u!114 &-414203761369992957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_tensions_rise_to_ideological_clash
+  m_EditorClassIdentifier: 
+  nextBeatID: ideological_clash
   conditions: []
 --- !u!114 &-400802766401714607
 MonoBehaviour:
@@ -165,7 +520,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextBeatID: presented
   conditions: []
---- !u!114 &-106174080736575980
+--- !u!114 &-245013224330040081
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -174,16 +529,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
-  m_Name: Ending Seal
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_faith_invoked_to_final_arguments
   m_EditorClassIdentifier: 
-  beatID: ending_seal
-  speakerRoleID: sovereign_role
-  targetRoleID: 
-  variationSet: {fileID: 11400000, guid: b38284b25c1ad879e92ffb4f09e2dfdd, type: 2}
-  isEndBeat: 1
-  branches: []
-  defaultNextBeatID: 
+  nextBeatID: final_arguments
+  conditions: []
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,6 +556,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e08689eb7f3a48a4487192b428da1c5d, type: 2}
   - {fileID: 11400000, guid: 96584314a08342cf3ade2ab3f0735f81, type: 2}
   - {fileID: 11400000, guid: 8d7545919adef373385356a1b469941b, type: 2}
+  - {fileID: 11400000, guid: e6904ae911c4f62ba9fc1509a1381a2e, type: 2}
+  - {fileID: 11400000, guid: 0bec6bc4c07f6e46a9c53fed70be40a9, type: 2}
+  - {fileID: 11400000, guid: 84691d347a06efb47b1154086bbb496f, type: 2}
   beats:
   - {fileID: 5069484824581817366}
   - {fileID: -5489039024587603993}
@@ -213,12 +566,98 @@ MonoBehaviour:
   - {fileID: -5138502270665391381}
   - {fileID: -7530531913238201480}
   - {fileID: -8483460703798284518}
-  - {fileID: -106174080736575980}
   - {fileID: 7440682013635278543}
   - {fileID: 7466417176858415366}
+  - {fileID: 2757335164504085415}
+  - {fileID: -1542528295122365260}
+  - {fileID: -8519168787732976596}
+  - {fileID: -1804892967061501115}
+  - {fileID: 7339823238097633492}
+  - {fileID: -2818027242213212413}
+  - {fileID: -4930137268550225010}
+  - {fileID: 1172034924290765737}
+  - {fileID: -7872470782667772419}
+  - {fileID: 8849353279962537232}
+  - {fileID: -657105850463629469}
+  - {fileID: -8550315731342829069}
+  - {fileID: -8365381306512794757}
   startingBeatID: opening
   description: 
   tags: []
+--- !u!114 &1110886898692874294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_intervention_attempt_to_violence_threatens
+  m_EditorClassIdentifier: 
+  nextBeatID: violence_threatens
+  conditions:
+  - {fileID: 11400000, guid: a75d49a30ae1a7c6aa7c130898638f86, type: 2}
+--- !u!114 &1172034924290765737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Final Arguments
+  m_EditorClassIdentifier: 
+  beatID: final_arguments
+  speakerRoleID: voice_of_reason
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: 7e0e04cff5e04fa7c8100bd40bfca8a1, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: -8160433400092517219}
+  - {fileID: -7698902613644147875}
+  - {fileID: -8131556748420555824}
+  - {fileID: -8276841643917589355}
+  - {fileID: 7403232140113998148}
+  defaultNextBeatID: ending_fracture
+--- !u!114 &1439031515893776891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_intervention_attempt_to_secret_revealed
+  m_EditorClassIdentifier: 
+  nextBeatID: secret_revealed
+  conditions:
+  - {fileID: 11400000, guid: e4d83b3d5a71a1606a7245f2297bd22a, type: 2}
+--- !u!114 &2757335164504085415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: old_grudge_surfaces
+  m_EditorClassIdentifier: 
+  beatID: old_grudge_surfaces
+  speakerRoleID: voice_of_war
+  targetRoleID: voice_of_peace
+  variationSet: {fileID: 11400000, guid: e87b221d1abf727ac82bb2bdb3681a3c, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: 4403323206697550336}
+  defaultNextBeatID: 
 --- !u!114 &3631552153303033141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,9 +676,9 @@ MonoBehaviour:
   variationSet: {fileID: 11400000, guid: 9df759f00f8c07f32a73d331e06736c7, type: 2}
   isEndBeat: 0
   branches:
-  - {fileID: 3796505185448921884}
   - {fileID: -3181665396217360671}
-  defaultNextBeatID: war_speaks_first
+  - {fileID: 3796505185448921884}
+  defaultNextBeatID: war_opens
 --- !u!114 &3796505185448921884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,8 +691,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
   m_Name: Branch_address_to_war_speaks_first
   m_EditorClassIdentifier: 
-  nextBeatID: war_speaks_first
+  nextBeatID: war_opens
   conditions: []
+--- !u!114 &4403323206697550336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_old_grudge_surfaces_to_intervention_attempt
+  m_EditorClassIdentifier: 
+  nextBeatID: intervention_attempt
+  conditions: []
+--- !u!114 &4472154385347051311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_intervention_attempt_to_faith_invoked
+  m_EditorClassIdentifier: 
+  nextBeatID: faith_invoked
+  conditions:
+  - {fileID: 11400000, guid: 487cf03230948d9749013bbe9e3a58c8, type: 2}
 --- !u!114 &5069484824581817366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,7 +754,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
   m_Name: Branch_war_speaks_first_to_counter_from_peace
   m_EditorClassIdentifier: 
-  nextBeatID: counter_from_peace
+  nextBeatID: peace_counters
+  conditions: []
+--- !u!114 &7339823238097633492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Compromise Proposed
+  m_EditorClassIdentifier: 
+  beatID: compromise_proposed
+  speakerRoleID: voice_of_peace
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: b5e60fbe5e834295ca365c75cec11427, type: 2}
+  isEndBeat: 0
+  branches:
+  - {fileID: -5237959935296514703}
+  defaultNextBeatID: 
+--- !u!114 &7403232140113998148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
+  m_Name: Branch_final_arguments_to_ending_fracture
+  m_EditorClassIdentifier: 
+  nextBeatID: ending_fracture
   conditions: []
 --- !u!114 &7440682013635278543
 MonoBehaviour:
@@ -300,10 +802,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
   m_Name: Counter from Peace
   m_EditorClassIdentifier: 
-  beatID: counter_from_peace
+  beatID: peace_counters
   speakerRoleID: voice_of_peace
   targetRoleID: 
-  variationSet: {fileID: 11400000, guid: f3cbd3609ec8d5fe19dce2de02d42f8b, type: 2}
+  variationSet: {fileID: 11400000, guid: e7430900254b715588e0e1f496ab9688, type: 2}
   isEndBeat: 0
   branches:
   - {fileID: 8580934392019524931}
@@ -320,28 +822,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
   m_Name: Counter from War
   m_EditorClassIdentifier: 
-  beatID: counter_from_war
+  beatID: war_counters
   speakerRoleID: voice_of_war
   targetRoleID: 
-  variationSet: {fileID: 11400000, guid: f3cbd3609ec8d5fe19dce2de02d42f8b, type: 2}
+  variationSet: {fileID: 11400000, guid: 76d4f3cc7288101d195ce73784675097, type: 2}
   isEndBeat: 0
   branches:
   - {fileID: -480618605317636836}
   defaultNextBeatID: 
---- !u!114 &7722052198681365946
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b43e0251fda444cbab0415bb7fcc19b1, type: 3}
-  m_Name: Branch_tensions_rise_to_ending_seal
-  m_EditorClassIdentifier: 
-  nextBeatID: ending_seal
-  conditions: []
 --- !u!114 &8580934392019524931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,3 +844,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nextBeatID: tensions_rise
   conditions: []
+--- !u!114 &8849353279962537232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fef6b2c66fc4da8affec0a4a23a3e51, type: 3}
+  m_Name: Ending Seal
+  m_EditorClassIdentifier: 
+  beatID: ending_seal
+  speakerRoleID: sovereign_role
+  targetRoleID: 
+  variationSet: {fileID: 11400000, guid: b38284b25c1ad879e92ffb4f09e2dfdd, type: 2}
+  isEndBeat: 1
+  branches: []
+  defaultNextBeatID: 

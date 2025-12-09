@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: vs_ideological_clash
   displayName: Ideological Clash
-  variations: []
+  variations:
+  - {fileID: 11400000, guid: e75c1768794e850f1b0b45365f4e2c09, type: 2}
+  - {fileID: 11400000, guid: bbd787911a81174e8ab05231034d5f04, type: 2}
+  - {fileID: 11400000, guid: e9497d4443433688c99ad02ae52f3e8f, type: 2}
+  - {fileID: 11400000, guid: f68ea2655dc9aa92db16de5fc4c9c040, type: 2}
+  - {fileID: 11400000, guid: cc3e2687d7cc7f414973d0f6d911f61f, type: 2}
+  - {fileID: 11400000, guid: 7f23f4e452afbb85cb7269934c2ae73e, type: 2}
+  - {fileID: 11400000, guid: c6de014abf80ae2d9a00d6d667c9669f, type: 2}
+  - {fileID: 11400000, guid: 3f0ae24521052e11a97839b449711101, type: 2}
   description: Fundamental worldviews collide
   tags: []

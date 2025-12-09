@@ -61,6 +61,7 @@ namespace Calliope.Runtime.Diagnostics
                 // Reset the instance
                 _instance._isEnabled = false;
                 _instance._eventBus = null;
+                _instance.OnDiagnosticsModeChanged = null;
             }
 
             _instance = null;
